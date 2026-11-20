@@ -1,0 +1,26 @@
+using System;
+
+namespace WaterChaos.Water
+{
+    /// <summary>
+    /// Immutable snapshot of water leaving the pump
+    /// </summary>
+    public readonly struct WaterFlowData()
+    {
+        /// <summary>
+        /// In liter per second (L/s) (cannot be negative)
+        /// </summary>
+        public float FlowRate {get;}
+        /// <summary>
+        /// in Pascale (Pa) (cannot be negative)
+        /// </summary>
+        public float Pressuer {get;}
+
+        public WaterFlowData(float flowRate, float pressure)
+        {
+            // Negative values have no physical meaning here; normalize once at construction
+            FlowRate = Math.Max(0f, flowRate);
+            Pressure = Math.Max(0f, pressure);
+        }
+    }
+}
