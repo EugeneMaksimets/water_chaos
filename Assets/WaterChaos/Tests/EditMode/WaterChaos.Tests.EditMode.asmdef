@@ -1,0 +1,14 @@
+{
+    "name": "WaterChaos.Tests.EditMode",
+    "rootNamespace": "WaterChaos.Tests",
+    "references": [
+        "WaterChaos.Runtime",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [ "Editor" ],
+    "overrideReferences": true,
+    "precompiledReferences": [ "nunit.framework.dll" ],
+    "autoReferenced": false,
+    "defineConstraints": [ "UNITY_INCLUDE_TESTS" ]
+}
