@@ -16,7 +16,7 @@ namespace WaterChaos.Tests
         {
             PumpModel pump = CreatePump();
 
-            Assert.IsFalse(pump.IsRunning);
+            Assert.IsFalse(pump.IsTurnOn);
             Assert.AreEqual(0f, pump.Output.Pressure);
             Assert.AreEqual(0f, pump.Output.FlowRate);
         }
@@ -78,10 +78,10 @@ namespace WaterChaos.Tests
             PumpModel pump = CreatePump();
 
             pump.Toggle();
-            Assert.IsTrue(pump.IsRunning);
+            Assert.IsTrue(pump.IsTurnOn);
 
             pump.Toggle();
-            Assert.IsFalse(pump.IsRunning);
+            Assert.IsFalse(pump.IsTurnOn);
         }
 
         [TestCase(5000f, MaxPressure)]

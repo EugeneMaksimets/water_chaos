@@ -2,10 +2,8 @@ using UnityEngine;
 
 namespace WaterChaos.Pump
 {
-    /// <summary>
-    /// Temporary on-screen readout of pump state. IMGUI keeps it scene-setup free;
-    /// replaced by the real minimal UI in slice 6.
-    /// </summary>
+    // replaced by the real minimal UI
+
     public sealed class PumpDebugView : MonoBehaviour
     {
         private const float PascalsPerKilopascal = 1000f;
@@ -17,7 +15,7 @@ namespace WaterChaos.Pump
             if (_pump == null)
                 return;
 
-            string state = _pump.IsRunning ? "ON" : "OFF";
+            string state = _pump.isTurnOn ? "ON" : "OFF";
             float current = _pump.CurrentPressure / PascalsPerKilopascal;
             float target = _pump.TargetPressure / PascalsPerKilopascal;
             float max = _pump.MaxPressure / PascalsPerKilopascal;
