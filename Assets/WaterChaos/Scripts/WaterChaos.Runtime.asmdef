@@ -1,0 +1,6 @@
+{
+    "name": "WaterChaos.Runtime",
+    "rootNamespace": "WaterChaos",
+    "references": [],
+    "autoReferenced": true
+}
