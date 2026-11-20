@@ -14,13 +14,13 @@ namespace WaterChaos.Water
         /// <summary>
         /// in Pascals (Pa) (cannot be negative)
         /// </summary>
-        public float Pressuer {get;}
+        public float Pressure {get;}
 
         public WaterFlowData(float flowRate, float pressure)
         {
             // Negative values have no physical meaning here; normalize once at construction
             FlowRate = Math.Max(0f, flowRate);
-            Pressuer = Math.Max(0f, pressure);
+            Pressure = Math.Max(0f, pressure);
         }
     }
 }
