@@ -10,17 +10,21 @@ namespace WaterChaos.Pump
     {
         [Header("Limits")]
         [Tooltip("In Pascals (Pa)")]
-        [SerializeField, Min(0f)] private float _maxPressure = 500_000f;
+        [SerializeField, Min(0f)] 
+        private float _maxPressure = 500_000f;
 
         [Tooltip("In Liter per second (l/s)")]
-        [SerializeField, Min(0f)] private float _maxFlowRate = 10f;
+        [SerializeField, Min(0f)] 
+        private float _maxFlowRate = 10f;
 
         [Header ("Responce")]
         [Tooltip("How fast pressure changes in Pascals (Pa)")]
-        [SerializeField, Min(0f)] private float _pressureChangeRate = 50_000f;
+        [SerializeField, Min(0f)] 
+        private float _pressureChangeRate = 50_000f;
 
         [Tooltip("Target on start, in pascals (Pa)")]
-        [SerializeField, Min(0f)] private float _initialTargetPressure = 20_000f;
+        [SerializeField, Min(0f)] 
+        private float _initialTargetPressure = 20_000f;
 
         private PumpModel _model;
 
