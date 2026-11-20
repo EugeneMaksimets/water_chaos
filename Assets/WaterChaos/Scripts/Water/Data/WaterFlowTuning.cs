@@ -11,7 +11,7 @@ namespace WaterChaos.Water
         [Header("Range")]
         [Tooltip("Pressure that give max range in pascals")]
         [SerializeField, Min(0f)]
-        private float _referecePressure = 500_000f;
+        private float _referencePressure = 500_000f;
 
         [Tooltip("Stream range at reference pressure, in meters (m).")]
         [SerializeField, Min(0f)]
@@ -40,7 +40,7 @@ namespace WaterChaos.Water
         /// <summary>Stream range in meters (m) for the given pressure in pascals (Pa).</summary>
         public float GetRange(float pressure)
         {
-            return Evaluate(_rangeCurve, pressure, _referecePressure) * _maxRange;
+            return Evaluate(_rangeCurve, pressure, _referencePressure) * _maxRange;
         }
 
         /// <summary>Impact force in newtons (N) for the given flow rate in liters per second (L/s).</summary>
@@ -53,10 +53,13 @@ namespace WaterChaos.Water
         // can never produce negative or oversized gameplay values.
         private static float Evaluate(AnimationCurve curve, float value, float reference)
         {
-            if(reference <= 0f || float.IsNaN(value))
+            if(reference <= 0f)
                 return 0f;
 
             float ratio = Mathf.Clamp01(value / reference);
+            if(float.IsNaN(ratio))
+                return 0f;
+
             return Mathf.Clamp01(curve.Evaluate(ratio));
         }
     }
