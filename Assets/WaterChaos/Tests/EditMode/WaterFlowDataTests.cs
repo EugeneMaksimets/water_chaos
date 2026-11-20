@@ -49,5 +49,20 @@ namespace WaterChaos.Tests
             Assert.AreEqual(0f, waterFlow.FlowRate);
             Assert.AreEqual(0f, waterFlow.Pressure);
         }
+
+        [Test]
+        public void NaNValues_ShouldBeClampedToZero()
+        {
+            // Arrange
+            float flowRate = float.NaN;
+            float pressure = float.NaN;
+
+            // Act
+            WaterFlowData waterFlow = new WaterFlowData(flowRate, pressure);
+
+            // Assert
+            Assert.AreEqual(0f, waterFlow.FlowRate);
+            Assert.AreEqual(0f, waterFlow.Pressure);
+        }
     }
 }

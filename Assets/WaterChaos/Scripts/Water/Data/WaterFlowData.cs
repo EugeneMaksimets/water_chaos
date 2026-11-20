@@ -19,8 +19,8 @@ namespace WaterChaos.Water
         public WaterFlowData(float flowRate, float pressure)
         {
             // Negative values have no physical meaning here; normalize once at construction
-            FlowRate = Math.Max(0f, flowRate);
-            Pressure = Math.Max(0f, pressure);
+            FlowRate = float.IsNaN(flowRate) ? 0f : Math.Max(0f, flowRate);
+            Pressure = float.IsNaN(pressure) ? 0f : Math.Max(0f, pressure);
         }
     }
 }
