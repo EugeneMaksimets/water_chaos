@@ -8,7 +8,8 @@ namespace WaterChaos.Pump
     {
         private const float PascalsPerKilopascal = 1000f;
 
-        [SerializeField] private PumpController _pump;
+        [SerializeField] 
+        private PumpController _pump;
 
         private void OnGUI()
         {
