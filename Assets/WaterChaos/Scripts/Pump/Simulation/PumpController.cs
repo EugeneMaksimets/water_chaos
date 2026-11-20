@@ -27,7 +27,7 @@ namespace WaterChaos.Pump
         public float CurrentPressure => _model.CurrentPressure;
         public WaterFlowData Output => _model.Output;
 
-        private void Start()
+        private void Awake()
         {
             _model = new PumpModel(_maxPressure, _maxFlowRate, _pressureChangeRate);
             SetTargetPressure(_pressureChangeRate);
