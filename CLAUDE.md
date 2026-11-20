@@ -19,6 +19,8 @@ This file provides guidance to Claude Code when working in this repository.
 - Prefer targeted searches over broad searches.
 - Reuse information already available in the current context.
 - Do not perform unnecessary tool calls.
+- Prioritize the current conversation context over rediscovering already known information.
+- If the required information is already available, do not inspect it again.
 
 ## Architecture
 
@@ -47,6 +49,7 @@ This file provides guidance to Claude Code when working in this repository.
   2. Run it and confirm it fails for the expected reason.
   3. Implement the minimal change.
   4. Run the test again and confirm it passes.
+- If a test cannot reasonably be written for the task, explain why before skipping TDD.
 - Run only relevant tests.
 - Do not run the full test suite unless necessary or requested.
 - Report modified files and test results.
@@ -66,6 +69,16 @@ This file provides guidance to Claude Code when working in this repository.
 Water Chaos — a Unity 6 (editor `6000.6.7f1`) first-person game using URP (17.6) and the **new Input System only** (`activeInputHandler: 1`; the legacy `UnityEngine.Input` API will throw).
 
 Main scene: `Assets/Scenes/SampleScene.unity`.
+
+## Development Roadmap
+
+- Development plan, current step and session protocol are maintained in `docs/ROADMAP.md`.
+- At the start of a development session, read `docs/ROADMAP.md` first.
+- Work only on the step marked "Текущая точка".
+- Read only files relevant to the current step.
+- Do not independently advance to the next step.
+- The user writes code manually; provide code snippets and review their implementation.
+- Update the roadmap only when explicitly asked.
 
 ## Commands
 
