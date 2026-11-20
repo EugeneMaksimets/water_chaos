@@ -19,6 +19,9 @@ namespace WaterChaos.Pump
         [Tooltip("How fast pressure changes in Pascals (Pa)")]
         [SerializeField, Min(0f)] private float _pressureChangeRate = 50_000f;
 
+        [Tooltip("Target on start, in pascals (Pa)")]
+        [SerializeField, Min(0f)] private float _initialTargetPressure = 20_000f;
+
         private PumpModel _model;
 
         public bool isTurnOn => _model.IsTurnOn;
@@ -30,7 +33,7 @@ namespace WaterChaos.Pump
         private void Awake()
         {
             _model = new PumpModel(_maxPressure, _maxFlowRate, _pressureChangeRate);
-            SetTargetPressure(_pressureChangeRate);
+            SetTargetPressure(_initialTargetPressure);
         }
 
         private void FixedUpdate()
