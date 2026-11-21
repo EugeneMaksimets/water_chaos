@@ -6,7 +6,7 @@ namespace WaterChaos.Water
     /// Draws the water stream with a LineRenderer. Display only: all data comes from WaterStream.
     /// </summary>
     [RequireComponent(typeof(LineRenderer))]
-    public sealed class WaterSreamView : MonoBehaviour
+    public sealed class WaterStreamView : MonoBehaviour
     {
         [Header("Source")]
         [SerializeField]
