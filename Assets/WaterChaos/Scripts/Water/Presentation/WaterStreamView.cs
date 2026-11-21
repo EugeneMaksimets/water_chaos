@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace WaterChaos.Water
 {
+    [DefaultExecutionOrder(100)] // after WaterStream.LateUpdate, so the line uses this frame's arc
     /// <summary>
     /// Draws the water stream with a LineRenderer. Display only: all data comes from WaterStream.
     /// </summary>

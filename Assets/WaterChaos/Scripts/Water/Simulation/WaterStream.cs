@@ -80,16 +80,35 @@ namespace WaterChaos.Water
 
         private void FixedUpdate()
         {
+            if (TryBuildStream(out RaycastHit hit, out Vector3 direction))
+                DeliverImpact(hit, direction, _source.Output);
+        }
+
+        // The player moves and rotates in Update, so the arc from FixedUpdate is stale by render time.
+        // Rebuild it every frame for visuals only; impacts are delivered in FixedUpdate.
+        private void LateUpdate()
+        {
+            TryBuildStream(out _, out _);
+        }
+
+        /// <summary>
+        /// Builds the arc from the current nozzle pose and cuts it at the first hit.
+        /// Returns true if the stream hit something.
+        /// </summary>
+        private bool TryBuildStream(out RaycastHit hit, out Vector3 direction)
+        {
             HasHit = false;
             VisiblePointCount = 0;
+            hit = default;
+            direction = default;
 
             if(_source == null || _tuning == null || _nozzle == null)
-                return;
+                return false;
 
             WaterFlowData flow = _source.Output;
             float range = _tuning.GetRange(flow.Pressure);
             if(flow.FlowRate <= 0 || range <= 0)
-                return;
+                return false;
 
             // Build the complete trajectory before collision detection.
             WaterArc.BuildPoints(
@@ -101,11 +120,11 @@ namespace WaterChaos.Water
             VisiblePointCount = _points.Length;
 
             // The first segment containing a collision gives us the nearest hit along the stream.
-            if(!TryFindHit(out RaycastHit hit, out int segment))
-                return;
+            if(!TryFindHit(out hit, out int segment))
+                return false;
             
             // Direction of the segment that hit — computed before the end point is moved.
-            Vector3 direction = (_points[segment + 1] - _points[segment]).normalized;
+            direction = (_points[segment + 1] - _points[segment]).normalized;
 
             // Cut the visible arc at the hit point.
             _points[segment + 1] = hit.point;
@@ -115,7 +134,7 @@ namespace WaterChaos.Water
             HitPoint = hit.point;
 
             DeliverImpact(hit, direction, flow);
-
+            return true;
         }
 
         // Segments are checked in order from the nozzle, so the first segment with a hit is the closest one.
