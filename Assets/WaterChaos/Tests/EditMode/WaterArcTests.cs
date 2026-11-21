@@ -22,24 +22,24 @@ namespace WaterChaos.Tests
         [Test]
         public void BuildPoints_LastPointIsRangeAlongAimMinusDrop()
         {
-            Vector3 origin = new Vector3(0f, -2f, 10f);
+            Vector3 expected = new Vector3(0f, -2f, 10f);
             Vector3[] points = new Vector3[5];
 
             WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, 2f, points);
 
-            AssertApproximately(origin, points[4]);
+            AssertApproximately(expected, points[4]);
         }
 
         [Test]
         public void BuildPoints_MidPointDropsQuarterOfDrop()
         {
-            Vector3 origin = new Vector3(0f, -0.5f, 5f);
+            Vector3 expected = new Vector3(0f, -0.5f, 5f);
             Vector3[] points = new Vector3[3];
 
             WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, 2f, points);
 
             // Test for: t = 0.5 → drop * t² = 2 * 0.25
-            AssertApproximately(origin, points[1]);
+            AssertApproximately(expected, points[1]);
         }
 
         [Test]
