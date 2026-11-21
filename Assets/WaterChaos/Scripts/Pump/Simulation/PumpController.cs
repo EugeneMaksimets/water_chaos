@@ -6,7 +6,7 @@ namespace WaterChaos.Pump
     /// <summary>
     /// For test PumpModel
     /// </summary>
-    public sealed class PumpController : MonoBehaviour
+    public sealed class PumpController : MonoBehaviour, IWaterFlowSource
     {
         [Header("Limits")]
         [Tooltip("In Pascals (Pa)")]
