@@ -26,6 +26,7 @@ namespace WaterChaos.Water
             if (points == null || points.Length < 2)
                 return;
             
+            // This ensures the direction has a length of 1, and range controls the actual distance.
             Vector3 aim = direction.normalized;
             int lastIndex = points.Length - 1;
 
