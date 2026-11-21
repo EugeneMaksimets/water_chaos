@@ -133,7 +133,6 @@ namespace WaterChaos.Water
             HasHit = true;
             HitPoint = hit.point;
 
-            DeliverImpact(hit, direction, flow);
             return true;
         }
 
