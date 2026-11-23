@@ -34,8 +34,20 @@ namespace WaterChaos.Water
             Vector3 origin, 
             Vector3 direction, 
             float range, 
-            Vector3 bend, 
+            Vector3 bend,
             Vector3[] points)
+        {
+            BuildPoints(origin, direction, range, bend, points, 1f);
+        }
+
+        /// <param name="tEnd">Where the arc stops: 1 = at range, above 1 = the same parabola keeps falling past range.</param>
+        public static void BuildPoints(
+            Vector3 origin,
+            Vector3 direction,
+            float range,
+            Vector3 bend,
+            Vector3[] points,
+            float tEnd)
         {
             if (points == null || points.Length < 2)
                 return;
@@ -49,7 +61,7 @@ namespace WaterChaos.Water
             // creating a parabolic trajectory.
             for (int i = 0; i <= lastIndex; i++)
             {
-                float t = (float) i / lastIndex;
+                float t = tEnd * i / lastIndex;
                 points[i] = origin + aim * (range * t) + bend * (t * t);
             }
         }

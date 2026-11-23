@@ -17,8 +17,8 @@ namespace WaterChaos.Water
         [Tooltip("Tube radius at the nozzle, m")]
         [SerializeField, Min(0.001f)]
         private float _radius = 0.05f;
-        [Tooltip("Radius at the stream end relative to the nozzle radius")]
-        [SerializeField, Range(0f, 1f)]
+        [Tooltip("Radius at the stream end relative to the nozzle radius (>1 widens the stream)")]
+        [SerializeField, Range(0f, 4f)]
         private float _tipRadiusScale = 0.6f;
         [SerializeField, Range(3, 16)]
         private int _sides = 8;
@@ -163,7 +163,6 @@ namespace WaterChaos.Water
             _mesh.SetVertices(_vertices, 0, vertexCount);
             _mesh.SetNormals(_normals, 0, vertexCount);
             _mesh.SetUVs(0, _uvs, 0, vertexCount);
-            _mesh.SetUVs(1, _uvs, 0, vertexCount);
             _mesh.SetIndices(_indices, 0, indexCount, MeshTopology.Triangles, 0);
             _mesh.RecalculateBounds();
         }

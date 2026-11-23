@@ -20,10 +20,20 @@ namespace WaterChaos.Water
         [SerializeField]
         private ParticleSystem _nozzleSpray;
 
+        [Tooltip("One-shot burst at the nozzle when water starts flowing; should be a child of the nozzle. Looping off.")]
+        [SerializeField]
+        private ParticleSystem _startBurst;
+
+        private bool _wasFlowing;
+
         private void LateUpdate()
         {
             // Fewer than 2 points means no water is flowing
             bool flowing = _stream != null && _stream.VisiblePointCount >= 2;
+
+            if (flowing && !_wasFlowing && _startBurst != null)
+                _startBurst.Play();
+            _wasFlowing = flowing;
 
             SetPlaying(_nozzleSpray, flowing);
 

@@ -104,6 +104,17 @@ namespace WaterChaos.Tests
                 AssertApproximately(fromDrop[i], fromBend[i]);
         }
 
+        [Test]
+        public void BuildPoints_TEndAboveOne_ContinuesParabolaPastRange()
+        {
+            var points = new Vector3[5];
+
+            WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, Vector3.down * 2f, points, 2f);
+
+            // t = 2: forward = 10 * 2, drop = 2 * 2^2
+            AssertApproximately(new Vector3(0f, -8f, 20f), points[4]);
+        }
+
         private static void AssertApproximately(Vector3 expected, Vector3 actual)
         {
             Assert.That(

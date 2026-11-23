@@ -44,6 +44,9 @@ namespace WaterChaos.Water
         [SerializeField, Range(0f, 1f)] 
         private float _dropPerRange = 0.2f;
         // SphereCast radius approximates the physical thickness of the stream.
+        [Tooltip("How far the arc continues past its range, as a multiple of range (1 = ends in the air).")]
+        [SerializeField, Min(1f)]
+        private float _fallExtent = 2f;
         [Tooltip("Stream thickness for hit detection, in meters (m).")]
         [SerializeField, Min(0f)] 
         private float _radius = 0.1f;
@@ -136,7 +139,7 @@ namespace WaterChaos.Water
 
             // Build the straight (gravity-only) arc first, then bend it by influences it passes through.
             Vector3 gravityBend = Vector3.down * (range * _dropPerRange);
-            WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend, _points);
+            WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend, _points, _fallExtent);
 
             if(stepInfluence)
             {
@@ -145,7 +148,7 @@ namespace WaterChaos.Water
             }
 
             if(_influenceBend != Vector3.zero)
-                WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend + _influenceBend, _points);
+                WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend + _influenceBend, _points, _fallExtent);
             
             VisiblePointCount = _points.Length;
 
