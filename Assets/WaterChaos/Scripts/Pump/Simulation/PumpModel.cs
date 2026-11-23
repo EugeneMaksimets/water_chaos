@@ -32,21 +32,29 @@ namespace WaterChaos.Pump
         public float TargetPressure { get; private set; }
         public float CurrentPressure { get; private set; }
         public float MaxPressure => _maxPressure;
-         /// <summary>
-        /// Prototype simplification: flow rate scales linearly with current pressure.
-        /// </summary>
-        public WaterFlowData Output
-        {
-            get
-            {
-                float pressureRatio = _maxPressure > 0f ? CurrentPressure / _maxPressure : 0f;
-                return new WaterFlowData(_maxFlowRate * pressureRatio, CurrentPressure);
-            }
-        }
-
         public void Start() => IsTurnOn = true;
         public void Stop() => IsTurnOn = false;
         public void Toggle() => IsTurnOn = !IsTurnOn;
+        /// <summary>
+        /// Share of the demanded water the intake actually gets: 1 = enough, 0 = dry.
+        /// </summary>
+        public float SupplyRatio { get; private set; } = 1f;
+
+        /// <summary>
+        /// Flow the pump wants at current pressure, ignoring supply, in liters per second (L/s).
+        /// Prototype simplification: scales linearly with current pressure.
+        /// </summary>
+        public float DemandFlowRate => _maxPressure > 0f ? _maxFlowRate * CurrentPressure / _maxPressure : 0f;
+
+        /// <summary>
+        /// Actual output: demand and pressure reduced by the water supply.
+        /// </summary>
+        public WaterFlowData Output => new WaterFlowData(DemandFlowRate * SupplyRatio, CurrentPressure * SupplyRatio);
+
+        public void SetSupplyRatio(float ratio)
+        {
+            SupplyRatio = Math.Min(Sanitize(ratio), 1f);
+        }
         public void SetTargetPressure(float pressure)
         {
             TargetPressure = Math.Min(Sanitize(pressure), _maxPressure);
@@ -74,7 +82,7 @@ namespace WaterChaos.Pump
         {
             return float.IsNaN(value) ? 0f: Math.Max(0f, value);
         }
-        
+
     }
 
 }

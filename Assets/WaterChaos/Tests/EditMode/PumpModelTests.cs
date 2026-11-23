@@ -121,5 +121,64 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(0f, pump.CurrentPressure);
         }
+        private PumpModel CreateRunningPumpAtMaxPressure()
+        {
+            PumpModel pump = CreatePump();
+            pump.SetTargetPressure(MaxPressure);
+            pump.Start();
+            pump.Tick(100f);
+            return pump;
+        }
+
+        [Test]
+        public void NewPump_HasFullSupply()
+        {
+            Assert.AreEqual(1f, CreatePump().SupplyRatio);
+        }
+
+        [Test]
+        public void DemandFlowRate_ScalesWithPressure_IgnoresSupply()
+        {
+            PumpModel pump = CreateRunningPumpAtMaxPressure();
+
+            pump.SetSupplyRatio(0f);
+
+            Assert.AreEqual(MaxFlowRate, pump.DemandFlowRate, 0.0001f);
+        }
+
+        [Test]
+        public void SetSupplyRatio_Half_HalvesOutputFlowAndPressure()
+        {
+            PumpModel pump = CreateRunningPumpAtMaxPressure();
+
+            pump.SetSupplyRatio(0.5f);
+
+            Assert.AreEqual(MaxFlowRate * 0.5f, pump.Output.FlowRate, 0.0001f);
+            Assert.AreEqual(MaxPressure * 0.5f, pump.Output.Pressure, 0.0001f);
+        }
+
+        [Test]
+        public void SetSupplyRatio_Zero_OutputIsZero_MotorPressureKept()
+        {
+            PumpModel pump = CreateRunningPumpAtMaxPressure();
+
+            pump.SetSupplyRatio(0f);
+
+            Assert.AreEqual(0f, pump.Output.FlowRate);
+            Assert.AreEqual(0f, pump.Output.Pressure);
+            Assert.AreEqual(MaxPressure, pump.CurrentPressure);
+        }
+
+        [TestCase(2f, 1f)]
+        [TestCase(-1f, 0f)]
+        [TestCase(float.NaN, 0f)]
+        public void SetSupplyRatio_IsClampedToZeroOne(float input, float expected)
+        {
+            PumpModel pump = CreatePump();
+
+            pump.SetSupplyRatio(input);
+
+            Assert.AreEqual(expected, pump.SupplyRatio);
+        }
     }
 }

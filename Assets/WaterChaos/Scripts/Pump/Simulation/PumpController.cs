@@ -27,6 +27,7 @@ namespace WaterChaos.Pump
         private float _initialTargetPressure = 20_000f;
 
         private PumpModel _model;
+        private WaterReservoir _reservoir;
 
         public bool isTurnOn => _model.IsTurnOn;
         public float MaxPressure => _model.MaxPressure;
@@ -42,12 +43,35 @@ namespace WaterChaos.Pump
 
         private void FixedUpdate()
         {
-            _model.Tick(Time.fixedDeltaTime);
+            float deltaTime = Time.fixedDeltaTime;
+            _model.Tick(deltaTime);
+
+            if (_reservoir != null)
+                DrawFromReservoir(deltaTime);
         }
 
         public void Toggle() => _model.Toggle();
+        
+        /// <summary>
+        /// Connects the tank the pump draws from; null means an endless supply.
+        /// </summary>
+        public void SetReservoir(WaterReservoir reservoir)
+        {
+            _reservoir = reservoir;
+            if (_reservoir == null)
+                _model.SetSupplyRatio(1f);
+        }
 
         public void SetTargetPressure(float pressure) => _model.SetTargetPressure(pressure);
 
+        private void DrawFromReservoir(float deltaTime)
+        {
+            float requested = _model.DemandFlowRate * deltaTime;
+            if (requested <= 0f)
+                return;
+
+            float drawn = _reservoir.Draw(requested);
+            _model.SetSupplyRatio(drawn / requested);
+        }
     }
 }
