@@ -3,7 +3,7 @@ using UnityEngine;
 namespace WaterChaos.Interaction
 {
     /// <summary>
-    /// Scales fire particles and light by the fire intensity. Presentation only.
+    /// Scales all child fire particles and the light by the fire intensity. Presentation only.
     /// </summary>
     public sealed class FireView : MonoBehaviour
     {
@@ -13,23 +13,20 @@ namespace WaterChaos.Interaction
 
         [Header("Visuals")]
         [SerializeField]
-        private ParticleSystem _particles;
-        [SerializeField]
         private Light _light;
 
-        private ParticleSystem.EmissionModule _emission;
-        private float _baseEmissionRate;
+        private ParticleSystem[] _particles;
+        private float[] _baseEmissionRates;
         private float _baseLightIntensity;
 
         private void Awake()
         {
-            if(_particles != null)
-            {
-                _emission = _particles.emission;
-                _baseEmissionRate = _emission.rateOverTimeMultiplier;
-            }
+            _particles = GetComponentsInChildren<ParticleSystem>();
+            _baseEmissionRates = new float[_particles.Length];
+            for (int i = 0; i < _particles.Length; i++)
+                _baseEmissionRates[i] = _particles[i].emission.rateOverTimeMultiplier;
 
-            if(_light != null)
+            if (_light != null)
                 _baseLightIntensity = _light.intensity;
         }
 
@@ -37,10 +34,13 @@ namespace WaterChaos.Interaction
         {
             float intensity = _fire.Intensity;
 
-            if(_particles != null)
-                _emission.rateOverTimeMultiplier = _baseEmissionRate * intensity;
+            for (int i = 0; i < _particles.Length; i++)
+            {
+                ParticleSystem.EmissionModule emission = _particles[i].emission;
+                emission.rateOverTimeMultiplier = _baseEmissionRates[i] * intensity;
+            }
 
-            if(_light != null)
+            if (_light != null)
                 _light.intensity = _baseLightIntensity * intensity;
         }
     }
