@@ -76,6 +76,8 @@ namespace WaterChaos.Water
         public bool HasHit { get; private set; }
         /// <summary>World position where the stream hit something.</summary>
         public Vector3 HitPoint { get; private set; }
+        /// <summary>Surface normal at <see cref="HitPoint"/>.</summary>
+        public Vector3 HitNormal { get; private set; }
 
         private void Awake()
         {
@@ -160,6 +162,7 @@ namespace WaterChaos.Water
             VisiblePointCount = segment + 2;
             HasHit = true;
             HitPoint = hit.point;
+            HitNormal = hit.normal;
 
             return true;
         }
