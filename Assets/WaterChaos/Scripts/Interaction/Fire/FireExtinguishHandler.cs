@@ -16,6 +16,10 @@ namespace WaterChaos.Interaction
         [SerializeField, Range(0f, 1f)] 
         private float _extinguishThreshold = 0.05f;
 
+        [Tooltip("Seconds (s) after which an extinguished fire burns again; 0 = never.")]
+        [SerializeField, Min(0f)]
+        private float _reigniteDelay = 5f;
+
         private FireModel _model;
 
         /// <summary>
@@ -26,7 +30,12 @@ namespace WaterChaos.Interaction
 
         private void Awake()
         {
-            _model = new FireModel(_coolingPerLiter, _extinguishThreshold);
+            _model = new FireModel(_coolingPerLiter, _extinguishThreshold, _reigniteDelay);
+        }
+
+        private void FixedUpdate()
+        {
+            _model.Tick(Time.fixedDeltaTime);
         }
 
         // Called during FixedUpdate by WaterStream

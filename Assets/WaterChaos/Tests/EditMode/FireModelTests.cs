@@ -10,6 +10,15 @@ namespace WaterChaos.Tests
 
         private FireModel CreateFire() => new FireModel(CoolingPerLiter, Threshold);
 
+        private const float ReigniteDelay = 5f;
+
+        private FireModel CreateExtinguishedFire()
+        {
+            FireModel fire = new FireModel(CoolingPerLiter, Threshold, ReigniteDelay);
+            fire.ApplyWater(1000f);
+            return fire;
+        }
+
         [Test]
         public void NewFire_IsBurningAtFullIntensity()
         {
@@ -71,6 +80,73 @@ namespace WaterChaos.Tests
             fire.ApplyWater(1f);
 
             Assert.AreEqual(0f, fire.Intensity);
+            Assert.IsFalse(fire.IsBurning);
+        }
+
+        [Test]
+        public void Tick_AfterDelay_ReignitesAtFullIntensity()
+        {
+            FireModel fire = CreateExtinguishedFire();
+
+            fire.Tick(ReigniteDelay);
+
+            Assert.IsTrue(fire.IsBurning);
+            Assert.AreEqual(1f, fire.Intensity);
+        }
+
+        [Test]
+        public void Tick_BeforeDelay_StaysExtinguished()
+        {
+            FireModel fire = CreateExtinguishedFire();
+
+            fire.Tick(ReigniteDelay - 0.1f);
+
+            Assert.IsFalse(fire.IsBurning);
+        }
+
+        [Test]
+        public void Tick_AccumulatesTimeAcrossCalls()
+        {
+            FireModel fire = CreateExtinguishedFire();
+
+            fire.Tick(3f);
+            fire.Tick(2f);
+
+            Assert.IsTrue(fire.IsBurning);
+        }
+
+        [Test]
+        public void ApplyWater_WhenExtinguished_ResetsReigniteTimer()
+        {
+            FireModel fire = CreateExtinguishedFire();
+            fire.Tick(4f);
+
+            fire.ApplyWater(1f);
+            fire.Tick(4f);
+
+            Assert.IsFalse(fire.IsBurning);
+        }
+
+        [Test]
+        public void Tick_ZeroDelay_NeverReignites()
+        {
+            FireModel fire = CreateFire();
+            fire.ApplyWater(1000f);
+
+            fire.Tick(1000f);
+
+            Assert.IsFalse(fire.IsBurning);
+        }
+
+        [TestCase(-1f)]
+        [TestCase(float.NaN)]
+        public void Tick_InvalidDeltaTime_IsIgnored(float deltaTime)
+        {
+            FireModel fire = CreateExtinguishedFire();
+
+            fire.Tick(deltaTime);
+            fire.Tick(ReigniteDelay - 0.1f);
+
             Assert.IsFalse(fire.IsBurning);
         }
     }
