@@ -6,7 +6,7 @@ namespace WaterChaos.Hydrant
     /// <summary>
     /// Scene adapter for <see cref="HydrantModel"/>; a water source that needs no pump.
     /// </summary>
-    public sealed class HydrantController : MonoBehaviour, IWaterFlowSource
+    public sealed class HydrantController : MonoBehaviour, IWaterFlowSource, IWaterSourceControl
     {
         [Header("Network")]
         [Tooltip("In Pascals (Pa), with the valve fully open")]
@@ -30,6 +30,10 @@ namespace WaterChaos.Hydrant
         public bool IsOpen => _model.IsOpen;
         public float OpenRatio => _model.OpenRatio;
         public WaterFlowData Output => _model.Output;
+        public void Stop() => _model.Close();
+
+        /// <summary>Network pressure is fixed; the hydrant ignores pressure steps.</summary>
+        public void AdjustPressure(int direction) { }
 
         private void Awake()
         {

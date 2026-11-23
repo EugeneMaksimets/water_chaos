@@ -6,7 +6,7 @@ namespace WaterChaos.Pump
     /// <summary>
     /// For test PumpModel
     /// </summary>
-    public sealed class PumpController : MonoBehaviour, IWaterFlowSource
+    public sealed class PumpController : MonoBehaviour, IWaterFlowSource, IWaterSourceControl
     {
         [Header("Limits")]
         [Tooltip("In Pascals (Pa)")]
@@ -21,6 +21,11 @@ namespace WaterChaos.Pump
         [Tooltip("How fast pressure changes in Pascals (Pa)")]
         [SerializeField, Min(0f)] 
         private float _pressureChangeRate = 50_000f;
+
+        [Header("Control")]
+        [Tooltip("Target pressure change per adjust step, in pascals (Pa)")]
+        [SerializeField, Min(0f)]
+        private float _pressureStep = 50_000f;
 
         [Tooltip("Target on start, in pascals (Pa)")]
         [SerializeField, Min(0f)] 
@@ -39,6 +44,9 @@ namespace WaterChaos.Pump
         public float TargetPressure => _model.TargetPressure;
         public float CurrentPressure => _model.CurrentPressure;
         public WaterFlowData Output => _model.Output;
+        public void AdjustPressure(int direction) => SetTargetPressure(TargetPressure + direction * _pressureStep);
+
+        public void Stop() => _model.Stop();
 
         public float SupplyRatio => _model.SupplyRatio;
 

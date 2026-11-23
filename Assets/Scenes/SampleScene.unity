@@ -5161,6 +5161,18 @@ MonoBehaviour:
   _flowRate: 8
   _valveSpeed: 2
   _openOnStart: 1
+--- !u!114 &161151389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161151385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8121bb2c06adb4e39af664bfa6da08c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterConnectionPoint
 --- !u!1 &179652602
 GameObject:
   m_ObjectHideFlags: 0
@@ -10176,6 +10188,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8907150275739478988, guid: 60f38a01237547147bc883f756cf6881, type: 3}
       insertIndex: -1
       addedObject: {fileID: 161151388}
+    - targetCorrespondingSourceObject: {fileID: 8907150275739478988, guid: 60f38a01237547147bc883f756cf6881, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 161151389}
   m_SourcePrefab: {fileID: 100100000, guid: 60f38a01237547147bc883f756cf6881, type: 3}
 --- !u!1 &766353891
 GameObject:
@@ -15104,6 +15119,7 @@ GameObject:
   - component: {fileID: 1273514896}
   - component: {fileID: 1273514895}
   - component: {fileID: 1273514900}
+  - component: {fileID: 1273514901}
   m_Layer: 0
   m_Name: Pump
   m_TagString: Untagged
@@ -15235,6 +15251,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Pump.PumpDebugView
   _pump: {fileID: 1273514895}
   _reservoir: {fileID: 1647824691}
+--- !u!114 &1273514901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273514893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8121bb2c06adb4e39af664bfa6da08c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterConnectionPoint
 --- !u!1 &1566599329
 GameObject:
   m_ObjectHideFlags: 0
@@ -17647,8 +17675,10 @@ GameObject:
   - component: {fileID: 1633715718}
   - component: {fileID: 1633715717}
   - component: {fileID: 1633715723}
-  - component: {fileID: 1633715724}
-  m_Layer: 0
+  - component: {fileID: 1633715727}
+  - component: {fileID: 1633715726}
+  - component: {fileID: 1633715725}
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -17808,7 +17838,7 @@ MonoBehaviour:
   _sensitivity: 0.15
   _maxLookAngle: 85
   _cameraTransform: {fileID: 330585546}
---- !u!114 &1633715724
+--- !u!114 &1633715725
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17819,9 +17849,41 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 64ea2468b2676448db4ec64c9866f6a3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerPumpInput
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerPumpControl
+  _input: {fileID: 1633715727}
   _pump: {fileID: 1273514895}
   _pressureStep: 50000
+--- !u!114 &1633715726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6d965a0093594503b3d3ab4537c598d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerHoseConnector
+  _input: {fileID: 1633715727}
+  _camera: {fileID: 330585546}
+  _stream: {fileID: 1815415062}
+  _maxDistance: 2
+  _interactMask:
+    serializedVersion: 2
+    m_Bits: 127
+--- !u!114 &1633715727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b84c01af7cbca4b7481887767935317c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerInputHandler
 --- !u!114 &1647824691 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7048707098105276787, guid: 1eb4c45c562994d7fbde1cbd18033a6f, type: 3}
@@ -17995,7 +18057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf9c91fddd597430893150f1cfb0aa6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterStream
-  _sourceBehaviour: {fileID: 1273514895}
+  _sourceBehaviour: {fileID: 0}
   _tuning: {fileID: 11400000, guid: 9dcc7f736528c4cbf8588caab8f55821, type: 2}
   _nozzle: {fileID: 1039611966}
   _hitMask:
