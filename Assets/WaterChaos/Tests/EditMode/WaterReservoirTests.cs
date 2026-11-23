@@ -103,5 +103,66 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(0f, reservoir.FillRatio);
         }
+
+        private const float LowLevel = 0.2f;
+
+        [Test]
+        public void OutflowRatio_AboveLowLevel_IsOne()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 50f, LowLevel);
+
+            Assert.AreEqual(1f, reservoir.OutflowRatio);
+        }
+
+        [Test]
+        public void OutflowRatio_BelowLowLevel_IsSqrtOfShareOfLowLevel()
+        {
+            // fill 0.05 of low level 0.2 → share 0.25 → sqrt = 0.5
+            WaterReservoir reservoir = new WaterReservoir(100f, 5f, LowLevel);
+
+            Assert.AreEqual(0.5f, reservoir.OutflowRatio, Tolerance);
+        }
+
+        [Test]
+        public void OutflowRatio_ZeroLowLevel_IsAlwaysOne()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 5f, 0f);
+
+            Assert.AreEqual(1f, reservoir.OutflowRatio);
+        }
+
+        [Test]
+        public void Draw_BelowLowLevel_GivesReducedAmount()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 5f, LowLevel);
+
+            float drawn = reservoir.Draw(4f);
+
+            Assert.AreEqual(2f, drawn, Tolerance);
+            Assert.AreEqual(3f, reservoir.Volume, Tolerance);
+        }
+
+        [TestCase(2f, 1f)]
+        [TestCase(-1f, 0f)]
+        [TestCase(float.NaN, 0f)]
+        public void LowLevelRatio_IsClampedToZeroOne(float input, float expected)
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 50f, input);
+
+            Assert.AreEqual(expected, reservoir.LowLevelRatio);
+        }
+
+        [Test]
+        public void Draw_RepeatedWithLowLevel_EmptiesInFiniteSteps()
+        {
+            // 50 L tank, pump wants 10 L/s at 50 Hz
+            WaterReservoir reservoir = new WaterReservoir(50f, 50f, LowLevel);
+            const float requestPerStep = 10f * 0.02f;
+
+            for (int step = 0; step < 1000 && !reservoir.IsEmpty; step++)
+                reservoir.Draw(requestPerStep);
+
+            Assert.IsTrue(reservoir.IsEmpty);
+        }
     }
 }

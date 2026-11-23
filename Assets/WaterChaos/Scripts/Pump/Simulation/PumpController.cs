@@ -26,6 +26,11 @@ namespace WaterChaos.Pump
         [SerializeField, Min(0f)] 
         private float _initialTargetPressure = 20_000f;
 
+        [Header("Supply")]
+        [Tooltip("Tank the pump draws from; empty = endless water")]
+        [SerializeField]
+        private WaterReservoirComponent _reservoirSource;
+
         private PumpModel _model;
         private WaterReservoir _reservoir;
 
@@ -34,6 +39,14 @@ namespace WaterChaos.Pump
         public float TargetPressure => _model.TargetPressure;
         public float CurrentPressure => _model.CurrentPressure;
         public WaterFlowData Output => _model.Output;
+
+        public float SupplyRatio => _model.SupplyRatio;
+
+        private void Start()
+        {
+            if (_reservoirSource != null)
+                SetReservoir(_reservoirSource.Reservoir);
+        }
 
         private void Awake()
         {
@@ -51,7 +64,7 @@ namespace WaterChaos.Pump
         }
 
         public void Toggle() => _model.Toggle();
-        
+
         /// <summary>
         /// Connects the tank the pump draws from; null means an endless supply.
         /// </summary>

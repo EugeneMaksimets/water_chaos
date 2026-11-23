@@ -1,4 +1,5 @@
 using UnityEngine;
+using WaterChaos.Water;
 
 namespace WaterChaos.Pump
 {
@@ -10,6 +11,9 @@ namespace WaterChaos.Pump
 
         [SerializeField] 
         private PumpController _pump;
+
+        [SerializeField]
+        private WaterReservoirComponent _reservoir;
 
         private void OnGUI()
         {
@@ -25,7 +29,12 @@ namespace WaterChaos.Pump
                 $"Pump: {state}\n" +
                 $"Current pressure: {current:F0} kPa\n" +
                 $"Target pressure: {target:F0} kPa (limit {max:F0})\n" +
-                $"Flow: {_pump.Output.FlowRate:F2} L/s");
+                $"Flow: {_pump.Output.FlowRate:F2} L/s" +
+                $"Flow: {_pump.Output.FlowRate:F2} L/s\n" +
+                $"Supply: {_pump.SupplyRatio:P0}\n" +
+                (_reservoir != null && _reservoir.Reservoir != null
+                    ? $"Reservoir: {_reservoir.Reservoir.Volume:F0} / {_reservoir.Reservoir.Capacity:F0} L ({_reservoir.Reservoir.FillRatio:P0})"
+                    : "Reservoir: none (endless)"));
         }
     }
 }
