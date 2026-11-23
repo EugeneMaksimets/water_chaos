@@ -68,6 +68,42 @@ namespace WaterChaos.Tests
             }
         }
 
+        [Test]
+        public void BuildPoints_Bend_ShiftsLastPointByFullBend()
+        {
+            Vector3 bend = new Vector3(3f, -2f, 0f);
+            Vector3[] points = new Vector3[5];
+
+            WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, bend, points);
+
+            AssertApproximately(new Vector3(3f, -2f, 10f), points[4]);
+        }
+
+        [Test]
+        public void BuildPoints_Bend_MidPointShiftsByQuarterOfBend()
+        {
+            Vector3 bend = new Vector3(4f, 0f, 0f);
+            Vector3[] points = new Vector3[3];
+
+            WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, bend, points);
+
+            // t = 0.5 → bend * t² = 4 * 0.25
+            AssertApproximately(new Vector3(1f, 0f, 5f), points[1]);
+        }
+
+        [Test]
+        public void BuildPoints_DropOverload_MatchesDownwardBend()
+        {
+            Vector3[] fromDrop = new Vector3[4];
+            Vector3[] fromBend = new Vector3[4];
+
+            WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, 2f, fromDrop);
+            WaterArc.BuildPoints(Vector3.zero, Vector3.forward, 10f, Vector3.down * 2f, fromBend);
+
+            for (int i = 0; i < fromDrop.Length; i++)
+                AssertApproximately(fromDrop[i], fromBend[i]);
+        }
+
         private static void AssertApproximately(Vector3 expected, Vector3 actual)
         {
             Assert.That(

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Interaction;
+using WaterChaos.Environment;
 
 namespace WaterChaos.Water
 {
@@ -14,6 +15,9 @@ namespace WaterChaos.Water
         // Hits beyond this capacity cannot be collected by the current cast.
         private const int MaxHitsPerCast = 8;
         private static readonly RaycastHit[] s_hitBuffer = new RaycastHit[MaxHitsPerCast];
+        // Max trigger colliders collected around one arc point.
+        private const int MaxInfluencesPerPoint = 8;
+        private static readonly Collider[] s_overlapBuffer = new Collider[MaxInfluencesPerPoint];
 
         [Header("Source")]
         [Tooltip("Component implementing IWaterFlowSource (e.g. PumpController).")]
@@ -43,6 +47,20 @@ namespace WaterChaos.Water
         [Tooltip("Stream thickness for hit detection, in meters (m).")]
         [SerializeField, Min(0f)] 
         private float _radius = 0.1f;
+
+        [Header("Influences")]
+        [Tooltip("Layers of trigger volumes that bend the stream (e.g. wind zones).")]
+        [SerializeField]
+        private LayerMask _influenceMask;
+        // Unique influences touched by the arc this step; reused to avoid allocations.
+        [Tooltip("How fast the wind bend follows its target, in meters per second (m/s).")]
+        [SerializeField, Min(0f)]
+        private float _bendSpeed = 3f;
+        // Smoothed wind offset of the stream end, in meters (m). Advanced only in FixedUpdate.
+        private Vector3 _influenceBend;
+
+        private readonly List<IFlowInfluence> _influences = new List<IFlowInfluence>();
+
         // Reused to collect all water-reactive components on the hit collider.
         // Keeping the list alive avoids creating a new collection for every impact.
         private readonly List<IWaterImpactReceiver> _receivers = 
@@ -80,7 +98,7 @@ namespace WaterChaos.Water
 
         private void FixedUpdate()
         {
-            if (TryBuildStream(out RaycastHit hit, out Vector3 direction))
+            if (TryBuildStream(true, out RaycastHit hit, out Vector3 direction))
                 DeliverImpact(hit, direction, _source.Output);
         }
 
@@ -88,14 +106,15 @@ namespace WaterChaos.Water
         // Rebuild it every frame for visuals only; impacts are delivered in FixedUpdate.
         private void LateUpdate()
         {
-            TryBuildStream(out _, out _);
+            TryBuildStream(false, out _, out _);
         }
 
         /// <summary>
         /// Builds the arc from the current nozzle pose and cuts it at the first hit.
         /// Returns true if the stream hit something.
+        /// <param name="stepInfluence">True only in FixedUpdate: advances the smoothed wind bend.</param>
         /// </summary>
-        private bool TryBuildStream(out RaycastHit hit, out Vector3 direction)
+        private bool TryBuildStream(bool stepInfluence, out RaycastHit hit, out Vector3 direction)
         {
             HasHit = false;
             VisiblePointCount = 0;
@@ -108,15 +127,24 @@ namespace WaterChaos.Water
             WaterFlowData flow = _source.Output;
             float range = _tuning.GetRange(flow.Pressure);
             if(flow.FlowRate <= 0 || range <= 0)
+            {
+                _influenceBend = Vector3.zero;
                 return false;
+            }
 
-            // Build the complete trajectory before collision detection.
-            WaterArc.BuildPoints(
-                _nozzle.position, 
-                _nozzle.forward, 
-                range, 
-                range * _dropPerRange, 
-                _points);
+            // Build the straight (gravity-only) arc first, then bend it by influences it passes through.
+            Vector3 gravityBend = Vector3.down * (range * _dropPerRange);
+            WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend, _points);
+
+            if(stepInfluence)
+            {
+                Vector3 target = GetInfluenceOffset(range);
+                _influenceBend = Vector3.MoveTowards(_influenceBend, target, _bendSpeed * Time.fixedDeltaTime);
+            }
+
+            if(_influenceBend != Vector3.zero)
+                WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend + _influenceBend, _points);
+            
             VisiblePointCount = _points.Length;
 
             // The first segment containing a collision gives us the nearest hit along the stream.
@@ -134,6 +162,40 @@ namespace WaterChaos.Water
             HitPoint = hit.point;
 
             return true;
+        }
+
+        /// <summary>
+        /// Sums end offsets of all influences the current (unbent) arc passes through, in meters (m).
+        /// </summary>
+        private Vector3 GetInfluenceOffset(float range)
+        {
+            if(_influenceMask.value == 0)
+                return Vector3.zero;
+
+            _influences.Clear();
+            for (int i = 0; i < _points.Length; i++)
+            {
+                int count = Physics.OverlapSphereNonAlloc(
+                    _points[i],
+                    _radius,
+                    s_overlapBuffer,
+                    _influenceMask,
+                    QueryTriggerInteraction.Collide);
+
+                    for (int j = 0; j < count; j++)
+                    {
+                        // One zone usually covers several points: count it once.
+                        if(s_overlapBuffer[j].TryGetComponent(out IFlowInfluence influence)
+                            && !_influences.Contains(influence))
+                            _influences.Add(influence);
+                    }
+            }
+
+            Vector3 offset = Vector3.zero;
+            for (int i = 0; i < _influences.Count; i++)
+                offset += _influences[i].GetEndOffset(range);
+
+            return offset;
         }
 
         // Segments are checked in order from the nozzle, so the first segment with a hit is the closest one.
