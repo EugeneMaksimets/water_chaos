@@ -4,7 +4,8 @@ using WaterChaos.Water;
 namespace WaterChaos.Pump
 {
     /// <summary>
-    /// Pure gameplay model of the pump: on/off state and pressure that ramps toward a target.
+    /// Pure gameplay model of the pump: on/off state, pressure that ramps toward a target,
+    /// and the water it draws from its source. The source owns the water; the pump only takes it.
     /// </summary>
     public sealed class PumpModel
     {
@@ -13,7 +14,7 @@ namespace WaterChaos.Pump
         private readonly float _pressureChangeRate;
 
         /// <summary>
-        /// Creates a stopped pump with zero pressure.
+        /// Creates a stopped pump with zero pressure, no source and no hose.
         /// </summary>
         /// <param name="maxPressure">Upper pressure limit in pascals (Pa).</param>
         /// <param name="maxFlowRate">Flow rate at max pressure in liters per second (L/s).</param>
@@ -25,6 +26,9 @@ namespace WaterChaos.Pump
             _pressureChangeRate = Sanitize(pressureChangeRate);
         }
 
+        /// <summary>Raised when <see cref="State"/> changes; argument is the new state.</summary>
+        public event Action<PumpState> StateChanged;
+
         public bool IsTurnOn { get; private set; }
         /// <summary>
         /// Pressure the pump aims for while running, in pascals (Pa).
@@ -32,9 +36,21 @@ namespace WaterChaos.Pump
         public float TargetPressure { get; private set; }
         public float CurrentPressure { get; private set; }
         public float MaxPressure => _maxPressure;
-        public void Start() => IsTurnOn = true;
-        public void Stop() => IsTurnOn = false;
-        public void Toggle() => IsTurnOn = !IsTurnOn;
+
+        /// <summary>Water the intake draws from; null when the intake has no usable water.</summary>
+        public WaterReservoir Source { get; private set; }
+
+        /// <summary>A hose is attached to the outlet.</summary>
+        public bool IsOutletConnected { get; private set; }
+
+        /// <summary>The source exists and still has water.</summary>
+        public bool HasWater => Source != null && !Source.IsEmpty;
+
+        /// <summary>Every condition to pump is met: water at the intake and a hose on the outlet.</summary>
+        public bool CanRun => HasWater && IsOutletConnected;
+
+        public PumpState State { get; private set; } = PumpState.NoWater;
+
         /// <summary>
         /// Share of the demanded water the intake actually gets: 1 = enough, 0 = dry.
         /// </summary>
@@ -47,21 +63,66 @@ namespace WaterChaos.Pump
         public float DemandFlowRate => _maxPressure > 0f ? _maxFlowRate * CurrentPressure / _maxPressure : 0f;
 
         /// <summary>
-        /// Actual output: demand and pressure reduced by the water supply.
+        /// Actual output: demand and pressure reduced by the water supply; zero unless the pump can run.
         /// </summary>
-        public WaterFlowData Output => new WaterFlowData(DemandFlowRate * SupplyRatio, CurrentPressure * SupplyRatio);
+        public WaterFlowData Output => CanRun
+            ? new WaterFlowData(DemandFlowRate * SupplyRatio, CurrentPressure * SupplyRatio)
+            : new WaterFlowData(0f, 0f);
+
+        /// <summary>Turns the motor on; ignored while the pump cannot run (no water or no hose).</summary>
+        public void Start()
+        {
+            if (CanRun)
+                IsTurnOn = true;
+            UpdateState();
+        }
+
+        public void Stop()
+        {
+            IsTurnOn = false;
+            UpdateState();
+        }
+
+        public void Toggle()
+        {
+            if (IsTurnOn)
+                Stop();
+            else
+                Start();
+        }
+
+        /// <summary>
+        /// Sets the water the intake draws from. Null = no usable water: output drops to zero,
+        /// a running motor pauses and resumes when water returns.
+        /// </summary>
+        public void SetSource(WaterReservoir source)
+        {
+            Source = source;
+            if (Source == null)
+                SupplyRatio = 0f;
+            UpdateState();
+        }
+
+        /// <summary>Tells the pump whether a hose is attached; without it nothing is delivered or drawn.</summary>
+        public void SetOutletConnected(bool connected)
+        {
+            IsOutletConnected = connected;
+            UpdateState();
+        }
 
         public void SetSupplyRatio(float ratio)
         {
             SupplyRatio = Math.Min(Sanitize(ratio), 1f);
         }
+
         public void SetTargetPressure(float pressure)
         {
             TargetPressure = Math.Min(Sanitize(pressure), _maxPressure);
         }
 
         /// <summary>
-        /// Advances the simulation. While stopped, pressure decays toward zero at the same rate.
+        /// Advances the simulation: moves pressure toward its goal, then draws this step's water
+        /// (flow × time, in liters) from the source. While stopped or unable to run, pressure decays toward zero.
         /// </summary>
         /// <param name="deltaTime">Elapsed time in seconds; non-positive values are ignored.</param>
         public void Tick(float deltaTime)
@@ -69,20 +130,54 @@ namespace WaterChaos.Pump
             if (deltaTime <= 0f || float.IsNaN(deltaTime))
                 return;
 
-            float goal = IsTurnOn ? TargetPressure : 0f;
+            float goal = IsTurnOn && CanRun ? TargetPressure : 0f;
             float maxStep = _pressureChangeRate * deltaTime;
             float difference = goal - CurrentPressure;
 
-            CurrentPressure = Math.Abs(difference) <= maxStep 
+            CurrentPressure = Math.Abs(difference) <= maxStep
                 ? goal
                 : CurrentPressure + Math.Sign(difference) * maxStep;
+
+            if (CanRun)
+                DrawFromSource(deltaTime);
+
+            UpdateState();
         }
 
-        private static float Sanitize (float value)
+        private void DrawFromSource(float deltaTime)
         {
-            return float.IsNaN(value) ? 0f: Math.Max(0f, value);
+            float requested = DemandFlowRate * deltaTime;
+            if (requested <= 0f)
+                return;
+
+            float drawn = Source.Draw(requested);
+            SetSupplyRatio(drawn / requested);
         }
 
-    }
+        private void UpdateState()
+        {
+            PumpState state = EvaluateState();
+            if (state == State)
+                return;
 
+            State = state;
+            StateChanged?.Invoke(state);
+        }
+
+        private PumpState EvaluateState()
+        {
+            if (!HasWater)
+                return PumpState.NoWater;
+
+            if (!IsOutletConnected)
+                return PumpState.Disconnected;
+
+            return IsTurnOn ? PumpState.Running : PumpState.Ready;
+        }
+
+        private static float Sanitize(float value)
+        {
+            return float.IsNaN(value) ? 0f : Math.Max(0f, value);
+        }
+    }
 }

@@ -1,25 +1,28 @@
+using System;
 using UnityEngine;
 using WaterChaos.Water;
 
 namespace WaterChaos.Pump
 {
     /// <summary>
-    /// For test PumpModel
+    /// Scene adapter for <see cref="PumpModel"/>: ticks it in FixedUpdate,
+    /// tells it whether a hose is on the outlet and exposes the output to the water system.
+    /// The water source is set from outside (<see cref="SetReservoir"/>): a fixed tank or a deployment check.
     /// </summary>
     public sealed class PumpController : MonoBehaviour, IWaterFlowSource, IWaterSourceControl
     {
         [Header("Limits")]
         [Tooltip("In Pascals (Pa)")]
-        [SerializeField, Min(0f)] 
+        [SerializeField, Min(0f)]
         private float _maxPressure = 500_000f;
 
         [Tooltip("In Liter per second (l/s)")]
-        [SerializeField, Min(0f)] 
+        [SerializeField, Min(0f)]
         private float _maxFlowRate = 10f;
 
         [Header ("Responce")]
         [Tooltip("How fast pressure changes in Pascals (Pa)")]
-        [SerializeField, Min(0f)] 
+        [SerializeField, Min(0f)]
         private float _pressureChangeRate = 50_000f;
 
         [Header("Control")]
@@ -28,30 +31,49 @@ namespace WaterChaos.Pump
         private float _pressureStep = 50_000f;
 
         [Tooltip("Target on start, in pascals (Pa)")]
-        [SerializeField, Min(0f)] 
+        [SerializeField, Min(0f)]
         private float _initialTargetPressure = 20_000f;
 
         [Header("Supply")]
-        [Tooltip("Tank the pump draws from; empty = no water, the pump gives no flow")]
+        [Tooltip("Fixed tank the pump draws from. Leave empty on a deployable pump: PumpDeployment picks the source.")]
         [SerializeField]
         private WaterReservoirComponent _reservoirSource;
 
+        [Header("Outlet")]
+        [Tooltip("Where the hose attaches; empty = first WaterConnectionPoint in children.")]
+        [SerializeField]
+        private WaterConnectionPoint _outlet;
+
         private PumpModel _model;
-        private WaterReservoir _reservoir;
+
+        /// <summary>Raised when the pump state changes; argument is the new state.</summary>
+        public event Action<PumpState> StateChanged;
 
         public bool isTurnOn => _model.IsTurnOn;
         public float MaxPressure => _model.MaxPressure;
         public float TargetPressure => _model.TargetPressure;
         public float CurrentPressure => _model.CurrentPressure;
         public WaterFlowData Output => _model.Output;
+        public PumpState State => _model.State;
+        public bool IsOutletConnected => _model.IsOutletConnected;
         public void AdjustPressure(int direction) => SetTargetPressure(TargetPressure + direction * _pressureStep);
 
         public void Stop() => _model.Stop();
 
         public float SupplyRatio => _model.SupplyRatio;
 
-        /// <summary>Tank the pump draws from; null means no supply.</summary>
-        public WaterReservoir Reservoir => _reservoir;
+        /// <summary>Water the pump draws from; null means no supply.</summary>
+        public WaterReservoir Reservoir => _model.Source;
+
+        private void Awake()
+        {
+            _model = new PumpModel(_maxPressure, _maxFlowRate, _pressureChangeRate);
+            _model.StateChanged += OnModelStateChanged;
+            SetTargetPressure(_initialTargetPressure);
+
+            if (_outlet == null)
+                _outlet = GetComponentInChildren<WaterConnectionPoint>(true);
+        }
 
         private void Start()
         {
@@ -59,44 +81,34 @@ namespace WaterChaos.Pump
                 SetReservoir(_reservoirSource.Reservoir);
         }
 
-        private void Awake()
-        {
-            _model = new PumpModel(_maxPressure, _maxFlowRate, _pressureChangeRate);
-            SetTargetPressure(_initialTargetPressure);
-            SetReservoir(null);
-        }
-
         private void FixedUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
-            _model.Tick(deltaTime);
-
-            if (_reservoir != null)
-                DrawFromReservoir(deltaTime);
+            RefreshOutlet();
+            _model.Tick(Time.fixedDeltaTime);
         }
 
-        public void Toggle() => _model.Toggle();
+        public void Toggle()
+        {
+            RefreshOutlet();
+            _model.Toggle();
+        }
 
         /// <summary>
-        /// Connects the tank the pump draws from; null means no supply, so the pump gives no flow.
+        /// Connects the water the pump draws from; null means no supply, so the pump gives no flow.
         /// </summary>
         public void SetReservoir(WaterReservoir reservoir)
         {
-            _reservoir = reservoir;
-            if (_reservoir == null)
-                _model.SetSupplyRatio(0f);
+            if (reservoir != _model.Source)
+                _model.SetSource(reservoir);
         }
 
         public void SetTargetPressure(float pressure) => _model.SetTargetPressure(pressure);
 
-        private void DrawFromReservoir(float deltaTime)
+        private void RefreshOutlet()
         {
-            float requested = _model.DemandFlowRate * deltaTime;
-            if (requested <= 0f)
-                return;
-
-            float drawn = _reservoir.Draw(requested);
-            _model.SetSupplyRatio(drawn / requested);
+            _model.SetOutletConnected(_outlet != null && _outlet.IsAttached);
         }
+
+        private void OnModelStateChanged(PumpState state) => StateChanged?.Invoke(state);
     }
 }

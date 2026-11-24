@@ -13,6 +13,15 @@ namespace WaterChaos.Water
         /// <summary>Controls of the same source; null if it has none.</summary>
         public IWaterSourceControl Control { get; private set; }
 
+        /// <summary>True while a hose is attached here.</summary>
+        public bool IsAttached { get; private set; }
+
+        /// <summary>Called by whoever attaches the hose.</summary>
+        public void Attach() => IsAttached = true;
+
+        /// <summary>Called by whoever detaches the hose.</summary>
+        public void Detach() => IsAttached = false;
+
         private void Awake()
         {
             Source = GetComponentInParent<IWaterFlowSource>();

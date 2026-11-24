@@ -99,6 +99,7 @@ namespace WaterChaos.Player
         private void Connect(WaterConnectionPoint point)
         {
             _connected = point;
+            _connected.Attach();
             _stream.SetSource(point.Source);
 
             if (_hose != null)
@@ -110,6 +111,7 @@ namespace WaterChaos.Player
             if (_connected.Control != null)
                 _connected.Control.Stop();
 
+            _connected.Detach();
             _connected = null;
             _stream.SetSource(null);
 
