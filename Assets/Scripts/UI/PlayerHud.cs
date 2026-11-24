@@ -14,8 +14,8 @@ namespace WaterChaos.UI
     {
         private const float BarWidth = 320f;
         private const float PromptSize = 72f;
-        private const string ConnectText = "Подключить";
-        private const string DisconnectText = "Отключить";
+        private const string ConnectText = "Connect";
+        private const string DisconnectText = "Disable";
 
         private static readonly Vector2 Center = new Vector2(0.5f, 0.5f);
         private static readonly Vector2 BottomLeft = Vector2.zero;
@@ -85,16 +85,16 @@ namespace WaterChaos.UI
         }
 
         /// <summary>
-        /// 0 when detached; the tank level for a pump with a reservoir;
-        /// 1 for sources that never run dry (hydrant network, pump without a tank).
+        /// 0 when detached; the tank level for a pump (0 without a tank);
+        /// 1 for the hydrant, whose network never runs dry.
         /// </summary>
         private static float GetWaterRatio(WaterConnectionPoint connected)
         {
             if (connected == null)
                 return 0f;
 
-            if (connected.Source is PumpController pump && pump.Reservoir != null)
-                return pump.Reservoir.FillRatio;
+            if (connected.Source is PumpController pump)
+                return pump.Reservoir != null ? pump.Reservoir.FillRatio : 0f;
 
             return 1f;
         }
@@ -129,8 +129,8 @@ namespace WaterChaos.UI
         {
             RectTransform root = CreateRect("Source Bars", canvas, BottomLeft, new Vector2(40f, 40f), new Vector2(BarWidth, 110f));
 
-            _waterFill = CreateBar("Вода", root, 0f);
-            _pressureFill = CreateBar("Давление", root, 60f);
+            _waterFill = CreateBar("Water", root, 0f);
+            _pressureFill = CreateBar("Pressure", root, 60f);
         }
 
         private Image CreateBar(string title, Transform parent, float y)

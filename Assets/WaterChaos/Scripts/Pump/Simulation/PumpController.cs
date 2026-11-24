@@ -32,7 +32,7 @@ namespace WaterChaos.Pump
         private float _initialTargetPressure = 20_000f;
 
         [Header("Supply")]
-        [Tooltip("Tank the pump draws from; empty = endless water")]
+        [Tooltip("Tank the pump draws from; empty = no water, the pump gives no flow")]
         [SerializeField]
         private WaterReservoirComponent _reservoirSource;
 
@@ -50,7 +50,7 @@ namespace WaterChaos.Pump
 
         public float SupplyRatio => _model.SupplyRatio;
 
-        /// <summary>Tank the pump draws from; null means an endless supply.</summary>
+        /// <summary>Tank the pump draws from; null means no supply.</summary>
         public WaterReservoir Reservoir => _reservoir;
 
         private void Start()
@@ -63,6 +63,7 @@ namespace WaterChaos.Pump
         {
             _model = new PumpModel(_maxPressure, _maxFlowRate, _pressureChangeRate);
             SetTargetPressure(_initialTargetPressure);
+            SetReservoir(null);
         }
 
         private void FixedUpdate()
@@ -77,13 +78,13 @@ namespace WaterChaos.Pump
         public void Toggle() => _model.Toggle();
 
         /// <summary>
-        /// Connects the tank the pump draws from; null means an endless supply.
+        /// Connects the tank the pump draws from; null means no supply, so the pump gives no flow.
         /// </summary>
         public void SetReservoir(WaterReservoir reservoir)
         {
             _reservoir = reservoir;
             if (_reservoir == null)
-                _model.SetSupplyRatio(1f);
+                _model.SetSupplyRatio(0f);
         }
 
         public void SetTargetPressure(float pressure) => _model.SetTargetPressure(pressure);
