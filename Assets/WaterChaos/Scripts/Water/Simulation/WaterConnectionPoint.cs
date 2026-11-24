@@ -8,7 +8,14 @@ namespace WaterChaos.Water
     /// </summary>
     public sealed class WaterConnectionPoint : MonoBehaviour
     {
+        [Header("References")]
+        [Tooltip("Where the hose starts, e.g. the pump outlet. Empty = this transform.")]
+        [SerializeField] private Transform _hoseAnchor;
+
         public IWaterFlowSource Source { get; private set; }
+
+        /// <summary>Where the hose visually starts; this transform if no anchor is set.</summary>
+        public Transform HoseAnchor => _hoseAnchor != null ? _hoseAnchor : transform;
 
         /// <summary>Controls of the same source; null if it has none.</summary>
         public IWaterSourceControl Control { get; private set; }

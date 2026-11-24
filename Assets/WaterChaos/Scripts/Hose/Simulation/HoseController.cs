@@ -78,7 +78,7 @@ namespace WaterChaos.Hose
                 return;
             }
 
-            _anchor = point.transform;
+            _anchor = point.HoseAnchor; 
 
             // The source the point belongs to (pump, hydrant) never blocks its own hose.
             Component source = point.Source as Component;

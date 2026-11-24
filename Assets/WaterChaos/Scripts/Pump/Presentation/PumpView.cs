@@ -22,6 +22,16 @@ namespace WaterChaos.Pump
         [SerializeField] private Color _readyColor = new Color(0.2f, 0.9f, 0.3f);
         [SerializeField] private Color _runningColor = new Color(0.2f, 0.7f, 1f);
 
+        [Header("Status Light Blinking")]
+        [Tooltip("Blinks per second (Hz) for each state; 0 = steady light.")]
+        [SerializeField, Min(0f)] private float _noWaterBlinkRate = 4f;
+        [SerializeField, Min(0f)] private float _disconnectedBlinkRate = 2f;
+        [SerializeField, Min(0f)] private float _readyBlinkRate = 0.7f;
+        [SerializeField, Min(0f)] private float _runningBlinkRate = 0f;
+
+        [Tooltip("Brightness of the lamp while blinked off, relative to its color; 0 = dark.")]
+        [SerializeField, Range(0f, 1f)] private float _offBrightness = 0.15f;
+
         [Header("Vibration")]
         [Tooltip("Visual-only child (no collider) that shakes while running.")]
         [SerializeField] private Transform _vibrationTarget;
@@ -54,6 +64,10 @@ namespace WaterChaos.Pump
         private Vector3 _vibrationRest;
         private bool _started;
         private bool _wasRunning;
+        private Color _lightColor;
+        private float _blinkRate;
+        private float _blinkTime;
+        private bool _lightOn;
 
         private void Awake()
         {
@@ -109,6 +123,7 @@ namespace WaterChaos.Pump
                 _motorLoop.pitch = Mathf.Lerp(_minPitch, _maxPitch, pressureRatio);
 
             UpdateBubbles(_pump.Output.FlowRate > 0f);
+            UpdateBlink();
         }
 
         private void OnStateChanged(PumpState state)
@@ -123,7 +138,11 @@ namespace WaterChaos.Pump
 
         private void ShowState(PumpState state)
         {
-            SetLightColor(GetColor(state));
+            // A new state starts with the lamp on, so the change is seen at once.
+            _lightColor = GetColor(state);
+            _blinkRate = GetBlinkRate(state);
+            _blinkTime = 0f;
+            SetLight(true);
 
             if (_motorLoop == null)
                 return;
@@ -162,14 +181,41 @@ namespace WaterChaos.Pump
             }
         }
 
-        private void SetLightColor(Color color)
+        private float GetBlinkRate(PumpState state)
         {
+            switch (state)
+            {
+                case PumpState.Running: return _runningBlinkRate;
+                case PumpState.Ready: return _readyBlinkRate;
+                case PumpState.Disconnected: return _disconnectedBlinkRate;
+                default: return _noWaterBlinkRate;
+            }
+        }
+
+        /// <summary>Half of each blink period the lamp is on, half off; a rate of 0 keeps it on.</summary>
+        private void UpdateBlink()
+        {
+            if (_blinkRate <= 0f)
+                return;
+
+            _blinkTime += Time.deltaTime;
+            bool on = Mathf.Repeat(_blinkTime * _blinkRate, 1f) < 0.5f;
+            if (on != _lightOn)
+                SetLight(on);
+        }
+
+        private void SetLight(bool on)
+        {
+            _lightOn = on;
             if (_statusLight == null)
                 return;
 
+            Color baseColor = on ? _lightColor : _lightColor * _offBrightness;
+            Color emission = on ? _lightColor * 2f : Color.black;
+
             _statusLight.GetPropertyBlock(_lightBlock);
-            _lightBlock.SetColor(BaseColorId, color);
-            _lightBlock.SetColor(EmissionColorId, color * 2f);
+            _lightBlock.SetColor(BaseColorId, baseColor);
+            _lightBlock.SetColor(EmissionColorId, emission);
             _statusLight.SetPropertyBlock(_lightBlock);
         }
     }

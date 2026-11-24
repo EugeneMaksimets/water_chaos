@@ -27,6 +27,10 @@ namespace WaterChaos.Items
         [Tooltip("Components that only make sense in the world (e.g. a pump's connection point); off while held.")]
         [SerializeField] private Behaviour[] _disableWhileHeld = new Behaviour[0];
 
+        [Header("World")]
+        [Tooltip("Always stands upright (e.g. a pump): released standing, turned only around the vertical axis, and never tips over.")]
+        [SerializeField] private bool _keepUpright;
+
         private Rigidbody _body;
         private Collider[] _colliders;
         private bool[] _wasEnabled;
@@ -41,6 +45,10 @@ namespace WaterChaos.Items
             _body = GetComponent<Rigidbody>();
             _colliders = GetComponentsInChildren<Collider>(true);
             _wasEnabled = new bool[_disableWhileHeld.Length];
+
+            // Physics can still turn it around the vertical axis, but never tilt it.
+            if (_keepUpright)
+                _body.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
 
         public void PickUp()
@@ -82,6 +90,9 @@ namespace WaterChaos.Items
             }
 
             transform.position = position;
+            if (_keepUpright)
+                transform.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+
             gameObject.SetActive(true);
 
             _body.isKinematic = false;
