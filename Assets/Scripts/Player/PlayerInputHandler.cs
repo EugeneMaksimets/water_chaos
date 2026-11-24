@@ -13,11 +13,23 @@ namespace WaterChaos.Player
         /// <summary>E is held down this frame: attach or detach the hose (hold action).</summary>
         public bool InteractHeld { get; private set; }
 
+        /// <summary>Left mouse button is held down this frame: aiming a throw.</summary>
+        public bool ThrowHeld { get; private set; }
+
         /// <summary>F: turn the connected source on or off.</summary>
         public event Action TogglePressed;
 
         /// <summary>Mouse wheel: +1 = more pressure, -1 = less.</summary>
         public event Action<int> PressureScrolled;
+
+        /// <summary>Q was pressed this frame: pick up the item under the crosshair.</summary>
+        public event Action PickUpPressed;
+
+        /// <summary>1, 2, 3: select an inventory slot; the argument is the slot index from 0.</summary>
+        public event Action<int> SlotSelected;
+
+        /// <summary>Left mouse button was released this frame: throw the selected item.</summary>
+        public event Action ThrowReleased;
 
         private void Update()
         {
@@ -26,13 +38,28 @@ namespace WaterChaos.Player
             if (keyboard == null || mouse == null)
             {
                 InteractHeld = false;
+                ThrowHeld = false;
                 return;
             }
 
             InteractHeld = keyboard.eKey.isPressed;
 
+            if (keyboard.qKey.wasPressedThisFrame)
+                PickUpPressed?.Invoke();
+
             if (keyboard.fKey.wasPressedThisFrame)
                 TogglePressed?.Invoke();
+
+            if (keyboard.digit1Key.wasPressedThisFrame)
+                SlotSelected?.Invoke(0);
+            if (keyboard.digit2Key.wasPressedThisFrame)
+                SlotSelected?.Invoke(1);
+            if (keyboard.digit3Key.wasPressedThisFrame)
+                SlotSelected?.Invoke(2);
+
+            ThrowHeld = mouse.leftButton.isPressed;
+            if (mouse.leftButton.wasReleasedThisFrame)
+                ThrowReleased?.Invoke();
 
             float scroll = mouse.scroll.ReadValue().y;
             if (scroll != 0f)

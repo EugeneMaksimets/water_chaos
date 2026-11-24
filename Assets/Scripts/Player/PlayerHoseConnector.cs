@@ -40,6 +40,10 @@ namespace WaterChaos.Player
 
         private void Update()
         {
+            // The attached source left the world (e.g. the pump was picked up): the hose comes off.
+            if (_connected != null && !_connected.isActiveAndEnabled)
+                Disconnect();
+
             WaterConnectionPoint target = FindTarget();
             if (target != _target)
             {
