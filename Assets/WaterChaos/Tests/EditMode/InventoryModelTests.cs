@@ -163,6 +163,20 @@ namespace WaterChaos.Tests
             Assert.AreSame(item, _inventory.GetItem(1));
         }
 
+        [Test]
+        public void Contains_TrueOnlyWhileItemIsStored()
+        {
+            FakeItem item = new FakeItem();
+            Assert.IsFalse(_inventory.Contains(item));
+
+            _inventory.TryAdd(item);
+            Assert.IsTrue(_inventory.Contains(item));
+
+            _inventory.RemoveSelected();
+            Assert.IsFalse(_inventory.Contains(item));
+            Assert.IsFalse(_inventory.Contains(null));
+        }
+
         private void FillInventory()
         {
             for (int i = 0; i < _inventory.Capacity; i++)

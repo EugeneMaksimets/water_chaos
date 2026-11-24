@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using WaterChaos.Hose;
+using WaterChaos.Player;
 
 namespace WaterChaos.UI
 {
@@ -10,16 +10,16 @@ namespace WaterChaos.UI
         private const string LimitText = "Hose length reached!";
 
         [Header("References")]
-        [SerializeField] private HoseController _hose;
+        [SerializeField] private PlayerHoseConnector _hoseConnector;
 
         [Tooltip("Text shown while the hose is at full length; hidden otherwise.")]
         [SerializeField] private Text _message;
 
         private void Awake()
         {
-            if (_hose == null || _message == null)
+            if (_hoseConnector == null || _message == null)
             {
-                Debug.LogError($"{name}: HoseMessageView needs Hose and Message references.", this);
+                Debug.LogError($"{name}: HoseMessageView needs Hose Connector and Message references.", this);
                 enabled = false;
                 return;
             }
@@ -30,17 +30,17 @@ namespace WaterChaos.UI
 
         private void OnEnable()
         {
-            if (_hose == null)
+            if (_hoseConnector == null)
                 return;
 
-            _hose.LimitReachedChanged += OnLimitReachedChanged;
-            OnLimitReachedChanged(_hose.IsLimitReached);
+            _hoseConnector.LimitReachedChanged += OnLimitReachedChanged;
+            OnLimitReachedChanged(_hoseConnector.IsLimitReached);
         }
 
         private void OnDisable()
         {
-            if (_hose != null)
-                _hose.LimitReachedChanged -= OnLimitReachedChanged;
+            if (_hoseConnector != null)
+                _hoseConnector.LimitReachedChanged -= OnLimitReachedChanged;
         }
 
         private void OnLimitReachedChanged(bool reached)

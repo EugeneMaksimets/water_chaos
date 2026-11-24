@@ -79,6 +79,7 @@ namespace WaterChaos.Items
 
         private int FindFreeSlot() => Array.IndexOf(_slots, null);
 
-        private bool Contains(IPickableItem item) => Array.IndexOf(_slots, item) >= 0;
+        /// <summary>True if the item is in any slot.</summary>
+        public bool Contains(IPickableItem item) => item != null && Array.IndexOf(_slots, item) >= 0;
     }
 }

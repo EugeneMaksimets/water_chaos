@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using WaterChaos.Hose;
 using WaterChaos.Water;
@@ -7,16 +8,13 @@ namespace WaterChaos.Player
     /// <summary>
     /// Holding interact on a connection point attaches the hose to it.
     /// Holding it on the attached point detaches the hose; on another point switches to it.
+    /// Works only while a nozzle is in the hands (see <see cref="AttachNozzle"/>); disabled otherwise.
     /// </summary>
     public class PlayerHoseConnector : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private Transform _camera;
-        [SerializeField] private WaterStream _stream;
-
-        [Tooltip("Optional: the physical hose that runs from the connected point to the player.")]
-        [SerializeField] private HoseController _hose;
 
         [Header("Settings")]
         [Tooltip("How far the player can reach a connection point, in meters (m).")]
@@ -26,10 +24,15 @@ namespace WaterChaos.Player
         [Tooltip("How long interact must be held to attach or detach, in seconds (s).")]
         [SerializeField, Min(0.01f)] private float _holdDuration = 0.8f;
 
+        private WaterStream _stream;
+        private HoseController _hose;
         private WaterConnectionPoint _connected;
         private WaterConnectionPoint _target;
         private float _holdTime;
         private bool _waitForRelease;
+
+        /// <summary>The held hose is at full length and holds the player back; false without a hose.</summary>
+        public event Action<bool> LimitReachedChanged;
 
         public WaterConnectionPoint Connected => _connected;
 
@@ -41,6 +44,62 @@ namespace WaterChaos.Player
 
         /// <summary>How far the current hold is, 0..1.</summary>
         public float HoldProgress => Mathf.Clamp01(_holdTime / _holdDuration);
+
+        /// <summary>The held hose is at full length; false without a hose.</summary>
+        public bool IsLimitReached => _hose != null && _hose.IsLimitReached;
+
+        private void Awake()
+        {
+            // No nozzle in the hands yet.
+            enabled = false;
+        }
+
+        private void OnDisable()
+        {
+            _target = null;
+            _holdTime = 0f;
+            _waitForRelease = false;
+        }
+
+        /// <summary>A nozzle came into the hands: interact now connects its stream and optional hose.</summary>
+        public void AttachNozzle(WaterStream stream, HoseController hose)
+        {
+            DetachNozzle();
+            if (stream == null)
+                return;
+
+            _stream = stream;
+            _hose = hose;
+            if (_hose != null)
+                _hose.LimitReachedChanged += OnLimitReachedChanged;
+
+            enabled = true;
+        }
+
+        /// <summary>The nozzle left the hands: the hose comes off, the source stops and interact does nothing.</summary>
+        public void DetachNozzle()
+        {
+            if (_connected != null)
+                Disconnect();
+
+            if (_hose != null)
+            {
+                _hose.LimitReachedChanged -= OnLimitReachedChanged;
+                _hose = null;
+                LimitReachedChanged?.Invoke(false);
+            }
+
+            _stream = null;
+            enabled = false;
+        }
+
+        /// <summary>
+        /// This frame's player move, in meters (m), limited by the held hose; unchanged without a hose.
+        /// </summary>
+        public Vector3 ConstrainMove(Vector3 delta)
+        {
+            return _hose != null ? _hose.ConstrainMove(delta) : delta;
+        }
 
         private void Update()
         {
@@ -117,6 +176,11 @@ namespace WaterChaos.Player
 
             if (_hose != null)
                 _hose.Disconnect();
+        }
+
+        private void OnLimitReachedChanged(bool reached)
+        {
+            LimitReachedChanged?.Invoke(reached);
         }
     }
 }
