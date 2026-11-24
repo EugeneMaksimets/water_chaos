@@ -19,11 +19,6 @@ namespace WaterChaos.Water
         private const int MaxInfluencesPerPoint = 8;
         private static readonly Collider[] s_overlapBuffer = new Collider[MaxInfluencesPerPoint];
 
-        [Header("Source")]
-        [Tooltip("Component implementing IWaterFlowSource (e.g. PumpController).")]
-        [SerializeField] 
-        private MonoBehaviour _sourceBehaviour;
-
         [Header("Setup")]
         [SerializeField] 
         private WaterFlowTuning _tuning;
@@ -61,6 +56,7 @@ namespace WaterChaos.Water
         private float _bendSpeed = 3f;
         // Smoothed wind offset of the stream end, in meters (m). Advanced only in FixedUpdate.
         private Vector3 _influenceBend;
+        private MonoBehaviour _sourceBehaviour;
 
         private readonly List<IFlowInfluence> _influences = new List<IFlowInfluence>();
 

@@ -34,6 +34,8 @@ namespace WaterChaos.Water
         [SerializeField] 
         private AnimationCurve _forceCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
+        /// <summary>Pressure that gives max range, in pascals (Pa).</summary>
+        public float ReferencePressure => _referencePressure;
         public float MaxRange => _maxRange;
         public float MaxImpactForce => _maxImpactForce;
 

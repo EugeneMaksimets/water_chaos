@@ -10,8 +10,8 @@ namespace WaterChaos.Player
     /// </summary>
     public class PlayerInputHandler : MonoBehaviour
     {
-        /// <summary>E: attach or detach the hose.</summary>
-        public event Action InteractPressed;
+        /// <summary>E is held down this frame: attach or detach the hose (hold action).</summary>
+        public bool InteractHeld { get; private set; }
 
         /// <summary>F: turn the connected source on or off.</summary>
         public event Action TogglePressed;
@@ -24,10 +24,12 @@ namespace WaterChaos.Player
             Keyboard keyboard = Keyboard.current;
             Mouse mouse = Mouse.current;
             if (keyboard == null || mouse == null)
+            {
+                InteractHeld = false;
                 return;
+            }
 
-            if (keyboard.eKey.wasPressedThisFrame)
-                InteractPressed?.Invoke();
+            InteractHeld = keyboard.eKey.isPressed;
 
             if (keyboard.fKey.wasPressedThisFrame)
                 TogglePressed?.Invoke();

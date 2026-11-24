@@ -50,6 +50,9 @@ namespace WaterChaos.Pump
 
         public float SupplyRatio => _model.SupplyRatio;
 
+        /// <summary>Tank the pump draws from; null means an endless supply.</summary>
+        public WaterReservoir Reservoir => _reservoir;
+
         private void Start()
         {
             if (_reservoirSource != null)
