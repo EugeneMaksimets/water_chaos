@@ -2323,7 +2323,7 @@ Transform:
   m_GameObject: {fileID: 3292657008952567179}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1813, y: 0, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.225}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2419,7 +2419,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bba6b601704749acb9eb3e4184bd700, type: 2}
+  - {fileID: 2100000, guid: 09479acf728e46e493451902ff93c8ae, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2517,8 +2517,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Hose.HoseView
   _hose: {fileID: 8886715139356573652}
   _width: 0.05
-  _material: {fileID: 2100000, guid: 7bba6b601704749acb9eb3e4184bd700, type: 2}
+  _material: {fileID: 2100000, guid: 09479acf728e46e493451902ff93c8ae, type: 2}
   _roundness: 6
+  _showWater: 1
+  _speedMultiplier: 1
+  _intensity: 1
+  _fullPressure: 200000
+  _fadeTime: 0.4
 --- !u!1 &6219470420064680752
 GameObject:
   m_ObjectHideFlags: 0
@@ -4868,8 +4873,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7896437642608557097}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.29375005, y: 0.006249957, z: 0.0062499754}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.285}
   m_LocalScale: {x: 0.6249998, y: 0.625, z: 0.6249998}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5004,100 +5009,104 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.6000001
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalScale.y
       value: 1.6
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.6000001
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.627
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.31000006
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.76699996
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - target: {fileID: -6505494680676671688, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
+      propertyPath: m_Name
+      value: LeverNozzle
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       propertyPath: m_Name
       value: Nozzle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1567026969470104618}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1525815379252737717}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3791363968718647583}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4873238707274096685}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8553395299696136569}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5174441863736086377}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5053214067466336079}
-  m_SourcePrefab: {fileID: 100100000, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
 --- !u!4 &1666482504460625419 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
   m_PrefabInstance: {fileID: 1200825574151029216}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2047829062591134897 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d315b0e7fa62e40902e3ba32b73e8c, type: 3}
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e649ba65b31d466da9f7e896ca3aa69, type: 3}
   m_PrefabInstance: {fileID: 1200825574151029216}
   m_PrefabAsset: {fileID: 0}
 --- !u!54 &4873238707274096685
@@ -5146,8 +5155,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.50338775, y: 0.36291075, z: 0.16598815}
-  m_Center: {x: -0.01968667, y: -0.013510823, z: 0.00000011920929}
+  m_Size: {x: 0.186, y: 0.378, z: 0.505}
+  m_Center: {x: 0, y: -0.023, z: 0.027}
 --- !u!114 &5174441863736086377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5160,11 +5169,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193eec3ade4e94c17b58c74cd44229a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Items.PickableItem
-  _icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  _icon: {fileID: 509628020344910026, guid: 4384375b64b004787b6aaec73c902397, type: 3}
   _heldPosition: {x: 0, y: 0, z: 0}
-  _heldRotation: {x: 0, y: 0, z: 0}
+  _heldRotation: {x: 0, y: -90, z: 0}
   _heldScale: 1
   _disableWhileHeld: []
+  _keepUpright: 0
 --- !u!114 &5053214067466336079
 MonoBehaviour:
   m_ObjectHideFlags: 0

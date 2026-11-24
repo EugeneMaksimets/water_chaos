@@ -48,5 +48,25 @@ namespace WaterChaos.Tests
             Assert.AreEqual(_tuning.MaxImpactForce, _tuning.GetImpactForce(float.MaxValue), 0.001f);
         }
 
+        [TestCase(0f)]
+        [TestCase(-100f)]
+        [TestCase(float.NaN)]
+        public void GetPressureRatio_WithoutValidPressure_ReturnsZero(float pressure)
+        {
+            Assert.AreEqual(0f, _tuning.GetPressureRatio(pressure));
+        }
+
+        [Test]
+        public void GetPressureRatio_HalfReference_ReturnsHalf()
+        {
+            Assert.AreEqual(0.5f, _tuning.GetPressureRatio(_tuning.ReferencePressure * 0.5f), 0.001f);
+        }
+
+        [Test]
+        public void GetPressureRatio_AboveReference_IsClampedToOne()
+        {
+            Assert.AreEqual(1f, _tuning.GetPressureRatio(float.MaxValue));
+        }
+
     }
 }

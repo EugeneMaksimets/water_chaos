@@ -269,6 +269,11 @@ MonoBehaviour:
   _disconnectedColor: {r: 1, g: 0.75, b: 0.1, a: 1}
   _readyColor: {r: 0.2, g: 0.9, b: 0.3, a: 1}
   _runningColor: {r: 0.2, g: 0.7, b: 1, a: 1}
+  _noWaterBlinkRate: 4
+  _disconnectedBlinkRate: 2
+  _readyBlinkRate: 0.7
+  _runningBlinkRate: 0
+  _offBrightness: 0.15
   _vibrationTarget: {fileID: 8799506964017707758}
   _vibrationAmplitude: 0.01
   _gaugeNeedle: {fileID: 0}
@@ -359,6 +364,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 845b5c1fa7afc449fb198bfade3fbadd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6505494680676671688, guid: 845b5c1fa7afc449fb198bfade3fbadd, type: 3}
+      propertyPath: m_Name
+      value: LeverPump
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 845b5c1fa7afc449fb198bfade3fbadd, type: 3}
       propertyPath: m_Name

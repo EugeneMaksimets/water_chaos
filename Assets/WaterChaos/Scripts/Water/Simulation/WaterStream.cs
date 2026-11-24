@@ -78,6 +78,10 @@ namespace WaterChaos.Water
         /// <summary>Surface normal at <see cref="HitPoint"/>.</summary>
         public Vector3 HitNormal { get; private set; }
 
+        /// <summary>Current source pressure as a share of the tuning's reference pressure (0..1); 0 without a source.</summary>
+        public float PressureRatio =>
+            _source != null && _tuning != null ? _tuning.GetPressureRatio(_source.Output.Pressure) : 0f;
+
         private void Awake()
         {
             _points = new Vector3[_pointCount];

@@ -55,6 +55,9 @@ namespace WaterChaos.Hose
         /// <summary>Current path and length; null until Awake.</summary>
         public HoseModel Model => _model;
 
+        /// <summary>Water source the hose start is attached to (pump, hydrant); null when disconnected.</summary>
+        public IWaterFlowSource Source { get; private set; }
+
         private void Awake()
         {
             if (_endPoint == null)
@@ -78,7 +81,8 @@ namespace WaterChaos.Hose
                 return;
             }
 
-            _anchor = point.HoseAnchor; 
+            _anchor = point.HoseAnchor;
+            Source = point.Source;
 
             // The source the point belongs to (pump, hydrant) never blocks its own hose.
             Component source = point.Source as Component;
@@ -91,6 +95,7 @@ namespace WaterChaos.Hose
         public void Disconnect()
         {
             _anchor = null;
+            Source = null;
             _blockedThisFrame = false;
             SetLimitReached(false);
         }

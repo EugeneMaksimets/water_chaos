@@ -45,6 +45,19 @@ namespace WaterChaos.Water
             return Evaluate(_rangeCurve, pressure, _referencePressure) * _maxRange;
         }
 
+        /// <summary>
+        /// Pressure as a share of the reference pressure (0..1): 0 = no pressure, 1 = full range.
+        /// </summary>
+        /// <param name="pressure">Pressure in pascals (Pa).</param>
+        public float GetPressureRatio(float pressure)
+        {
+            if(_referencePressure <= 0f)
+                return 0f;
+
+            float ratio = Mathf.Clamp01(pressure / _referencePressure);
+            return float.IsNaN(ratio) ? 0f : ratio;
+        }
+
         /// <summary>Impact force in newtons (N) for the given flow rate in liters per second (L/s).</summary>
         public float GetImpactForce(float flowRate)
         {
