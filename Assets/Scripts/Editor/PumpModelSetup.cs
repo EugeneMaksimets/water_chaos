@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using WaterChaos.Items;
 using WaterChaos.Pump;
 
 namespace WaterChaos.EditorTools
@@ -45,7 +46,8 @@ namespace WaterChaos.EditorTools
             FitCollider(root.gameObject, local);
             PlaceChild(root, IntakeName, new Vector3(local.center.x, local.min.y + 0.05f, local.center.z));
             PlaceChild(root, LightName, new Vector3(local.center.x, local.max.y + 0.05f, local.center.z));
-            SetVibrationTarget(root.gameObject, model.transform);
+            SetupView(root, pump, model.transform);
+            SetupHeldParts(root.gameObject);
 
             EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
             Selection.activeGameObject = root.gameObject;
@@ -94,15 +96,51 @@ namespace WaterChaos.EditorTools
             child.localPosition = localPosition;
         }
 
-        /// <summary>Shake only the model, so the physics body and the hose attachment stay still.</summary>
-        private static void SetVibrationTarget(GameObject root, Transform model)
+        /// <summary>
+        /// Adds PumpView if it is missing and wires it: the status light shows the pump state,
+        /// only the model shakes, so the physics body and the hose attachment stay still.
+        /// </summary>
+        private static void SetupView(Transform root, PumpController pump, Transform model)
         {
             PumpView view = root.GetComponent<PumpView>();
             if (view == null)
-                return;
+                view = Undo.AddComponent<PumpView>(root.gameObject);
+
+            Transform light = root.Find(LightName);
 
             SerializedObject data = new SerializedObject(view);
+            data.FindProperty("_pump").objectReferenceValue = pump;
+            data.FindProperty("_statusLight").objectReferenceValue = light != null ? light.GetComponent<Renderer>() : null;
             data.FindProperty("_vibrationTarget").objectReferenceValue = model;
+            data.ApplyModifiedProperties();
+        }
+
+        /// <summary>The pump's world-only parts are switched off while the player holds it.</summary>
+        private static void SetupHeldParts(GameObject root)
+        {
+            PickableItem item = root.GetComponent<PickableItem>();
+            if (item == null)
+                return;
+
+            Behaviour[] parts =
+            {
+                root.GetComponent<PumpController>(),
+                root.GetComponent<PumpDebugView>(),
+                root.GetComponent<PumpDeployment>(),
+            };
+
+            SerializedObject data = new SerializedObject(item);
+            SerializedProperty list = data.FindProperty("_disableWhileHeld");
+            list.arraySize = 0;
+            foreach (Behaviour part in parts)
+            {
+                if (part == null)
+                    continue;
+
+                list.arraySize++;
+                list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = part;
+            }
+
             data.ApplyModifiedProperties();
         }
 

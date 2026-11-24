@@ -4938,7 +4938,7 @@ MonoBehaviour:
   _nozzle: {fileID: 1567026969470104618}
   _hitMask:
     serializedVersion: 2
-    m_Bits: 9
+    m_Bits: 265
   _pointCount: 16
   _dropPerRange: 0.2
   _fallExtent: 2

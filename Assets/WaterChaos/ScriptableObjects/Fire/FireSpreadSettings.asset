@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 418988c1bd9694633bb03422b54092d2, type: 3}
+  m_Name: FireSpreadSettings
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireSpreadSettings
+  _firePrefab: {fileID: 2233029035384726905, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  _spreadRadius: 3
+  _spreadInterval: 6
+  _minIntensity: 0.5
+  _ignitionChance: 0.5
+  _ignitionDelay: 2
+  _surfaceSamples: 8
+  _spawnHeight: 0.5
+  _exclusionRadius: 1.5
+  _maxActiveFires: 25
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 4294966891
+  _fireMask:
+    serializedVersion: 2
+    m_Bits: 256
+  _waterMask:
+    serializedVersion: 2
+    m_Bits: 16
