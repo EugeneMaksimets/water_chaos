@@ -1,0 +1,29 @@
+{
+ "streetwright": "1.2.0",
+ "buildings": [
+  {
+   "title": "Starter cottage",
+   "placed": 165,
+   "distinct_pieces": 32,
+   "name": "Starter_Cottage",
+   "file": "Buildings/Starter_Cottage.json",
+   "gltf": "glTF/Buildings/Starter_Cottage.glb"
+  },
+  {
+   "title": "Starter bungalow with deck",
+   "placed": 281,
+   "distinct_pieces": 38,
+   "name": "Starter_Bungalow",
+   "file": "Buildings/Starter_Bungalow.json",
+   "gltf": "glTF/Buildings/Starter_Bungalow.glb"
+  },
+  {
+   "title": "Demo street (3 buildings)",
+   "placed": 611,
+   "distinct_pieces": 38,
+   "name": "Demo_Street",
+   "file": "Buildings/Demo_Street.json",
+   "gltf": "glTF/Buildings/Demo_Street.glb"
+  }
+ ]
+}

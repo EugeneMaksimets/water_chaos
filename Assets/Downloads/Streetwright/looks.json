@@ -1,0 +1,3538 @@
+{
+ "MI_TS_Walls": {
+  "group": "walls",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Roofs": {
+  "group": "roofs",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#5A5F63",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Floors": {
+  "group": "floors",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#B98A5E",
+    "surface": 4,
+    "surface_name": "Planks"
+   },
+   "B": {
+    "tint": "#E9E2D3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Doors": {
+  "group": "doors",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#EBCB7A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Windows": {
+  "group": "windows",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Masonry": {
+  "group": "masonry",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A0563F",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Outdoor": {
+  "group": "outdoor",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#9C7A5B",
+    "surface": 4,
+    "surface_name": "Planks"
+   },
+   "B": {
+    "tint": "#7E8F6A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#3F4448",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Street": {
+  "group": "street",
+  "style": null,
+  "zones": {
+   "A": {
+    "tint": "#43474B",
+    "surface": 12,
+    "surface_name": "Gravel"
+   },
+   "B": {
+    "tint": "#B5B1A8",
+    "surface": 5,
+    "surface_name": "Tiles"
+   },
+   "C": {
+    "tint": "#D2CEC5",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#F2EFE6",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PorchBungalow_Walls": {
+  "group": "walls",
+  "style": "porch_bungalow",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8EAA7C",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PorchBungalow_Roofs": {
+  "group": "roofs",
+  "style": "porch_bungalow",
+  "zones": {
+   "A": {
+    "tint": "#786854",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PorchBungalow_Doors": {
+  "group": "doors",
+  "style": "porch_bungalow",
+  "zones": {
+   "A": {
+    "tint": "#EBCB7A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PorchBungalow_Masonry": {
+  "group": "masonry",
+  "style": "porch_bungalow",
+  "zones": {
+   "A": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MidcenturyRanch_Walls": {
+  "group": "walls",
+  "style": "midcentury_ranch",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#B9A683",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#7F9D92",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MidcenturyRanch_Roofs": {
+  "group": "roofs",
+  "style": "midcentury_ranch",
+  "zones": {
+   "A": {
+    "tint": "#A87D68",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#7F9D92",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#7F9D92",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MidcenturyRanch_Doors": {
+  "group": "doors",
+  "style": "midcentury_ranch",
+  "zones": {
+   "A": {
+    "tint": "#D9774F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#7F9D92",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MidcenturyRanch_Masonry": {
+  "group": "masonry",
+  "style": "midcentury_ranch",
+  "zones": {
+   "A": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PaintedVictorian_Walls": {
+  "group": "walls",
+  "style": "painted_victorian",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#AD8D9F",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#83A39A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PaintedVictorian_Roofs": {
+  "group": "roofs",
+  "style": "painted_victorian",
+  "zones": {
+   "A": {
+    "tint": "#77647C",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#83A39A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#83A39A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PaintedVictorian_Doors": {
+  "group": "doors",
+  "style": "painted_victorian",
+  "zones": {
+   "A": {
+    "tint": "#EBCB7A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#83A39A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_PaintedVictorian_Masonry": {
+  "group": "masonry",
+  "style": "painted_victorian",
+  "zones": {
+   "A": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_StorybookCottage_Walls": {
+  "group": "walls",
+  "style": "storybook_cottage",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#B9A47E",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#BCA789",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_StorybookCottage_Roofs": {
+  "group": "roofs",
+  "style": "storybook_cottage",
+  "zones": {
+   "A": {
+    "tint": "#718660",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#BCA789",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#BCA789",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_StorybookCottage_Doors": {
+  "group": "doors",
+  "style": "storybook_cottage",
+  "zones": {
+   "A": {
+    "tint": "#D9774F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#BCA789",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_StorybookCottage_Masonry": {
+  "group": "masonry",
+  "style": "storybook_cottage",
+  "zones": {
+   "A": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#B3987B",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ClapboardColonial_Walls": {
+  "group": "walls",
+  "style": "clapboard_colonial",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ClapboardColonial_Roofs": {
+  "group": "roofs",
+  "style": "clapboard_colonial",
+  "zones": {
+   "A": {
+    "tint": "#786854",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ClapboardColonial_Doors": {
+  "group": "doors",
+  "style": "clapboard_colonial",
+  "zones": {
+   "A": {
+    "tint": "#EBCB7A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C7AD89",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ClapboardColonial_Masonry": {
+  "group": "masonry",
+  "style": "clapboard_colonial",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BrickTerrace_Walls": {
+  "group": "walls",
+  "style": "brick_terrace",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#B88B73",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#BFA785",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BrickTerrace_Roofs": {
+  "group": "roofs",
+  "style": "brick_terrace",
+  "zones": {
+   "A": {
+    "tint": "#716B5B",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#BFA785",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#BFA785",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BrickTerrace_Doors": {
+  "group": "doors",
+  "style": "brick_terrace",
+  "zones": {
+   "A": {
+    "tint": "#5F8F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#BFA785",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BrickTerrace_Masonry": {
+  "group": "masonry",
+  "style": "brick_terrace",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Farmhouse_Walls": {
+  "group": "walls",
+  "style": "farmhouse",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#C3BCA2",
+    "surface": 7,
+    "surface_name": "BoardBatten"
+   },
+   "C": {
+    "tint": "#93A582",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Farmhouse_Roofs": {
+  "group": "roofs",
+  "style": "farmhouse",
+  "zones": {
+   "A": {
+    "tint": "#7F8E87",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#93A582",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#93A582",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Farmhouse_Doors": {
+  "group": "doors",
+  "style": "farmhouse",
+  "zones": {
+   "A": {
+    "tint": "#D9774F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#93A582",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Farmhouse_Masonry": {
+  "group": "masonry",
+  "style": "farmhouse",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_WalkupFlats_Walls": {
+  "group": "walls",
+  "style": "walkup_flats",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#AC8B77",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#C1AD8D",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_WalkupFlats_Roofs": {
+  "group": "roofs",
+  "style": "walkup_flats",
+  "zones": {
+   "A": {
+    "tint": "#7D7864",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#C1AD8D",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C1AD8D",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_WalkupFlats_Doors": {
+  "group": "doors",
+  "style": "walkup_flats",
+  "zones": {
+   "A": {
+    "tint": "#5F8F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C1AD8D",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_WalkupFlats_Masonry": {
+  "group": "masonry",
+  "style": "walkup_flats",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LakesideLodge_Walls": {
+  "group": "walls",
+  "style": "lakeside_lodge",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#9C956F",
+    "surface": 4,
+    "surface_name": "Planks"
+   },
+   "C": {
+    "tint": "#AD916E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LakesideLodge_Roofs": {
+  "group": "roofs",
+  "style": "lakeside_lodge",
+  "zones": {
+   "A": {
+    "tint": "#778A6B",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#AD916E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#AD916E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LakesideLodge_Doors": {
+  "group": "doors",
+  "style": "lakeside_lodge",
+  "zones": {
+   "A": {
+    "tint": "#D9774F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#AD916E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LakesideLodge_Masonry": {
+  "group": "masonry",
+  "style": "lakeside_lodge",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GrandColonial_Walls": {
+  "group": "walls",
+  "style": "grand_colonial",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#B8AC8F",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#CBB897",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GrandColonial_Roofs": {
+  "group": "roofs",
+  "style": "grand_colonial",
+  "zones": {
+   "A": {
+    "tint": "#7A785F",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#CBB897",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#CBB897",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GrandColonial_Doors": {
+  "group": "doors",
+  "style": "grand_colonial",
+  "zones": {
+   "A": {
+    "tint": "#5F8F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#CBB897",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GrandColonial_Masonry": {
+  "group": "masonry",
+  "style": "grand_colonial",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GlassModern_Walls": {
+  "group": "walls",
+  "style": "glass_modern",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#95AAA3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#778F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GlassModern_Roofs": {
+  "group": "roofs",
+  "style": "glass_modern",
+  "zones": {
+   "A": {
+    "tint": "#7A897F",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#778F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#778F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GlassModern_Doors": {
+  "group": "doors",
+  "style": "glass_modern",
+  "zones": {
+   "A": {
+    "tint": "#D9774F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#778F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GlassModern_Masonry": {
+  "group": "masonry",
+  "style": "glass_modern",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GildedMansion_Walls": {
+  "group": "walls",
+  "style": "gilded_mansion",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#B9AD92",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#B8A078",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GildedMansion_Roofs": {
+  "group": "roofs",
+  "style": "gilded_mansion",
+  "zones": {
+   "A": {
+    "tint": "#7B8067",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#B8A078",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#B8A078",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GildedMansion_Doors": {
+  "group": "doors",
+  "style": "gilded_mansion",
+  "zones": {
+   "A": {
+    "tint": "#5F8F86",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#B8A078",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GildedMansion_Masonry": {
+  "group": "masonry",
+  "style": "gilded_mansion",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_TudorRevival_Walls": {
+  "group": "walls",
+  "style": "tudor_revival",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#E8DDC6",
+    "surface": 17,
+    "surface_name": "HalfTimber"
+   },
+   "C": {
+    "tint": "#4A3A2C",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_TudorRevival_Roofs": {
+  "group": "roofs",
+  "style": "tudor_revival",
+  "zones": {
+   "A": {
+    "tint": "#4E5257",
+    "surface": 21,
+    "surface_name": "Slate"
+   },
+   "B": {
+    "tint": "#4A3A2C",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#4A3A2C",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_TudorRevival_Doors": {
+  "group": "doors",
+  "style": "tudor_revival",
+  "zones": {
+   "A": {
+    "tint": "#5B3B2A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#4A3A2C",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_TudorRevival_Masonry": {
+  "group": "masonry",
+  "style": "tudor_revival",
+  "zones": {
+   "A": {
+    "tint": "#8E5A44",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "B": {
+    "tint": "#8E5A44",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_SpanishMission_Walls": {
+  "group": "walls",
+  "style": "spanish_mission",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#F1EBDD",
+    "surface": 15,
+    "surface_name": "Stucco"
+   },
+   "C": {
+    "tint": "#7A5236",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_SpanishMission_Roofs": {
+  "group": "roofs",
+  "style": "spanish_mission",
+  "zones": {
+   "A": {
+    "tint": "#B5653F",
+    "surface": 22,
+    "surface_name": "ClayTile"
+   },
+   "B": {
+    "tint": "#7A5236",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#7A5236",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_SpanishMission_Doors": {
+  "group": "doors",
+  "style": "spanish_mission",
+  "zones": {
+   "A": {
+    "tint": "#6B4A32",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#7A5236",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_SpanishMission_Masonry": {
+  "group": "masonry",
+  "style": "spanish_mission",
+  "zones": {
+   "A": {
+    "tint": "#C9B79B",
+    "surface": 25,
+    "surface_name": "Adobe"
+   },
+   "B": {
+    "tint": "#C9B79B",
+    "surface": 25,
+    "surface_name": "Adobe"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MediterraneanVilla_Walls": {
+  "group": "walls",
+  "style": "mediterranean_villa",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#E3BF8A",
+    "surface": 15,
+    "surface_name": "Stucco"
+   },
+   "C": {
+    "tint": "#F2EADB",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MediterraneanVilla_Roofs": {
+  "group": "roofs",
+  "style": "mediterranean_villa",
+  "zones": {
+   "A": {
+    "tint": "#B86B45",
+    "surface": 22,
+    "surface_name": "ClayTile"
+   },
+   "B": {
+    "tint": "#F2EADB",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F2EADB",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MediterraneanVilla_Doors": {
+  "group": "doors",
+  "style": "mediterranean_villa",
+  "zones": {
+   "A": {
+    "tint": "#3F6E74",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F2EADB",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_MediterraneanVilla_Masonry": {
+  "group": "masonry",
+  "style": "mediterranean_villa",
+  "zones": {
+   "A": {
+    "tint": "#CDBB9C",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#CDBB9C",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CapeCod_Walls": {
+  "group": "walls",
+  "style": "cape_cod",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#A9A79F",
+    "surface": 19,
+    "surface_name": "CedarShakes"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CapeCod_Roofs": {
+  "group": "roofs",
+  "style": "cape_cod",
+  "zones": {
+   "A": {
+    "tint": "#4D4F52",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CapeCod_Doors": {
+  "group": "doors",
+  "style": "cape_cod",
+  "zones": {
+   "A": {
+    "tint": "#2F4A63",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CapeCod_Masonry": {
+  "group": "masonry",
+  "style": "cape_cod",
+  "zones": {
+   "A": {
+    "tint": "#B9AFA2",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#B9AFA2",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Craftsman_Walls": {
+  "group": "walls",
+  "style": "craftsman",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#7C8462",
+    "surface": 19,
+    "surface_name": "CedarShakes"
+   },
+   "C": {
+    "tint": "#E6DCC3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Craftsman_Roofs": {
+  "group": "roofs",
+  "style": "craftsman",
+  "zones": {
+   "A": {
+    "tint": "#5C4A3C",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#E6DCC3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#E6DCC3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Craftsman_Doors": {
+  "group": "doors",
+  "style": "craftsman",
+  "zones": {
+   "A": {
+    "tint": "#8A4B2E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#E6DCC3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Craftsman_Masonry": {
+  "group": "masonry",
+  "style": "craftsman",
+  "zones": {
+   "A": {
+    "tint": "#8C7A68",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "B": {
+    "tint": "#8C7A68",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LogCabin_Walls": {
+  "group": "walls",
+  "style": "log_cabin",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8A5F3E",
+    "surface": 18,
+    "surface_name": "Log"
+   },
+   "C": {
+    "tint": "#5C3E28",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LogCabin_Roofs": {
+  "group": "roofs",
+  "style": "log_cabin",
+  "zones": {
+   "A": {
+    "tint": "#4F6650",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#5C3E28",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#5C3E28",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LogCabin_Doors": {
+  "group": "doors",
+  "style": "log_cabin",
+  "zones": {
+   "A": {
+    "tint": "#3C2A1E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#5C3E28",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_LogCabin_Masonry": {
+  "group": "masonry",
+  "style": "log_cabin",
+  "zones": {
+   "A": {
+    "tint": "#8E8A82",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "B": {
+    "tint": "#8E8A82",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ScandinavianRed_Walls": {
+  "group": "walls",
+  "style": "scandinavian_red",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#9E3B2E",
+    "surface": 7,
+    "surface_name": "BoardBatten"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ScandinavianRed_Roofs": {
+  "group": "roofs",
+  "style": "scandinavian_red",
+  "zones": {
+   "A": {
+    "tint": "#3A3B3D",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ScandinavianRed_Doors": {
+  "group": "doors",
+  "style": "scandinavian_red",
+  "zones": {
+   "A": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ScandinavianRed_Masonry": {
+  "group": "masonry",
+  "style": "scandinavian_red",
+  "zones": {
+   "A": {
+    "tint": "#9A958C",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#9A958C",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_NordicModern_Walls": {
+  "group": "walls",
+  "style": "nordic_modern",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#2E2F31",
+    "surface": 7,
+    "surface_name": "BoardBatten"
+   },
+   "C": {
+    "tint": "#B88A5A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_NordicModern_Roofs": {
+  "group": "roofs",
+  "style": "nordic_modern",
+  "zones": {
+   "A": {
+    "tint": "#2A2B2D",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#B88A5A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#B88A5A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_NordicModern_Doors": {
+  "group": "doors",
+  "style": "nordic_modern",
+  "zones": {
+   "A": {
+    "tint": "#B88A5A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#B88A5A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_NordicModern_Masonry": {
+  "group": "masonry",
+  "style": "nordic_modern",
+  "zones": {
+   "A": {
+    "tint": "#7F7B75",
+    "surface": 24,
+    "surface_name": "BoardFormedConcrete"
+   },
+   "B": {
+    "tint": "#7F7B75",
+    "surface": 24,
+    "surface_name": "BoardFormedConcrete"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_JapaneseInspired_Walls": {
+  "group": "walls",
+  "style": "japanese_inspired",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#3A3430",
+    "surface": 16,
+    "surface_name": "Shiplap"
+   },
+   "C": {
+    "tint": "#C9A77A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_JapaneseInspired_Roofs": {
+  "group": "roofs",
+  "style": "japanese_inspired",
+  "zones": {
+   "A": {
+    "tint": "#4B4F55",
+    "surface": 21,
+    "surface_name": "Slate"
+   },
+   "B": {
+    "tint": "#C9A77A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C9A77A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_JapaneseInspired_Doors": {
+  "group": "doors",
+  "style": "japanese_inspired",
+  "zones": {
+   "A": {
+    "tint": "#C9A77A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C9A77A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_JapaneseInspired_Masonry": {
+  "group": "masonry",
+  "style": "japanese_inspired",
+  "zones": {
+   "A": {
+    "tint": "#9C978E",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#9C978E",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ArtDeco_Walls": {
+  "group": "walls",
+  "style": "art_deco",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#EBC9C0",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F5EFE3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ArtDeco_Roofs": {
+  "group": "roofs",
+  "style": "art_deco",
+  "zones": {
+   "A": {
+    "tint": "#7B8C8A",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#F5EFE3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F5EFE3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ArtDeco_Doors": {
+  "group": "doors",
+  "style": "art_deco",
+  "zones": {
+   "A": {
+    "tint": "#2F5D62",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F5EFE3",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ArtDeco_Masonry": {
+  "group": "masonry",
+  "style": "art_deco",
+  "zones": {
+   "A": {
+    "tint": "#D8CDBA",
+    "surface": 29,
+    "surface_name": "Checker"
+   },
+   "B": {
+    "tint": "#D8CDBA",
+    "surface": 29,
+    "surface_name": "Checker"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brutalist_Walls": {
+  "group": "walls",
+  "style": "brutalist",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#A7A49E",
+    "surface": 24,
+    "surface_name": "BoardFormedConcrete"
+   },
+   "C": {
+    "tint": "#8D8A84",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brutalist_Roofs": {
+  "group": "roofs",
+  "style": "brutalist",
+  "zones": {
+   "A": {
+    "tint": "#5F5E5B",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#8D8A84",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#8D8A84",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brutalist_Doors": {
+  "group": "doors",
+  "style": "brutalist",
+  "zones": {
+   "A": {
+    "tint": "#B5562F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#8D8A84",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brutalist_Masonry": {
+  "group": "masonry",
+  "style": "brutalist",
+  "zones": {
+   "A": {
+    "tint": "#8F8C86",
+    "surface": 24,
+    "surface_name": "BoardFormedConcrete"
+   },
+   "B": {
+    "tint": "#8F8C86",
+    "surface": 24,
+    "surface_name": "BoardFormedConcrete"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_IndustrialLoft_Walls": {
+  "group": "walls",
+  "style": "industrial_loft",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#7E3E31",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#2E3033",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_IndustrialLoft_Roofs": {
+  "group": "roofs",
+  "style": "industrial_loft",
+  "zones": {
+   "A": {
+    "tint": "#3B3D40",
+    "surface": 23,
+    "surface_name": "Corrugated"
+   },
+   "B": {
+    "tint": "#2E3033",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#2E3033",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_IndustrialLoft_Doors": {
+  "group": "doors",
+  "style": "industrial_loft",
+  "zones": {
+   "A": {
+    "tint": "#2E3033",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#2E3033",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_IndustrialLoft_Masonry": {
+  "group": "masonry",
+  "style": "industrial_loft",
+  "zones": {
+   "A": {
+    "tint": "#5C5550",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "B": {
+    "tint": "#5C5550",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brownstone_Walls": {
+  "group": "walls",
+  "style": "brownstone",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#7A5544",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#E3D7C2",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brownstone_Roofs": {
+  "group": "roofs",
+  "style": "brownstone",
+  "zones": {
+   "A": {
+    "tint": "#3F3B38",
+    "surface": 21,
+    "surface_name": "Slate"
+   },
+   "B": {
+    "tint": "#E3D7C2",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#E3D7C2",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brownstone_Doors": {
+  "group": "doors",
+  "style": "brownstone",
+  "zones": {
+   "A": {
+    "tint": "#2D2522",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#E3D7C2",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_Brownstone_Masonry": {
+  "group": "masonry",
+  "style": "brownstone",
+  "zones": {
+   "A": {
+    "tint": "#6E4E40",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "B": {
+    "tint": "#6E4E40",
+    "surface": 6,
+    "surface_name": "Stone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_AdobePueblo_Walls": {
+  "group": "walls",
+  "style": "adobe_pueblo",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#C99A6B",
+    "surface": 25,
+    "surface_name": "Adobe"
+   },
+   "C": {
+    "tint": "#7A5A3A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_AdobePueblo_Roofs": {
+  "group": "roofs",
+  "style": "adobe_pueblo",
+  "zones": {
+   "A": {
+    "tint": "#B07A52",
+    "surface": 22,
+    "surface_name": "ClayTile"
+   },
+   "B": {
+    "tint": "#7A5A3A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#7A5A3A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_AdobePueblo_Doors": {
+  "group": "doors",
+  "style": "adobe_pueblo",
+  "zones": {
+   "A": {
+    "tint": "#3F8C8C",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#7A5A3A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_AdobePueblo_Masonry": {
+  "group": "masonry",
+  "style": "adobe_pueblo",
+  "zones": {
+   "A": {
+    "tint": "#B8875C",
+    "surface": 25,
+    "surface_name": "Adobe"
+   },
+   "B": {
+    "tint": "#B8875C",
+    "surface": 25,
+    "surface_name": "Adobe"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BeachCottage_Walls": {
+  "group": "walls",
+  "style": "beach_cottage",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#BFD8DF",
+    "surface": 16,
+    "surface_name": "Shiplap"
+   },
+   "C": {
+    "tint": "#FFFFFF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BeachCottage_Roofs": {
+  "group": "roofs",
+  "style": "beach_cottage",
+  "zones": {
+   "A": {
+    "tint": "#8A9399",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#FFFFFF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#FFFFFF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BeachCottage_Doors": {
+  "group": "doors",
+  "style": "beach_cottage",
+  "zones": {
+   "A": {
+    "tint": "#F2C14E",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#FFFFFF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_BeachCottage_Masonry": {
+  "group": "masonry",
+  "style": "beach_cottage",
+  "zones": {
+   "A": {
+    "tint": "#D9D2C5",
+    "surface": 31,
+    "surface_name": "Beadboard"
+   },
+   "B": {
+    "tint": "#D9D2C5",
+    "surface": 31,
+    "surface_name": "Beadboard"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GothicRevival_Walls": {
+  "group": "walls",
+  "style": "gothic_revival",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#C9C6BB",
+    "surface": 7,
+    "surface_name": "BoardBatten"
+   },
+   "C": {
+    "tint": "#5B5E62",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GothicRevival_Roofs": {
+  "group": "roofs",
+  "style": "gothic_revival",
+  "zones": {
+   "A": {
+    "tint": "#3C3F44",
+    "surface": 21,
+    "surface_name": "Slate"
+   },
+   "B": {
+    "tint": "#5B5E62",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#5B5E62",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GothicRevival_Doors": {
+  "group": "doors",
+  "style": "gothic_revival",
+  "zones": {
+   "A": {
+    "tint": "#6E2E34",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#5B5E62",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_GothicRevival_Masonry": {
+  "group": "masonry",
+  "style": "gothic_revival",
+  "zones": {
+   "A": {
+    "tint": "#8F8B84",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "B": {
+    "tint": "#8F8B84",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ThatchedCottage_Walls": {
+  "group": "walls",
+  "style": "thatched_cottage",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#F3EEE2",
+    "surface": 15,
+    "surface_name": "Stucco"
+   },
+   "C": {
+    "tint": "#5E4630",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ThatchedCottage_Roofs": {
+  "group": "roofs",
+  "style": "thatched_cottage",
+  "zones": {
+   "A": {
+    "tint": "#B39462",
+    "surface": 32,
+    "surface_name": "Thatch"
+   },
+   "B": {
+    "tint": "#5E4630",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#5E4630",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ThatchedCottage_Doors": {
+  "group": "doors",
+  "style": "thatched_cottage",
+  "zones": {
+   "A": {
+    "tint": "#4D6B48",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#5E4630",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_ThatchedCottage_Masonry": {
+  "group": "masonry",
+  "style": "thatched_cottage",
+  "zones": {
+   "A": {
+    "tint": "#A89F94",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "B": {
+    "tint": "#A89F94",
+    "surface": 33,
+    "surface_name": "StoneRubble"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CoastalShingle_Walls": {
+  "group": "walls",
+  "style": "coastal_shingle",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#9C9A93",
+    "surface": 20,
+    "surface_name": "FishScale"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CoastalShingle_Roofs": {
+  "group": "roofs",
+  "style": "coastal_shingle",
+  "zones": {
+   "A": {
+    "tint": "#6B6E70",
+    "surface": 19,
+    "surface_name": "CedarShakes"
+   },
+   "B": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CoastalShingle_Doors": {
+  "group": "doors",
+  "style": "coastal_shingle",
+  "zones": {
+   "A": {
+    "tint": "#B9473A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_CoastalShingle_Masonry": {
+  "group": "masonry",
+  "style": "coastal_shingle",
+  "zones": {
+   "A": {
+    "tint": "#B9B2A6",
+    "surface": 28,
+    "surface_name": "Flagstone"
+   },
+   "B": {
+    "tint": "#B9B2A6",
+    "surface": 28,
+    "surface_name": "Flagstone"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DesertModern_Walls": {
+  "group": "walls",
+  "style": "desert_modern",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#EDE6D9",
+    "surface": 15,
+    "surface_name": "Stucco"
+   },
+   "C": {
+    "tint": "#C9B28F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DesertModern_Roofs": {
+  "group": "roofs",
+  "style": "desert_modern",
+  "zones": {
+   "A": {
+    "tint": "#9B8F80",
+    "surface": 10,
+    "surface_name": "MetalRoof"
+   },
+   "B": {
+    "tint": "#C9B28F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C9B28F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DesertModern_Doors": {
+  "group": "doors",
+  "style": "desert_modern",
+  "zones": {
+   "A": {
+    "tint": "#C46A3C",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#C9B28F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DesertModern_Masonry": {
+  "group": "masonry",
+  "style": "desert_modern",
+  "zones": {
+   "A": {
+    "tint": "#D8C8AE",
+    "surface": 34,
+    "surface_name": "BreezeBlock"
+   },
+   "B": {
+    "tint": "#D8C8AE",
+    "surface": 34,
+    "surface_name": "BreezeBlock"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DutchColonial_Walls": {
+  "group": "walls",
+  "style": "dutch_colonial",
+  "zones": {
+   "A": {
+    "tint": "#EFE6D8",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#6F8FA6",
+    "surface": 1,
+    "surface_name": "LapSiding"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DutchColonial_Roofs": {
+  "group": "roofs",
+  "style": "dutch_colonial",
+  "zones": {
+   "A": {
+    "tint": "#3E4247",
+    "surface": 3,
+    "surface_name": "Shingles"
+   },
+   "B": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DutchColonial_Doors": {
+  "group": "doors",
+  "style": "dutch_colonial",
+  "zones": {
+   "A": {
+    "tint": "#9C2F2F",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "B": {
+    "tint": "#8FA7BF",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#B8925A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ },
+ "MI_TS_DutchColonial_Masonry": {
+  "group": "masonry",
+  "style": "dutch_colonial",
+  "zones": {
+   "A": {
+    "tint": "#9C6B54",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "B": {
+    "tint": "#9C6B54",
+    "surface": 2,
+    "surface_name": "Brick"
+   },
+   "C": {
+    "tint": "#F4F1EA",
+    "surface": 0,
+    "surface_name": "Plaster"
+   },
+   "D": {
+    "tint": "#9DB29A",
+    "surface": 0,
+    "surface_name": "Plaster"
+   }
+  }
+ }
+}

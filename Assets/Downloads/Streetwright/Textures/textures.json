@@ -1,0 +1,970 @@
+[
+ {
+  "surface": 0,
+  "name": "Plaster",
+  "maps": {
+   "BaseColor": "T_TS_Plaster_BaseColor.png",
+   "Normal": "T_TS_Plaster_Normal.png",
+   "Roughness": "T_TS_Plaster_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 1,
+  "name": "LapSiding",
+  "maps": {
+   "BaseColor": "T_TS_LapSiding_BaseColor.png",
+   "Normal": "T_TS_LapSiding_Normal.png",
+   "Roughness": "T_TS_LapSiding_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   300
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 2,
+  "name": "Brick",
+  "maps": {
+   "BaseColor": "T_TS_Brick_BaseColor.png",
+   "Normal": "T_TS_Brick_Normal.png",
+   "Roughness": "T_TS_Brick_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   300
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 3,
+  "name": "Shingles",
+  "maps": {
+   "BaseColor": "T_TS_Shingles_BaseColor.png",
+   "Normal": "T_TS_Shingles_Normal.png",
+   "Roughness": "T_TS_Shingles_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "roof",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 4,
+  "name": "Planks",
+  "maps": {
+   "BaseColor": "T_TS_Planks_BaseColor.png",
+   "Normal": "T_TS_Planks_Normal.png",
+   "Roughness": "T_TS_Planks_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 5,
+  "name": "Tiles",
+  "maps": {
+   "BaseColor": "T_TS_Tiles_BaseColor.png",
+   "Normal": "T_TS_Tiles_Normal.png",
+   "Roughness": "T_TS_Tiles_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 6,
+  "name": "Stone",
+  "maps": {
+   "BaseColor": "T_TS_Stone_BaseColor.png",
+   "Normal": "T_TS_Stone_Normal.png",
+   "Roughness": "T_TS_Stone_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 7,
+  "name": "BoardBatten",
+  "maps": {
+   "BaseColor": "T_TS_BoardBatten_BaseColor.png",
+   "Normal": "T_TS_BoardBatten_Normal.png",
+   "Roughness": "T_TS_BoardBatten_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 8,
+  "name": "WallpaperStripe",
+  "maps": {
+   "BaseColor": "T_TS_WallpaperStripe_BaseColor.png",
+   "Normal": "T_TS_WallpaperStripe_Normal.png",
+   "Roughness": "T_TS_WallpaperStripe_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "interior",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 9,
+  "name": "WallpaperSprig",
+  "maps": {
+   "BaseColor": "T_TS_WallpaperSprig_BaseColor.png",
+   "Normal": "T_TS_WallpaperSprig_Normal.png",
+   "Roughness": "T_TS_WallpaperSprig_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "interior",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 10,
+  "name": "MetalRoof",
+  "maps": {
+   "BaseColor": "T_TS_MetalRoof_BaseColor.png",
+   "Normal": "T_TS_MetalRoof_Normal.png",
+   "Roughness": "T_TS_MetalRoof_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "roof",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 11,
+  "name": "Marble",
+  "maps": {
+   "BaseColor": "T_TS_Marble_BaseColor.png",
+   "Normal": "T_TS_Marble_Normal.png",
+   "Roughness": "T_TS_Marble_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 12,
+  "name": "Gravel",
+  "maps": {
+   "BaseColor": "T_TS_Gravel_BaseColor.png",
+   "Normal": "T_TS_Gravel_Normal.png",
+   "Roughness": "T_TS_Gravel_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 13,
+  "name": "Lino",
+  "maps": {
+   "BaseColor": "T_TS_Lino_BaseColor.png",
+   "Normal": "T_TS_Lino_Normal.png",
+   "Roughness": "T_TS_Lino_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 14,
+  "name": "Laminate",
+  "maps": {
+   "BaseColor": "T_TS_Laminate_BaseColor.png",
+   "Normal": "T_TS_Laminate_Normal.png",
+   "Roughness": "T_TS_Laminate_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 15,
+  "name": "Stucco",
+  "maps": {
+   "BaseColor": "T_TS_Stucco_BaseColor.png",
+   "Normal": "T_TS_Stucco_Normal.png",
+   "Roughness": "T_TS_Stucco_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 16,
+  "name": "Shiplap",
+  "maps": {
+   "BaseColor": "T_TS_Shiplap_BaseColor.png",
+   "Normal": "T_TS_Shiplap_Normal.png",
+   "Roughness": "T_TS_Shiplap_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 17,
+  "name": "HalfTimber",
+  "maps": {
+   "BaseColor": "T_TS_HalfTimber_BaseColor.png",
+   "Normal": "T_TS_HalfTimber_Normal.png",
+   "Roughness": "T_TS_HalfTimber_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 18,
+  "name": "Log",
+  "maps": {
+   "BaseColor": "T_TS_Log_BaseColor.png",
+   "Normal": "T_TS_Log_Normal.png",
+   "Roughness": "T_TS_Log_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 19,
+  "name": "CedarShakes",
+  "maps": {
+   "BaseColor": "T_TS_CedarShakes_BaseColor.png",
+   "Normal": "T_TS_CedarShakes_Normal.png",
+   "Roughness": "T_TS_CedarShakes_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 20,
+  "name": "FishScale",
+  "maps": {
+   "BaseColor": "T_TS_FishScale_BaseColor.png",
+   "Normal": "T_TS_FishScale_Normal.png",
+   "Roughness": "T_TS_FishScale_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 21,
+  "name": "Slate",
+  "maps": {
+   "BaseColor": "T_TS_Slate_BaseColor.png",
+   "Normal": "T_TS_Slate_Normal.png",
+   "Roughness": "T_TS_Slate_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "roof",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 22,
+  "name": "ClayTile",
+  "maps": {
+   "BaseColor": "T_TS_ClayTile_BaseColor.png",
+   "Normal": "T_TS_ClayTile_Normal.png",
+   "Roughness": "T_TS_ClayTile_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "roof",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 23,
+  "name": "Corrugated",
+  "maps": {
+   "BaseColor": "T_TS_Corrugated_BaseColor.png",
+   "Normal": "T_TS_Corrugated_Normal.png",
+   "Roughness": "T_TS_Corrugated_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "roof",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 24,
+  "name": "BoardFormedConcrete",
+  "maps": {
+   "BaseColor": "T_TS_BoardFormedConcrete_BaseColor.png",
+   "Normal": "T_TS_BoardFormedConcrete_Normal.png",
+   "Roughness": "T_TS_BoardFormedConcrete_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 25,
+  "name": "Adobe",
+  "maps": {
+   "BaseColor": "T_TS_Adobe_BaseColor.png",
+   "Normal": "T_TS_Adobe_Normal.png",
+   "Roughness": "T_TS_Adobe_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 26,
+  "name": "DiagonalTile",
+  "maps": {
+   "BaseColor": "T_TS_DiagonalTile_BaseColor.png",
+   "Normal": "T_TS_DiagonalTile_Normal.png",
+   "Roughness": "T_TS_DiagonalTile_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 27,
+  "name": "Cobble",
+  "maps": {
+   "BaseColor": "T_TS_Cobble_BaseColor.png",
+   "Normal": "T_TS_Cobble_Normal.png",
+   "Roughness": "T_TS_Cobble_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 28,
+  "name": "Flagstone",
+  "maps": {
+   "BaseColor": "T_TS_Flagstone_BaseColor.png",
+   "Normal": "T_TS_Flagstone_Normal.png",
+   "Roughness": "T_TS_Flagstone_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 29,
+  "name": "Checker",
+  "maps": {
+   "BaseColor": "T_TS_Checker_BaseColor.png",
+   "Normal": "T_TS_Checker_Normal.png",
+   "Roughness": "T_TS_Checker_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 30,
+  "name": "HexTile",
+  "maps": {
+   "BaseColor": "T_TS_HexTile_BaseColor.png",
+   "Normal": "T_TS_HexTile_Normal.png",
+   "Roughness": "T_TS_HexTile_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 31,
+  "name": "Beadboard",
+  "maps": {
+   "BaseColor": "T_TS_Beadboard_BaseColor.png",
+   "Normal": "T_TS_Beadboard_Normal.png",
+   "Roughness": "T_TS_Beadboard_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "interior",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 32,
+  "name": "Thatch",
+  "maps": {
+   "BaseColor": "T_TS_Thatch_BaseColor.png",
+   "Normal": "T_TS_Thatch_Normal.png",
+   "Roughness": "T_TS_Thatch_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "roof",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 33,
+  "name": "StoneRubble",
+  "maps": {
+   "BaseColor": "T_TS_StoneRubble_BaseColor.png",
+   "Normal": "T_TS_StoneRubble_Normal.png",
+   "Roughness": "T_TS_StoneRubble_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 34,
+  "name": "BreezeBlock",
+  "maps": {
+   "BaseColor": "T_TS_BreezeBlock_BaseColor.png",
+   "Normal": "T_TS_BreezeBlock_Normal.png",
+   "Roughness": "T_TS_BreezeBlock_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "wall",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 35,
+  "name": "WallpaperDamask",
+  "maps": {
+   "BaseColor": "T_TS_WallpaperDamask_BaseColor.png",
+   "Normal": "T_TS_WallpaperDamask_Normal.png",
+   "Roughness": "T_TS_WallpaperDamask_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "interior",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 36,
+  "name": "WallpaperDiamond",
+  "maps": {
+   "BaseColor": "T_TS_WallpaperDiamond_BaseColor.png",
+   "Normal": "T_TS_WallpaperDiamond_Normal.png",
+   "Roughness": "T_TS_WallpaperDiamond_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "interior",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 37,
+  "name": "Terracotta",
+  "maps": {
+   "BaseColor": "T_TS_Terracotta_BaseColor.png",
+   "Normal": "T_TS_Terracotta_Normal.png",
+   "Roughness": "T_TS_Terracotta_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 38,
+  "name": "Parquet",
+  "maps": {
+   "BaseColor": "T_TS_Parquet_BaseColor.png",
+   "Normal": "T_TS_Parquet_Normal.png",
+   "Roughness": "T_TS_Parquet_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "floor",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 39,
+  "name": "ShortGrass",
+  "maps": {
+   "BaseColor": "T_TS_ShortGrass_BaseColor.png",
+   "Normal": "T_TS_ShortGrass_Normal.png",
+   "Roughness": "T_TS_ShortGrass_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 40,
+  "name": "LongGrass",
+  "maps": {
+   "BaseColor": "T_TS_LongGrass_BaseColor.png",
+   "Normal": "T_TS_LongGrass_Normal.png",
+   "Roughness": "T_TS_LongGrass_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 41,
+  "name": "Dirt",
+  "maps": {
+   "BaseColor": "T_TS_Dirt_BaseColor.png",
+   "Normal": "T_TS_Dirt_Normal.png",
+   "Roughness": "T_TS_Dirt_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 42,
+  "name": "Sand",
+  "maps": {
+   "BaseColor": "T_TS_Sand_BaseColor.png",
+   "Normal": "T_TS_Sand_Normal.png",
+   "Roughness": "T_TS_Sand_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ },
+ {
+  "surface": 43,
+  "name": "Mulch",
+  "maps": {
+   "BaseColor": "T_TS_Mulch_BaseColor.png",
+   "Normal": "T_TS_Mulch_Normal.png",
+   "Roughness": "T_TS_Mulch_Roughness.png"
+  },
+  "tile_cm": [
+   100,
+   100
+  ],
+  "resolution": 1024,
+  "colorspace": {
+   "BaseColor": "sRGB",
+   "Normal": "linear",
+   "Roughness": "linear"
+  },
+  "normal_convention": "OpenGL (green up); Unreal: tick Flip Green Channel",
+  "kind": "ground",
+  "licence": "CC0 1.0 (original procedural work by Stonefletcher Productions LLC)"
+ }
+]
