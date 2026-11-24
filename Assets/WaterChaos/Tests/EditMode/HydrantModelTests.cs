@@ -97,5 +97,38 @@ namespace WaterChaos.Tests
             Assert.AreEqual(0f, hydrant.Output.FlowRate);
             Assert.AreEqual(0f, hydrant.Output.Pressure);
         }
+
+        [Test]
+        public void NewHydrant_TargetPressureIsMax()
+        {
+            HydrantModel hydrant = CreateHydrant();
+
+            Assert.AreEqual(Pressure, hydrant.TargetPressure, Tolerance);
+            Assert.AreEqual(Pressure, hydrant.MaxPressure, Tolerance);
+        }
+
+        [Test]
+        public void SetTargetPressure_ScalesPressureAndFlow()
+        {
+            HydrantModel hydrant = CreateHydrant();
+            hydrant.SetTargetPressure(Pressure * 0.25f);
+            hydrant.Open();
+            hydrant.Tick(10f);
+
+            Assert.AreEqual(Pressure * 0.25f, hydrant.Output.Pressure, Tolerance);
+            Assert.AreEqual(FlowRate * 0.25f, hydrant.Output.FlowRate, Tolerance);
+        }
+
+        [TestCase(1000f, Pressure)]
+        [TestCase(-10f, 0f)]
+        [TestCase(float.NaN, 0f)]
+        public void SetTargetPressure_ClampsToValidRange(float requested, float expected)
+        {
+            HydrantModel hydrant = CreateHydrant();
+
+            hydrant.SetTargetPressure(requested);
+
+            Assert.AreEqual(expected, hydrant.TargetPressure, Tolerance);
+        }
     }
 }

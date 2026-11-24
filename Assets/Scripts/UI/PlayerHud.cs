@@ -7,7 +7,7 @@ using WaterChaos.Water;
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Player HUD: pressure and water bars of the connected source, and the hold-to-interact prompt.
+    /// Player HUD: crosshair dot, pressure and water bars of the connected source, and the hold-to-interact prompt.
     /// Builds its own overlay canvas on start, so it only needs references.
     /// </summary>
     public sealed class PlayerHud : MonoBehaviour
@@ -36,6 +36,11 @@ namespace WaterChaos.UI
 
         [Tooltip("Its reference pressure fills the pressure bar, so the bar matches the stream range.")]
         [SerializeField] private WaterFlowTuning _tuning;
+
+        [Header("Crosshair")]
+        [Tooltip("Diameter of the center dot, in reference pixels (1920x1080).")]
+        [SerializeField, Min(1f)] private float _crosshairSize = 6f;
+        [SerializeField] private Color _crosshairColor = new Color(1f, 1f, 1f, 0.9f);
 
         [Header("Water Bar")]
         [SerializeField] private Color _waterColor = new Color(0.25f, 0.6f, 1f);
@@ -74,6 +79,7 @@ namespace WaterChaos.UI
             _solidSprite = CreateCircleSprite(4, 0f, false);
 
             Transform canvas = CreateCanvas();
+            BuildCrosshair(canvas);
             BuildBars(canvas);
             BuildPrompts(canvas);
         }
@@ -148,6 +154,13 @@ namespace WaterChaos.UI
             scaler.matchWidthOrHeight = 0.5f;
 
             return go.transform;
+        }
+
+        private void BuildCrosshair(Transform canvas)
+        {
+            Vector2 size = new Vector2(_crosshairSize, _crosshairSize);
+            Image dot = CreateImage("Crosshair", canvas, Center, Vector2.zero, size, CreateCircleSprite(32, 0f, true), _crosshairColor);
+            dot.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(1f, -1f);
         }
 
         private void BuildBars(Transform canvas)

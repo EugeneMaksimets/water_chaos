@@ -227,8 +227,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84ec50954190e4d309f9d47358841fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Hydrant.HydrantController
-  _pressure: 300000
-  _flowRate: 8
+  _maxPressure: 500000
+  _maxFlowRate: 10
+  _pressureStep: 50000
+  _initialPressure: 250000
   _valveSpeed: 2
   _openOnStart: 0
 --- !u!114 &161151389
