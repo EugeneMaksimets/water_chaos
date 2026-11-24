@@ -14,8 +14,14 @@ namespace WaterChaos.UI
     {
         private const float BarWidth = 320f;
         private const float PromptSize = 72f;
+        private const float PromptY = -90f;
+
+        /// <summary>Distance between prompt centers when hose and pick up prompts show together.</summary>
+        private const float PromptSpacing = 170f;
+
         private const string ConnectText = "Connect";
         private const string DisconnectText = "Disable";
+        private const string PickUpText = "Pick up";
 
         private static readonly Vector2 Center = new Vector2(0.5f, 0.5f);
         private static readonly Vector2 BottomLeft = Vector2.zero;
@@ -24,6 +30,9 @@ namespace WaterChaos.UI
 
         [Header("References")]
         [SerializeField] private PlayerHoseConnector _hose;
+
+        [Tooltip("Shows the pick up prompt for the item under the crosshair. Optional.")]
+        [SerializeField] private PlayerItemInteractor _itemInteractor;
 
         [Tooltip("Its reference pressure fills the pressure bar, so the bar matches the stream range.")]
         [SerializeField] private WaterFlowTuning _tuning;
@@ -41,9 +50,16 @@ namespace WaterChaos.UI
         private Image _pressureFill;
         private Image _waterFill;
 
-        private GameObject _prompt;
-        private Image _promptProgress;
-        private Text _promptLabel;
+        private Prompt _hosePrompt;
+        private Prompt _pickUpPrompt;
+
+        /// <summary>Round key prompt under the crosshair: key letter, optional hold ring and action label.</summary>
+        private sealed class Prompt
+        {
+            public RectTransform Root;
+            public Image Progress;
+            public Text Label;
+        }
 
         private void Awake()
         {
@@ -59,13 +75,13 @@ namespace WaterChaos.UI
 
             Transform canvas = CreateCanvas();
             BuildBars(canvas);
-            BuildPrompt(canvas);
+            BuildPrompts(canvas);
         }
 
         private void Update()
         {
             UpdateBars();
-            UpdatePrompt();
+            UpdatePrompts();
         }
 
         private void UpdateBars()
@@ -99,15 +115,24 @@ namespace WaterChaos.UI
             return 1f;
         }
 
-        private void UpdatePrompt()
+        private void UpdatePrompts()
         {
-            bool visible = _hose.Target != null;
-            _prompt.SetActive(visible);
-            if (!visible)
+            bool hoseVisible = _hose.Target != null;
+            bool pickUpVisible = _itemInteractor != null && _itemInteractor.Target != null;
+
+            _hosePrompt.Root.gameObject.SetActive(hoseVisible);
+            _pickUpPrompt.Root.gameObject.SetActive(pickUpVisible);
+
+            // Both at once (e.g. the pump): side by side, hose on the left; otherwise centered.
+            float offset = hoseVisible && pickUpVisible ? PromptSpacing * 0.5f : 0f;
+            _hosePrompt.Root.anchoredPosition = new Vector2(-offset, PromptY);
+            _pickUpPrompt.Root.anchoredPosition = new Vector2(offset, PromptY);
+
+            if (!hoseVisible)
                 return;
 
-            _promptProgress.fillAmount = _hose.HoldProgress;
-            _promptLabel.text = _hose.TargetIsConnected ? DisconnectText : ConnectText;
+            _hosePrompt.Progress.fillAmount = _hose.HoldProgress;
+            _hosePrompt.Label.text = _hose.TargetIsConnected ? DisconnectText : ConnectText;
         }
 
         private Transform CreateCanvas()
@@ -150,30 +175,41 @@ namespace WaterChaos.UI
             return fill;
         }
 
-        private void BuildPrompt(Transform canvas)
+        private void BuildPrompts(Transform canvas)
         {
-            Vector2 size = new Vector2(PromptSize, PromptSize);
-            RectTransform root = CreateRect("Interact Prompt", canvas, Center, new Vector2(0f, -90f), size);
-            _prompt = root.gameObject;
-
             Sprite disc = CreateCircleSprite(128, 0f, true);
             Sprite ring = CreateCircleSprite(128, 0.82f, true);
+
+            _hosePrompt = CreatePrompt("Interact Prompt", canvas, "E", disc, ring);
+
+            // Pick up is a single press, so its ring stays full instead of showing hold progress.
+            _pickUpPrompt = CreatePrompt("Pick Up Prompt", canvas, "Q", disc, ring);
+            _pickUpPrompt.Progress.fillAmount = 1f;
+            _pickUpPrompt.Label.text = PickUpText;
+        }
+
+        private Prompt CreatePrompt(string name, Transform canvas, string key, Sprite disc, Sprite ring)
+        {
+            Vector2 size = new Vector2(PromptSize, PromptSize);
+            RectTransform root = CreateRect(name, canvas, Center, new Vector2(0f, PromptY), size);
 
             CreateImage("Background", root, Center, Vector2.zero, size, disc, PanelColor);
             CreateImage("Track", root, Center, Vector2.zero, size, ring, new Color(1f, 1f, 1f, 0.2f));
 
-            _promptProgress = CreateImage("Progress", root, Center, Vector2.zero, size, ring, Color.white);
-            _promptProgress.type = Image.Type.Filled;
-            _promptProgress.fillMethod = Image.FillMethod.Radial360;
-            _promptProgress.fillOrigin = (int)Image.Origin360.Top;
-            _promptProgress.fillClockwise = true;
-            _promptProgress.fillAmount = 0f;
+            Image progress = CreateImage("Progress", root, Center, Vector2.zero, size, ring, Color.white);
+            progress.type = Image.Type.Filled;
+            progress.fillMethod = Image.FillMethod.Radial360;
+            progress.fillOrigin = (int)Image.Origin360.Top;
+            progress.fillClockwise = true;
+            progress.fillAmount = 0f;
 
-            Text key = CreateText("Key", root, Center, Vector2.zero, size, 30, TextAnchor.MiddleCenter);
-            key.text = "E";
-            key.fontStyle = FontStyle.Bold;
+            Text keyText = CreateText("Key", root, Center, Vector2.zero, size, 30, TextAnchor.MiddleCenter);
+            keyText.text = key;
+            keyText.fontStyle = FontStyle.Bold;
 
-            _promptLabel = CreateText("Label", root, Center, new Vector2(0f, -56f), new Vector2(240f, 30f), 20, TextAnchor.MiddleCenter);
+            Text label = CreateText("Label", root, Center, new Vector2(0f, -56f), new Vector2(240f, 30f), 20, TextAnchor.MiddleCenter);
+
+            return new Prompt { Root = root, Progress = progress, Label = label };
         }
 
         private static RectTransform CreateRect(string name, Transform parent, Vector2 anchor, Vector2 position, Vector2 size)

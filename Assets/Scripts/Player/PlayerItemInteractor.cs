@@ -24,6 +24,9 @@ namespace WaterChaos.Player
         /// <summary>The player tried to pick up an item, but every slot is taken.</summary>
         public event Action BackpackFull;
 
+        /// <summary>Item under the crosshair that pick up would take; null if none.</summary>
+        public IPickableItem Target { get; private set; }
+
         private void Awake()
         {
             if (_input == null || _inventory == null || _camera == null)
@@ -41,6 +44,12 @@ namespace WaterChaos.Player
         private void OnDisable()
         {
             _input.PickUpPressed -= OnPickUpPressed;
+            Target = null;
+        }
+
+        private void Update()
+        {
+            Target = FindTarget();
         }
 
         private void OnPickUpPressed()
