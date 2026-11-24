@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using WaterChaos.Hose;
 
 namespace WaterChaos.Player
 {
@@ -14,6 +15,9 @@ namespace WaterChaos.Player
 
         [Header("References")]
         [SerializeField] private Transform _cameraTransform;
+
+        [Tooltip("Optional: stops moving farther while the hose is fully extended.")]
+        [SerializeField] private HoseController _hose;
 
         private CharacterController _characterController;
         private Vector3 _velocity;
@@ -76,7 +80,11 @@ namespace WaterChaos.Player
 
             movement.y = _velocity.y;
 
-            _characterController.Move(movement * Time.deltaTime);
+            Vector3 step = movement * Time.deltaTime;
+            if (_hose != null)
+                step = _hose.ConstrainMove(step);
+
+            _characterController.Move(step);
         }
     }
 }

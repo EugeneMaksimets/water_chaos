@@ -1,4 +1,5 @@
 using UnityEngine;
+using WaterChaos.Hose;
 using WaterChaos.Water;
 
 namespace WaterChaos.Player
@@ -13,6 +14,9 @@ namespace WaterChaos.Player
         [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private Transform _camera;
         [SerializeField] private WaterStream _stream;
+
+        [Tooltip("Optional: the physical hose that runs from the connected point to the player.")]
+        [SerializeField] private HoseController _hose;
 
         [Header("Settings")]
         [Tooltip("How far the player can reach a connection point, in meters (m).")]
@@ -96,6 +100,9 @@ namespace WaterChaos.Player
         {
             _connected = point;
             _stream.SetSource(point.Source);
+
+            if (_hose != null)
+                _hose.Connect(point);
         }
 
         private void Disconnect()
@@ -105,6 +112,9 @@ namespace WaterChaos.Player
 
             _connected = null;
             _stream.SetSource(null);
+
+            if (_hose != null)
+                _hose.Disconnect();
         }
     }
 }
