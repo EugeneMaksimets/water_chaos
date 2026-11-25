@@ -4,47 +4,38 @@ using WaterChaos.Items;
 namespace WaterChaos.Player
 {
     /// <summary>
-    /// Holding primary aims the selected item and shows its predicted path; releasing it throws the item
-    /// along the camera forward. Drop puts the item down in front of the player without a push.
+    /// Drop (F) puts the selected item down in front of the player without a push.
+    /// This is the only way an item leaves the hands: the primary button (left mouse button) never drops.
     /// </summary>
     public sealed class PlayerItemThrower : MonoBehaviour
     {
-        private const int TrajectoryPointCount = 60;
+        /// <summary>Distance kept between a dropped item and a wall or the player, in meters (m).</summary>
+        private const float Gap = 0.35f;
 
-        /// <summary>Distance kept between a spawned item and a wall in front of the camera, in meters (m).</summary>
-        private const float WallGap = 0.3f;
+        /// <summary>Used when the player has no CharacterController, in meters (m).</summary>
+        private const float DefaultPlayerRadius = 0.5f;
 
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private PlayerInventory _inventory;
 
-        [Tooltip("The throw goes along its forward.")]
+        [Tooltip("The item is dropped in front of it, at its height.")]
         [SerializeField] private Transform _camera;
 
-        [Tooltip("Draws the predicted path while aiming. Optional.")]
-        [SerializeField] private LineRenderer _trajectoryLine;
-
-        [Header("Throw")]
-        [Tooltip("Impulse given to the item, in newton-seconds (N·s). Launch speed = impulse / item mass.")]
-        [SerializeField, Min(0f)] private float _throwImpulse = 10f;
-
-        [Tooltip("How far in front of the camera the item appears, in meters (m).")]
+        [Header("Drop")]
+        [Tooltip("Smallest distance from the player to a dropped item, in meters (m). Big items go farther, so they never overlap the player.")]
         [SerializeField, Min(0f)] private float _spawnDistance = 0.8f;
 
-        [Tooltip("Layers that block the item: the spawn point and the predicted path stop on them. Exclude the Player layer.")]
+        [Tooltip("How far below the eyes the item appears, in meters (m).")]
+        [SerializeField, Min(0f)] private float _dropBelowEyes = 0.6f;
+
+        [Tooltip("Layers that block the item: a drop spot needs free room up to them. Exclude the Player layer.")]
         [SerializeField] private LayerMask _collisionMask = ~0;
 
-        [Header("Trajectory")]
-        [Tooltip("Time between predicted path points, in seconds (s).")]
-        [SerializeField, Min(0.01f)] private float _trajectoryTimeStep = 0.05f;
+        private float _playerRadius = DefaultPlayerRadius;
 
-        private readonly Vector3[] _points = new Vector3[TrajectoryPointCount];
-
-        /// <summary>The selected slot holds an item.</summary>
-        public bool CanThrow { get; private set; }
-
-        /// <summary>Throw is held and there is an item to throw.</summary>
-        public bool IsAiming { get; private set; }
+        /// <summary>The selected slot holds an item that Drop would put down.</summary>
+        public bool CanDrop { get; private set; }
 
         private void Awake()
         {
@@ -55,105 +46,61 @@ namespace WaterChaos.Player
                 return;
             }
 
-            HideTrajectory();
+            if (TryGetComponent(out CharacterController body))
+                _playerRadius = body.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.z);
         }
 
         private void OnEnable()
         {
-            _input.PrimaryReleased += OnThrowReleased;
             _input.DropPressed += OnDropPressed;
         }
 
         private void OnDisable()
         {
-            _input.PrimaryReleased -= OnThrowReleased;
             _input.DropPressed -= OnDropPressed;
-            CanThrow = false;
-            IsAiming = false;
-            HideTrajectory();
+            CanDrop = false;
         }
 
         private void Update()
         {
-            IPickableItem item = _inventory.Model.SelectedItem;
-            CanThrow = item != null;
-            IsAiming = CanThrow && _input.PrimaryHeld;
-
-            if (IsAiming)
-                DrawTrajectory(item);
-            else
-                HideTrajectory();
-        }
-
-        private void OnThrowReleased()
-        {
-            ReleaseSelected(_camera.forward * _throwImpulse);
-        }
-
-        private void OnDropPressed()
-        {
-            ReleaseSelected(Vector3.zero);
+            CanDrop = _inventory.Model.SelectedItem != null;
         }
 
         /// <summary>Takes the selected item out of the inventory into the world; does nothing when the slot is empty.</summary>
-        /// <param name="impulse">Push given to the item, in newton-seconds (N·s); zero just lets it fall.</param>
-        private void ReleaseSelected(Vector3 impulse)
+        private void OnDropPressed()
         {
             IPickableItem item = _inventory.Model.RemoveSelected();
             if (item == null)
                 return;
 
-            item.Release(GetSpawnPosition(), impulse);
+            item.Release(GetSpawnPosition(item.Radius), Vector3.zero);
         }
 
-        /// <summary>A point in front of the camera, pulled back if a wall is closer, so the item is not spawned inside it.</summary>
-        private Vector3 GetSpawnPosition()
+        /// <summary>
+        /// A point below the eyes, far enough that an item of <paramref name="itemRadius"/> does not overlap the
+        /// player (otherwise physics pushes it up onto the player's head). In front if there is room before a wall,
+        /// else to the right, left or behind; in front as a last resort.
+        /// </summary>
+        private Vector3 GetSpawnPosition(float itemRadius)
         {
-            Vector3 forward = _camera.forward;
-            float distance = _spawnDistance;
+            Vector3 forward = Vector3.ProjectOnPlane(_camera.forward, Vector3.up);
+            if (forward.sqrMagnitude < 0.0001f)
+                forward = transform.forward;
+            forward.Normalize();
+            Vector3 right = new Vector3(forward.z, 0f, -forward.x);
 
-            if (Physics.Raycast(_camera.position, forward, out RaycastHit hit, _spawnDistance + WallGap, _collisionMask, QueryTriggerInteraction.Ignore))
-                distance = Mathf.Min(distance, Mathf.Max(0f, hit.distance - WallGap));
+            float distance = Mathf.Max(_spawnDistance, _playerRadius + itemRadius + Gap);
+            float needed = distance + itemRadius + Gap;
 
-            return _camera.position + forward * distance;
-        }
-
-        private void DrawTrajectory(IPickableItem item)
-        {
-            if (_trajectoryLine == null)
-                return;
-
-            float mass = Mathf.Max(item.Mass, 0.001f);
-            Vector3 velocity = _camera.forward * (_throwImpulse / mass);
-            ThrowTrajectory.Fill(_points, GetSpawnPosition(), velocity, Physics.gravity, _trajectoryTimeStep);
-
-            int count = CutAtFirstHit();
-            _trajectoryLine.positionCount = count;
-            for (int i = 0; i < count; i++)
-                _trajectoryLine.SetPosition(i, _points[i]);
-
-            _trajectoryLine.enabled = true;
-        }
-
-        /// <summary>Ends the path where it first hits something; returns the number of points to draw.</summary>
-        private int CutAtFirstHit()
-        {
-            for (int i = 1; i < _points.Length; i++)
+            Vector3 origin = _camera.position + Vector3.down * _dropBelowEyes;
+            Vector3[] directions = { forward, right, -right, -forward };
+            foreach (Vector3 direction in directions)
             {
-                if (Physics.Linecast(_points[i - 1], _points[i], out RaycastHit hit, _collisionMask, QueryTriggerInteraction.Ignore))
-                {
-                    _points[i] = hit.point;
-                    return i + 1;
-                }
+                if (!Physics.Raycast(origin, direction, needed, _collisionMask, QueryTriggerInteraction.Ignore))
+                    return origin + direction * distance;
             }
 
-            return _points.Length;
-        }
-
-        private void HideTrajectory()
-        {
-            if (_trajectoryLine != null)
-                _trajectoryLine.enabled = false;
+            return origin + forward * distance;
         }
     }
 }

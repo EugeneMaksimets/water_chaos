@@ -48,8 +48,14 @@ namespace WaterChaos.UI
             if (!PlayerControls.IsMouseButton(control, out bool isLeft, out bool isRight))
                 return CreateKeyPrompt(name, parent, PlayerControls.GetDisplayName(control), position);
 
+            return CreateMousePrompt(name, parent, isLeft, isRight, position);
+        }
+
+        /// <summary>Round prompt with a mouse icon; no button lit means the wheel.</summary>
+        public static KeyPrompt CreateMousePrompt(string name, Transform parent, bool leftLit, bool rightLit, Vector2 position)
+        {
             KeyPrompt prompt = CreateKeyPrompt(name, parent, string.Empty, position, out RectTransform root);
-            Sprite mouse = CreateMouseSprite(isLeft, isRight);
+            Sprite mouse = CreateMouseSprite(leftLit, rightLit);
             CreateImage("Mouse Icon", root, Vector2.zero, new Vector2(MouseIconWidth, MouseIconHeight), mouse, Color.white);
             return prompt;
         }

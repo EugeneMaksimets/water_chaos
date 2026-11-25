@@ -73,6 +73,16 @@ namespace WaterChaos.Interaction
                 Intensity = 1f;
         }
 
+        /// <summary>Lights an extinguished fire again at full intensity; a burning fire is left as is.</summary>
+        public void Reignite()
+        {
+            if (IsBurning)
+                return;
+
+            Intensity = 1f;
+            _timeExtinguished = 0f;
+        }
+
         private static float Sanitize(float value)
         {
             return float.IsNaN(value) ? 0f : Math.Max(0f, value);

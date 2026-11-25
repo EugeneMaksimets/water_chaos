@@ -7,13 +7,20 @@ using WaterChaos.Water;
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Player HUD: crosshair dot and the pressure and water bars of the connected source.
+    /// Player HUD: crosshair dot, the pressure and water bars of the connected source
+    /// the one-time "mouse wheel changes pressure" prompt (see <see cref="PlayerSourceControl.ShowPressureHint"/>)
+    /// and "put the pump in the water" while a connected pump is out of water.
     /// Interaction prompts live in <see cref="RadialInteractionMenu"/>.
     /// Builds its own overlay canvas on start, so it only needs references.
     /// </summary>
     public sealed class PlayerHud : MonoBehaviour
     {
         private const float BarWidth = 320f;
+        private const string PressureHintText = "Scroll: Pressure";
+        private const string NeedsWaterText = "Put the pump in the water";
+
+        /// <summary>Below the interaction prompts, in reference pixels (1920x1080).</summary>
+        private static readonly Vector2 PressureHintPosition = new Vector2(0f, -200f);
         private static readonly Vector2 Center = new Vector2(0.5f, 0.5f);
         private static readonly Vector2 BottomLeft = Vector2.zero;
         private static readonly Vector2 TopLeft = new Vector2(0f, 1f);
@@ -43,6 +50,10 @@ namespace WaterChaos.UI
         private Image _pressureFill;
         private Image _waterFill;
 
+        private PlayerSourceControl _sourceControl;
+        private KeyPrompt _pressureHint;
+        private Text _needsWaterHint;
+
         private void Awake()
         {
             if (_hose == null || _tuning == null)
@@ -58,11 +69,34 @@ namespace WaterChaos.UI
             Transform canvas = CreateCanvas();
             BuildCrosshair(canvas);
             BuildBars(canvas);
+
+            // Same player object; optional, without it there is simply no pressure hint.
+            _sourceControl = GetComponent<PlayerSourceControl>();
+            _pressureHint = HudWidgets.CreateMousePrompt("Pressure Hint", canvas, false, false, PressureHintPosition);
+
+            _needsWaterHint = HudWidgets.CreateText("Pump Needs Water Hint", canvas, PressureHintPosition, new Vector2(700f, 40f), 26, TextAnchor.MiddleCenter);
+            _needsWaterHint.text = NeedsWaterText;
+            _needsWaterHint.color = HudWidgets.ProblemColor;
+            _needsWaterHint.fontStyle = FontStyle.Bold;
+            _needsWaterHint.gameObject.SetActive(false);
         }
 
         private void Update()
         {
             UpdateBars();
+            UpdatePressureHint();
+        }
+
+        private void UpdatePressureHint()
+        {
+            bool needsWater = _sourceControl != null && _sourceControl.PumpNeedsWater;
+            if (_needsWaterHint.gameObject.activeSelf != needsWater)
+                _needsWaterHint.gameObject.SetActive(needsWater);
+
+            if (_sourceControl != null && _sourceControl.ShowPressureHint)
+                _pressureHint.Show(PressureHintText, PressureHintPosition.x, 1f);
+            else
+                _pressureHint.Hide();
         }
 
         private void UpdateBars()

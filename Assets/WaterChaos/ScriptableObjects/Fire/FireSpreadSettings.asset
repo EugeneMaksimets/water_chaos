@@ -31,3 +31,6 @@ MonoBehaviour:
   _waterMask:
     serializedVersion: 2
     m_Bits: 16
+  _roomMask:
+    serializedVersion: 2
+    m_Bits: 512

@@ -10,6 +10,7 @@ namespace WaterChaos.Tests
         {
             public Sprite Icon => null;
             public float Mass => 1f;
+            public float Radius => 0f;
             public void PickUp() { }
             public void Release(Vector3 position, Vector3 impulse) { }
         }

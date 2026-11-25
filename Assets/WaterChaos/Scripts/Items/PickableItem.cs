@@ -40,11 +40,15 @@ namespace WaterChaos.Items
         public Sprite Icon => _icon;
         public float Mass => _body.mass;
 
+        /// <summary>Measured once in the world (colliders and renderers, world scale); see <see cref="ItemFootprint"/>.</summary>
+        public float Radius { get; private set; }
+
         private void Awake()
         {
             _body = GetComponent<Rigidbody>();
             _colliders = GetComponentsInChildren<Collider>(true);
             _wasEnabled = new bool[_disableWhileHeld.Length];
+            Radius = MeasureRadius();
 
             // Physics can still turn it around the vertical axis, but never tilt it.
             if (_keepUpright)
@@ -99,6 +103,26 @@ namespace WaterChaos.Items
             _body.linearVelocity = Vector3.zero;
             _body.angularVelocity = Vector3.zero;
             _body.AddForce(impulse, ForceMode.Impulse);
+        }
+
+        private float MeasureRadius()
+        {
+            float radius = 0f;
+            foreach (Collider itemCollider in _colliders)
+            {
+                if (itemCollider.enabled && !itemCollider.isTrigger)
+                    radius = Mathf.Max(radius, ItemFootprint.GetRadius(transform.position, itemCollider.bounds));
+            }
+
+            // Collider bounds can be empty before physics has synced; the visible mesh is a safe second source.
+            // Only meshes: stream lines and particles (e.g. on the nozzle) reach far beyond the item.
+            foreach (Renderer itemRenderer in GetComponentsInChildren<Renderer>())
+            {
+                if (itemRenderer is MeshRenderer || itemRenderer is SkinnedMeshRenderer)
+                    radius = Mathf.Max(radius, ItemFootprint.GetRadius(transform.position, itemRenderer.bounds));
+            }
+
+            return radius;
         }
 
         private void SetWorldPartsEnabled(bool value)

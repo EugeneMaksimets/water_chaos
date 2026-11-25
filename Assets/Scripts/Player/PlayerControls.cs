@@ -11,10 +11,10 @@ namespace WaterChaos.Player
         /// <summary>Close an open menu.</summary>
         Cancel,
 
-        /// <summary>Main action: the first interaction action, otherwise hold and release to throw.</summary>
+        /// <summary>Main action: the first interaction action (Pick Up, Water On/Off...). Never drops an item.</summary>
         Primary,
 
-        /// <summary>Put the held item down in front of the player.</summary>
+        /// <summary>Put the held item down in front of the player. The only control that takes an item out of the hands.</summary>
         Drop,
 
         Slot1,

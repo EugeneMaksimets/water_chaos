@@ -8,7 +8,7 @@ using WaterChaos.UI;
 namespace WaterChaos.EditorTools
 {
     /// <summary>
-    /// One-click setup of the inventory UI in the open scene: slots, notice and throw hint, all wired to the player.
+    /// One-click setup of the inventory UI in the open scene: slots, notice and drop hint, all wired to the player.
     /// Running it again rebuilds the UI. Undo-able; save the scene afterwards.
     /// </summary>
     public static class InventorySceneSetup
@@ -197,7 +197,7 @@ namespace WaterChaos.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        /// <summary>The throw must not collide with the player's own capsule; the trajectory line must be thin.</summary>
+        /// <summary>The drop point must not stop on the player's own capsule.</summary>
         private static void FixThrower(PlayerItemThrower thrower)
         {
             SerializedObject so = new SerializedObject(thrower);
@@ -208,18 +208,6 @@ namespace WaterChaos.EditorTools
                 mask.intValue &= ~(1 << player);
             }
             so.ApplyModifiedProperties();
-
-            LineRenderer line = (LineRenderer)so.FindProperty("_trajectoryLine").objectReferenceValue;
-            if (line == null)
-                return;
-
-            Undo.RecordObject(line, "Setup Trajectory Line");
-            line.useWorldSpace = true;
-            line.widthMultiplier = 1f;
-            line.startWidth = 0.03f;
-            line.endWidth = 0.03f;
-            line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            line.receiveShadows = false;
         }
 
         private static Text CreateBottomText(string name, Transform parent, Font font, float y, int size, Color color)

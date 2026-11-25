@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using WaterChaos.Props;
+using WaterChaos.Rooms;
 
 namespace WaterChaos.EditorTools
 {
@@ -59,6 +60,7 @@ namespace WaterChaos.EditorTools
             var fridge = instance.AddComponent<Fridge>();
             SetReference(fridge, "_door", FindChild(instance.transform, "Door"));
             SetReference(fridge, "_interiorLight", light);
+            AddCooler(instance, CoolingApplianceKind.Refrigerator);
 
             Save(instance, FridgePrefabPath);
         }
@@ -75,6 +77,7 @@ namespace WaterChaos.EditorTools
             SetReference(airConditioner, "_louver", FindChild(instance.transform, "Louver"));
             SetReference(airConditioner, "_statusLight", FindChild(instance.transform, "StatusLight").gameObject);
             SetReference(airConditioner, "_airFlow", FindChild(instance.transform, "AirFlow"));
+            AddCooler(instance, CoolingApplianceKind.AirConditioner);
 
             Save(instance, AirConditionerPrefabPath);
         }
@@ -109,6 +112,16 @@ namespace WaterChaos.EditorTools
             var collider = root.AddComponent<BoxCollider>();
             collider.center = root.transform.InverseTransformPoint(bounds.center);
             collider.size = bounds.size;
+        }
+
+        /// <summary>Room cooling: 1 °C/s while the appliance is switched on.</summary>
+        private static void AddCooler(GameObject root, CoolingApplianceKind kind)
+        {
+            var cooler = root.AddComponent<CoolingAppliance>();
+            var serialized = new SerializedObject(cooler);
+            serialized.FindProperty("_kind").enumValueIndex = (int)kind;
+            serialized.FindProperty("_coolingPerSecond").floatValue = 1f;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static Transform FindChild(Transform parent, string childName)

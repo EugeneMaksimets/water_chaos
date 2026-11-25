@@ -2,17 +2,21 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Interaction;
+using WaterChaos.Rooms;
 
 namespace WaterChaos.Props
 {
     /// <summary>
     /// Fridge whose door the player opens and closes from the interaction menu.
     /// The door swings smoothly around its hinge (the door object's pivot, local Y axis).
+    /// It can also be switched on and off; while on, its <see cref="CoolingAppliance"/> cools the room.
     /// </summary>
     public class Fridge : MonoBehaviour, IInteractionProvider
     {
         private const string OpenText = "Open";
         private const string CloseText = "Close";
+        private const string TurnOnText = "Turn On";
+        private const string TurnOffText = "Turn Off";
 
         [Header("References")]
         [Tooltip("Door object; its pivot sits on the hinge.")]
@@ -32,6 +36,8 @@ namespace WaterChaos.Props
         private float _currentAngle;
         private bool _isOpen;
         private Action _toggle;
+        private Action _togglePower;
+        private CoolingAppliance _cooling;
 
         public bool IsOpen => _isOpen;
 
@@ -45,7 +51,15 @@ namespace WaterChaos.Props
             }
 
             _closedRotation = _door.localRotation;
+            // Prefabs made before rooms existed get the cooler added here.
+            if (!TryGetComponent(out _cooling))
+            {
+                _cooling = gameObject.AddComponent<CoolingAppliance>();
+                _cooling.Configure(CoolingApplianceKind.Refrigerator);
+            }
+
             _toggle = Toggle;
+            _togglePower = TogglePower;
             UpdateLight();
         }
 
@@ -65,6 +79,12 @@ namespace WaterChaos.Props
                 return;
 
             actions.Add(new InteractionAction(_isOpen ? CloseText : OpenText, this, _toggle));
+            actions.Add(new InteractionAction(_cooling.IsOn ? TurnOffText : TurnOnText, this, _togglePower));
+        }
+
+        public void TogglePower()
+        {
+            _cooling.Toggle();
         }
 
         public void Toggle()

@@ -17,6 +17,8 @@ namespace WaterChaos.Interaction
         private const float GroundProbeHeight = 2f;
         // Radius of the water check around a fire position, in meters (m).
         private const float WaterProbeRadius = 0.3f;
+        // Radius of the room check around a fire position, in meters (m).
+        private const float RoomProbeRadius = 0.05f;
 
         private static readonly Collider[] s_targetBuffer = new Collider[MaxColliders];
         private static readonly Collider[] s_fireBuffer = new Collider[MaxColliders];
@@ -71,7 +73,7 @@ namespace WaterChaos.Interaction
 
         private void Update()
         {
-            if (_model.Tick(Time.deltaTime, _fire.Intensity, Random.value))
+            if (_model.Tick(Time.deltaTime, _fire.Intensity, Random.value) && CanSpreadNow())
                 TrySpread();
         }
 
@@ -122,6 +124,26 @@ namespace WaterChaos.Interaction
             return false;
         }
 
+        /// <summary>A room under cooling protection stops its fires from spreading.</summary>
+        private bool CanSpreadNow()
+        {
+            IFireArea area = _fire.Area;
+            return area == null || area.AllowsSpread;
+        }
+
+        /// <summary>
+        /// A fire spreads only within its own area: inside a room to the same room (never through walls),
+        /// outdoors to places outside every room.
+        /// </summary>
+        private bool IsInOwnArea(Vector3 firePosition)
+        {
+            IFireArea area = _fire.Area;
+            if (area != null)
+                return area.Contains(firePosition);
+
+            return !Physics.CheckSphere(firePosition, RoomProbeRadius, _settings.RoomMask, QueryTriggerInteraction.Collide);
+        }
+
         private void TrySpread()
         {
             s_candidates.Clear();
@@ -150,7 +172,7 @@ namespace WaterChaos.Interaction
                     continue;
 
                 Vector3 firePosition = _settings.GetFirePosition(target.IgnitionPosition);
-                if (CanBurnAt(firePosition, _settings))
+                if (IsInOwnArea(firePosition) && CanBurnAt(firePosition, _settings))
                     s_candidates.Add(new Candidate { Target = target, FirePosition = firePosition });
             }
         }
@@ -179,7 +201,7 @@ namespace WaterChaos.Interaction
                     continue;
 
                 Vector3 firePosition = _settings.GetFirePosition(hit.point);
-                if (CanBurnAt(firePosition, _settings))
+                if (IsInOwnArea(firePosition) && CanBurnAt(firePosition, _settings))
                     s_candidates.Add(new Candidate { Target = null, FirePosition = firePosition });
             }
         }

@@ -62,6 +62,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c438ee74b6d14d8d89860d57edd7340, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5583396630949177918}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c438ee74b6d14d8d89860d57edd7340, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1738915110938139795}
   m_SourcePrefab: {fileID: 100100000, guid: 6c438ee74b6d14d8d89860d57edd7340, type: 3}
 --- !u!4 &1530744497141090564 stripped
 Transform:
@@ -119,8 +122,22 @@ MonoBehaviour:
   _louver: {fileID: 5801307517045908678}
   _statusLight: {fileID: 3309651501975129164}
   _airFlow: {fileID: 1530744497141090564}
-  _startOn: 0
   _louverOpenAngle: -55
   _louverSpeed: 90
   _airPulse: 0.12
   _airPulseFrequency: 1.5
+--- !u!114 &1738915110938139795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7411579959712798682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28d778b19145a48fb94bd07d8e9a0d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Rooms.CoolingAppliance
+  _kind: 1
+  _coolingPerSecond: 1
+  _isOn: 0

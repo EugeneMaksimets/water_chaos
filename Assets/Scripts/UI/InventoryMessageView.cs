@@ -4,12 +4,11 @@ using WaterChaos.Player;
 
 namespace WaterChaos.UI
 {
-    /// <summary>Inventory texts: the short "backpack is full" notice and the throw / drop hint (keys from the bindings).</summary>
+    /// <summary>Inventory texts: the short "backpack is full" notice and the drop hint (keys from the bindings).</summary>
     public sealed class InventoryMessageView : MonoBehaviour
     {
         private const string FullText = "Backpack is full!";
-        private string _readyText;
-        private string _aimingText;
+        private string _dropText;
 
         [Header("References")]
         [SerializeField] private PlayerItemInteractor _interactor;
@@ -18,7 +17,7 @@ namespace WaterChaos.UI
         [Tooltip("Shows the notice for a moment, then hides.")]
         [SerializeField] private Text _notice;
 
-        [Tooltip("Throw hint; hidden when the selected slot is empty.")]
+        [Tooltip("Drop hint; hidden when the selected slot is empty.")]
         [SerializeField] private Text _hint;
 
         [Header("Settings")]
@@ -36,10 +35,7 @@ namespace WaterChaos.UI
                 return;
             }
 
-            string primary = PlayerControls.GetDisplayName(PlayerControl.Primary);
-            string drop = PlayerControls.GetDisplayName(PlayerControl.Drop);
-            _readyText = $"Hold {primary} to throw · {drop} to drop";
-            _aimingText = $"Release {primary} to throw";
+            _dropText = $"{PlayerControls.GetDisplayName(PlayerControl.Drop)} to drop";
 
             _notice.gameObject.SetActive(false);
             _hint.gameObject.SetActive(false);
@@ -80,10 +76,10 @@ namespace WaterChaos.UI
 
         private void UpdateHint()
         {
-            bool visible = _thrower.CanThrow;
+            bool visible = _thrower.CanDrop;
             _hint.gameObject.SetActive(visible);
             if (visible)
-                _hint.text = _thrower.IsAiming ? _aimingText : _readyText;
+                _hint.text = _dropText;
         }
     }
 }

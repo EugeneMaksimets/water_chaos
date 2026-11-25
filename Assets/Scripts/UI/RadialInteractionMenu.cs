@@ -12,7 +12,7 @@ namespace WaterChaos.UI
     /// The mouse direction from the screen center highlights one, a click performs it and closes the menu.
     /// E again or Escape closes it; it also closes when the target changes or nothing is left to do.
     /// While open: the cursor is free, gameplay input is blocked in <see cref="PlayerInputHandler"/> and the listed
-    /// player behaviours (look, movement, throw, slot keys) are switched off, so the mouse and the click never act
+    /// player behaviours (look, movement, drop, slot keys) are switched off, so the mouse and the click never act
     /// on the game underneath. Action providers in that list stay on, so their actions stay in the menu.
     /// Generic: it knows nothing about pumps, hoses or items — only labels and actions.
     /// </summary>
@@ -27,7 +27,7 @@ namespace WaterChaos.UI
         [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private PlayerInteraction _interaction;
 
-        [Tooltip("Player behaviours switched off while the menu is open, e.g. PlayerLook, PlayerMovement, PlayerItemThrower, PlayerInventory. Action providers listed here are skipped.")]
+        [Tooltip("Player behaviours switched off while the menu is open, e.g. PlayerLook, PlayerMovement, PlayerItemThrower (drop), PlayerInventory. Action providers listed here are skipped.")]
         [SerializeField] private Behaviour[] _blockWhileOpen = new Behaviour[0];
 
         [Header("Look")]
@@ -138,10 +138,17 @@ namespace WaterChaos.UI
                 return;
             }
 
+            // A learned action (e.g. "Water On/Off" after first use) still works on the primary button, without its prompt.
+            bool showPrimary = _interaction.Actions[0].ShowPrompt;
             bool hasMore = count > 1;
-            _prompt.Show(GetPrimaryText(), hasMore ? -PromptPairX : 0f, 1f);
+
+            if (showPrimary)
+                _prompt.Show(GetPrimaryText(), hasMore ? -PromptPairX : 0f, 1f);
+            else
+                _prompt.Hide();
+
             if (hasMore)
-                _menuPrompt.Show(MenuText, PromptPairX, 1f);
+                _menuPrompt.Show(MenuText, showPrimary ? PromptPairX : 0f, 1f);
             else
                 _menuPrompt.Hide();
         }
@@ -163,13 +170,12 @@ namespace WaterChaos.UI
             return _primaryText;
         }
 
-        /// <summary>Menu closed: the primary button performs the first action instead of aiming a throw.</summary>
+        /// <summary>Menu closed: the primary button performs the first action.</summary>
         private void OnPrimaryPressed()
         {
             if (IsOpen || !_interaction.isActiveAndEnabled || _interaction.Actions.Count == 0)
                 return;
 
-            _input.ConsumePrimary();
             _interaction.Actions[0].Execute();
         }
 

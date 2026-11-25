@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Interaction;
+using WaterChaos.Rooms;
 
 namespace WaterChaos.Props
 {
     /// <summary>
     /// Wall air conditioner the player turns on and off from the interaction menu.
     /// When on: the louver opens, the status light shows and the cold-air streaks pulse.
+    /// The on/off state lives in <see cref="CoolingAppliance"/>, which also cools the room.
     /// </summary>
     public class AirConditioner : MonoBehaviour, IInteractionProvider
     {
@@ -25,8 +27,6 @@ namespace WaterChaos.Props
         [SerializeField] private Transform _airFlow;
 
         [Header("Settings")]
-        [SerializeField] private bool _startOn;
-
         [Tooltip("Louver angle when open, in degrees around its hinge (local X). Flip the sign if it opens inward.")]
         [SerializeField] private float _louverOpenAngle = -55f;
 
@@ -42,10 +42,11 @@ namespace WaterChaos.Props
         private Quaternion _louverClosedRotation;
         private Vector3 _airFlowScale;
         private float _louverAngle;
-        private bool _isOn;
+        private CoolingAppliance _cooling;
         private Action _toggle;
+        private Action<CoolingAppliance> _onCoolingChanged;
 
-        public bool IsOn => _isOn;
+        public bool IsOn => _cooling != null && _cooling.IsOn;
 
         private void Awake()
         {
@@ -60,21 +61,36 @@ namespace WaterChaos.Props
             if (_airFlow != null)
                 _airFlowScale = _airFlow.localScale;
 
+            // Prefabs made before rooms existed get the cooler added here.
+            if (!TryGetComponent(out _cooling))
+            {
+                _cooling = gameObject.AddComponent<CoolingAppliance>();
+                _cooling.Configure(CoolingApplianceKind.AirConditioner);
+            }
+
             _toggle = Toggle;
-            _isOn = _startOn;
+            _onCoolingChanged = OnCoolingChanged;
+            _cooling.StateChanged += _onCoolingChanged;
             UpdateVisuals();
+        }
+
+        private void OnDestroy()
+        {
+            if (_cooling != null)
+                _cooling.StateChanged -= _onCoolingChanged;
         }
 
         private void Update()
         {
-            float target = _isOn ? _louverOpenAngle : 0f;
+            bool isOn = IsOn;
+            float target = isOn ? _louverOpenAngle : 0f;
             if (!Mathf.Approximately(_louverAngle, target))
             {
                 _louverAngle = Mathf.MoveTowards(_louverAngle, target, _louverSpeed * Time.deltaTime);
                 _louver.localRotation = _louverClosedRotation * Quaternion.Euler(_louverAngle, 0f, 0f);
             }
 
-            if (_isOn && _airFlow != null)
+            if (isOn && _airFlow != null)
             {
                 float pulse = 1f + _airPulse * Mathf.Sin(Time.time * _airPulseFrequency * 2f * Mathf.PI);
                 _airFlow.localScale = _airFlowScale * pulse;
@@ -86,23 +102,28 @@ namespace WaterChaos.Props
             if (!isActiveAndEnabled)
                 return;
 
-            actions.Add(new InteractionAction(_isOn ? TurnOffText : TurnOnText, this, _toggle));
+            actions.Add(new InteractionAction(IsOn ? TurnOffText : TurnOnText, this, _toggle));
         }
 
         public void Toggle()
         {
-            _isOn = !_isOn;
+            _cooling.Toggle();
+        }
+
+        private void OnCoolingChanged(CoolingAppliance cooling)
+        {
             UpdateVisuals();
         }
 
         private void UpdateVisuals()
         {
+            bool isOn = IsOn;
             if (_statusLight != null)
-                _statusLight.SetActive(_isOn);
+                _statusLight.SetActive(isOn);
 
             if (_airFlow != null)
             {
-                _airFlow.gameObject.SetActive(_isOn);
+                _airFlow.gameObject.SetActive(isOn);
                 _airFlow.localScale = _airFlowScale;
             }
         }

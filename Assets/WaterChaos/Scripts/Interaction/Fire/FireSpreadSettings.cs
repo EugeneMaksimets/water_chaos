@@ -52,6 +52,9 @@ namespace WaterChaos.Interaction
         [Tooltip("Water volumes (triggers); no fire appears inside them.")]
         [SerializeField] private LayerMask _waterMask = 1 << 4;
 
+        [Tooltip("Room volumes (triggers). A fire outdoors never spreads into a room; a fire in a room asks the room.")]
+        [SerializeField] private LayerMask _roomMask = 1 << 9;
+
         public FireExtinguishHandler FirePrefab => _firePrefab;
         public float SpreadRadius => _spreadRadius;
         public float SpreadInterval => _spreadInterval;
@@ -64,6 +67,7 @@ namespace WaterChaos.Interaction
         public LayerMask TargetMask => _targetMask;
         public LayerMask FireMask => _fireMask;
         public LayerMask WaterMask => _waterMask;
+        public LayerMask RoomMask => _roomMask;
 
         /// <summary>Where the fire's pivot goes for a fire burning at <paramref name="burningPoint"/>.</summary>
         public Vector3 GetFirePosition(Vector3 burningPoint) => burningPoint + Vector3.up * _spawnHeight;

@@ -149,5 +149,27 @@ namespace WaterChaos.Tests
 
             Assert.IsFalse(fire.IsBurning);
         }
+
+        [Test]
+        public void Reignite_ExtinguishedFire_BurnsAtFullIntensity()
+        {
+            FireModel fire = CreateExtinguishedFire();
+
+            fire.Reignite();
+
+            Assert.IsTrue(fire.IsBurning);
+            Assert.AreEqual(1f, fire.Intensity);
+        }
+
+        [Test]
+        public void Reignite_BurningFire_KeepsIntensity()
+        {
+            FireModel fire = CreateFire();
+            fire.ApplyWater(2f);
+
+            fire.Reignite();
+
+            Assert.AreEqual(0.8f, fire.Intensity, 0.0001f);
+        }
     }
 }
