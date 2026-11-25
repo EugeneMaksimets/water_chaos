@@ -246,6 +246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 63195090}
   - component: {fileID: 63195089}
+  - component: {fileID: 63195091}
   m_Layer: 0
   m_Name: Reservoir B
   m_TagString: Untagged
@@ -292,6 +293,19 @@ Transform:
   - {fileID: 2006939206}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &63195091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63195088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d20b9cec490423ca7f8037ea523fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirTarget
+  _reservoir: {fileID: 1944037577}
 --- !u!1 &73422764
 GameObject:
   m_ObjectHideFlags: 0
@@ -4202,6 +4216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 695974347}
   - component: {fileID: 695974348}
+  - component: {fileID: 695974349}
   m_Layer: 0
   m_Name: Lake
   m_TagString: Untagged
@@ -4242,6 +4257,19 @@ MonoBehaviour:
   _surface: {fileID: 439676042}
   _fullY: 0.79
   _emptyY: 0.01
+--- !u!114 &695974349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695974346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d20b9cec490423ca7f8037ea523fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirTarget
+  _reservoir: {fileID: 401745872}
 --- !u!1 &721851588
 GameObject:
   m_ObjectHideFlags: 0
@@ -10659,6 +10687,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1330259128}
   - component: {fileID: 1330259127}
+  - component: {fileID: 1330259129}
   m_Layer: 0
   m_Name: Reservoir B (1)
   m_TagString: Untagged
@@ -10705,6 +10734,19 @@ Transform:
   - {fileID: 2109196325}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1330259129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330259126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d20b9cec490423ca7f8037ea523fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirTarget
+  _reservoir: {fileID: 1055329593}
 --- !u!1 &1518892820
 GameObject:
   m_ObjectHideFlags: 0
@@ -10956,6 +10998,8 @@ GameObject:
   - component: {fileID: 1633715735}
   - component: {fileID: 1633715734}
   - component: {fileID: 1633715736}
+  - component: {fileID: 1633715738}
+  - component: {fileID: 1633715737}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -11439,6 +11483,37 @@ MonoBehaviour:
   _optionColor: {r: 0, g: 0, b: 0, a: 0.55}
   _highlightColor: {r: 1, g: 1, b: 1, a: 0.9}
   _highlightTextColor: {r: 0.08, g: 0.08, b: 0.08, a: 1}
+--- !u!114 &1633715737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aa84d6a5de30433eb26c32368ded151, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.WaterReservoirInfoUI
+  _detector: {fileID: 1633715738}
+  _panelPosition: {x: 0, y: 150}
+--- !u!114 &1633715738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db885788068db44fa9e19c572a6f813f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirDetector
+  _camera: {fileID: 330585546}
+  _maxDistance: 4
+  _mask:
+    serializedVersion: 2
+    m_Bits: 4294967167
 --- !u!1 &1694194528
 GameObject:
   m_ObjectHideFlags: 0
