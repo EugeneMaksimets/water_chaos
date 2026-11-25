@@ -23,6 +23,7 @@ namespace WaterChaos.Interaction
         private float _reigniteDelay = 5f;
 
         private FireModel _model;
+        private Collider[] _colliders;
         private bool _wasBurning;
 
         /// <summary>
@@ -41,6 +42,7 @@ namespace WaterChaos.Interaction
         {
             _model = new FireModel(_coolingPerLiter, _extinguishThreshold, _reigniteDelay);
             _wasBurning = _model.IsBurning;
+            _colliders = GetComponentsInChildren<Collider>();
         }
 
         private void FixedUpdate()
@@ -80,7 +82,18 @@ namespace WaterChaos.Interaction
                 return;
 
             _wasBurning = burning;
+            SetCollidersEnabled(burning);
             BurningChanged?.Invoke(this);
+        }
+
+        // An extinguished fire lets water pass through; it is hit again once it burns.
+        private void SetCollidersEnabled(bool value)
+        {
+            foreach (Collider part in _colliders)
+            {
+                if (part != null)
+                    part.enabled = value;
+            }
         }
     }
 }
