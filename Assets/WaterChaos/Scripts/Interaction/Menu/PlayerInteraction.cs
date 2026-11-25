@@ -26,10 +26,15 @@ namespace WaterChaos.Interaction
         [Tooltip("Layers the look ray can hit. Exclude the Player layer.")]
         [SerializeField] private LayerMask _interactMask = ~0;
 
+        [Header("Highlight")]
+        [Tooltip("How much the object under the crosshair is tinted towards white (0 = off).")]
+        [SerializeField, Range(0f, 1f)] private float _highlight = 0.3f;
+
         private readonly List<IInteractionProvider> _playerProviders = new List<IInteractionProvider>();
         private readonly List<InteractionAction> _collected = new List<InteractionAction>();
         private readonly List<InteractionAction> _actions = new List<InteractionAction>();
         private readonly RaycastHit[] _hits = new RaycastHit[MaxHits];
+        private InteractionHighlight _highlighter;
 
         /// <summary>Valid actions this frame, without duplicate labels. Do not modify.</summary>
         public IReadOnlyList<InteractionAction> Actions => _actions;
@@ -50,12 +55,14 @@ namespace WaterChaos.Interaction
             }
 
             GetComponents(_playerProviders);
+            _highlighter = new InteractionHighlight(_highlight);
         }
 
         private void OnDisable()
         {
             _actions.Clear();
             Focus = null;
+            _highlighter?.Clear();
             Title = DefaultTitle;
         }
 
@@ -77,6 +84,7 @@ namespace WaterChaos.Interaction
 
             Focus = FindFocus(_actions);
             Title = Focus != null ? GetName(Focus) : _actions.Count == 1 ? _actions[0].Label : DefaultTitle;
+            _highlighter.Show(FirstTarget(_actions), Focus);
         }
 
         private void Collect(IInteractionProvider provider)
@@ -149,6 +157,17 @@ namespace WaterChaos.Interaction
             }
 
             return best;
+        }
+
+        private static Transform FirstTarget(List<InteractionAction> actions)
+        {
+            foreach (InteractionAction action in actions)
+            {
+                if (action.Target != null)
+                    return action.Target.transform;
+            }
+
+            return null;
         }
 
         private static Transform FindFocus(List<InteractionAction> actions)

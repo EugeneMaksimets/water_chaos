@@ -115,10 +115,11 @@ namespace WaterChaos.EditorTools.MiniVillage
                 m.Part(new Vector3(s * 1.25f, 1.6f, -1.7f), new Vector3(0.06f, 0.08f, 0.25f), "GasYellow");
                 m.Part(new Vector3(s * 1.25f, 1.6f, -1.2f), new Vector3(0.06f, 0.08f, 0.25f), "GasRed");
 
-                // Coupling: the left one is the working outlet, the right one is the twin for looks.
-                Along(m.Mesh, new Vector3(s * 1.32f, 1.2f, -1.45f), 0.09f, 0.16f, "Metal");
-                Along(m.Mesh, new Vector3(s * 1.41f, 1.2f, -1.45f), 0.1f, 0.04f, "GasYellow");
             }
+
+            // The nozzle outlet coupling, on the left side only (where the WaterConnectionPoint is).
+            Along(m.Mesh, new Vector3(-1.32f, 1.2f, -1.45f), 0.09f, 0.16f, "Metal");
+            Along(m.Mesh, new Vector3(-1.41f, 1.2f, -1.45f), 0.1f, 0.04f, "GasYellow");
         }
 
         private static void BuildBody(PropModel m)
