@@ -49,8 +49,16 @@ namespace WaterChaos.WaterTransfer
         [Tooltip("Height of the end above the ground it rests on, in meters (m).")]
         [SerializeField, Min(0f)] private float _restHeight = 0.05f;
 
+        [Header("Drop")]
+        [Tooltip("Smallest horizontal distance from the player a dropped coil lands at, in meters (m).")]
+        [SerializeField, Min(0.3f)] private float _dropClearance = 0.8f;
+
+        [Tooltip("Radius kept free of other objects (pump, walls) around a dropped coil, in meters (m).")]
+        [SerializeField, Min(0.05f)] private float _coilRadius = 0.25f;
+
         private readonly TransferHoseModel _model = new TransferHoseModel();
         private readonly RaycastHit[] _groundHits = new RaycastHit[GroundBufferSize];
+        private readonly Collider[] _overlaps = new Collider[GroundBufferSize];
 
         private HoseModel _path;
         private HosePathSolver _solver;
@@ -182,6 +190,27 @@ namespace WaterChaos.WaterTransfer
             return true;
         }
 
+        /// <summary>
+        /// Detaches the hose from the pump (which stops delivering) and lays it on the ground as a coil item
+        /// at <paramref name="preferred"/>, or beside the player if that spot is unsafe. It can be picked up again.
+        /// </summary>
+        /// <param name="viewPoint">The player's eyes: the coil is kept clear of them and never dropped behind a wall.</param>
+        /// <param name="forward">The player's facing; it orders the fallback spots and turns the coil.</param>
+        public bool TryDropCoil(Vector3 preferred, Vector3 viewPoint, Vector3 forward)
+        {
+            if (!_model.CanDisconnect)
+                return false;
+
+            Vector3 spot = FindDropSpot(preferred, viewPoint, forward);
+
+            Disconnect();
+            Vector3 flat = Vector3.ProjectOnPlane(forward, Vector3.up);
+            if (flat.sqrMagnitude > 1e-6f)
+                transform.rotation = Quaternion.LookRotation(flat.normalized, Vector3.up);
+            _item.Release(spot, Vector3.zero);
+            return true;
+        }
+
         private void Disconnect()
         {
             if (ConnectedPoint != null)
@@ -201,6 +230,40 @@ namespace WaterChaos.WaterTransfer
 
             _coil.SetActive(!laidOut);
             _end.gameObject.SetActive(laidOut);
+        }
+
+        /// <summary>
+        /// First spot (see <see cref="TransferHoseDrop"/>) that is visible from the player, has ground under it and room
+        /// for the coil; the preferred spot kept clear of the player if none has.
+        /// </summary>
+        private Vector3 FindDropSpot(Vector3 preferred, Vector3 viewPoint, Vector3 forward)
+        {
+            for (int i = 0; i < TransferHoseDrop.CandidateCount; i++)
+            {
+                Vector3 candidate = TransferHoseDrop.GetCandidate(i, viewPoint, preferred, forward, _dropClearance);
+                if (Physics.Linecast(viewPoint, candidate, _groundMask, QueryTriggerInteraction.Ignore))
+                    continue;
+
+                if (FindGround(candidate, out Vector3 ground) && HasRoom(ground))
+                    return ground;
+            }
+
+            return TransferHoseDrop.GetCandidate(0, viewPoint, preferred, forward, _dropClearance);
+        }
+
+        /// <summary>No solid object (pump, wall, another item) overlaps a coil resting at <paramref name="ground"/>.</summary>
+        private bool HasRoom(Vector3 ground)
+        {
+            Vector3 center = ground + Vector3.up * (_coilRadius + _restHeight);
+            int count = Physics.OverlapSphereNonAlloc(center, _coilRadius, _overlaps, _groundMask, QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (!_overlaps[i].transform.IsChildOf(transform))
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>First solid surface under the point; triggers such as water volumes are skipped.</summary>

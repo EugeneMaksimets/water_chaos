@@ -58,6 +58,14 @@ namespace WaterChaos.Tests
         }
 
         [Test]
+        public void Connect_NotOfferedWhileNozzleUsesSharedOutlet()
+        {
+            CollectionAssert.DoesNotContain(
+                Collect(holdsHose: true, outletAttached: false, hoseState: TransferHoseState.Stored, regularOutletBusy: true),
+                PumpMenuAction.Connect);
+        }
+
+        [Test]
         public void TurnOn_NotOfferedWhileEndIsCarried()
         {
             CollectionAssert.DoesNotContain(Collect(hoseState: TransferHoseState.Carried), PumpMenuAction.TurnOn);

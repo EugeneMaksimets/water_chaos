@@ -125,7 +125,10 @@ namespace WaterChaos.EditorTools
             return index >= 0 ? 1 << index : 0;
         }
 
-        /// <summary>Adds the transfer outlet to the pump root (where its collider is), opposite the regular outlet.</summary>
+        /// <summary>
+        /// Adds the transfer side of the pump outlet to the pump root (where its collider is). It has no connector of its own:
+        /// the transfer hose starts at the nozzle outlet's anchor. A separate outlet left by an older setup is removed.
+        /// </summary>
         private static bool AddPumpOutlet()
         {
             GameObject root = PrefabUtility.LoadPrefabContents(PumpPrefabPath);
@@ -144,16 +147,9 @@ namespace WaterChaos.EditorTools
                     return false;
                 }
 
-                Transform anchor = root.transform.Find(TransferOutletName);
-                if (anchor == null)
-                {
-                    anchor = new GameObject(TransferOutletName).transform;
-                    anchor.SetParent(root.transform, false);
-
-                    WaterConnectionPoint regular = root.GetComponentInChildren<WaterConnectionPoint>(true);
-                    Vector3 local = regular != null ? root.transform.InverseTransformPoint(regular.HoseAnchor.position) : new Vector3(0.2f, 0.2f, 0f);
-                    anchor.localPosition = new Vector3(-local.x, local.y, -local.z);
-                }
+                Transform oldOutlet = root.transform.Find(TransferOutletName);
+                if (oldOutlet != null)
+                    Object.DestroyImmediate(oldOutlet.gameObject);
 
                 if (!root.TryGetComponent(out TransferConnectionPoint point))
                     point = root.AddComponent<TransferConnectionPoint>();
@@ -161,7 +157,6 @@ namespace WaterChaos.EditorTools
                 Set(point, data =>
                 {
                     data.FindProperty("_pump").objectReferenceValue = pump;
-                    data.FindProperty("_anchor").objectReferenceValue = anchor;
                 });
 
                 PrefabUtility.SaveAsPrefabAsset(root, PumpPrefabPath);

@@ -34,6 +34,12 @@ namespace WaterChaos.Player
         /// <summary>The held hose is at full length and holds the player back; false without a hose.</summary>
         public event Action<bool> LimitReachedChanged;
 
+        /// <summary>
+        /// Raised right before the nozzle hose attaches to a point, so whatever else uses that pump outlet
+        /// (the transfer hose) can be taken off first.
+        /// </summary>
+        public event Action<WaterConnectionPoint> Connecting;
+
         public WaterConnectionPoint Connected => _connected;
 
         /// <summary>Connection point under the crosshair that interact would act on; null if none.</summary>
@@ -157,6 +163,8 @@ namespace WaterChaos.Player
 
         private void Connect(WaterConnectionPoint point)
         {
+            Connecting?.Invoke(point);
+
             _connected = point;
             _connected.Attach();
             _stream.SetSource(point.Source);

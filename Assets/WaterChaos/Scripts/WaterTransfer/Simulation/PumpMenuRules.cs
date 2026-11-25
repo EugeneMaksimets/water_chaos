@@ -40,10 +40,10 @@ namespace WaterChaos.WaterTransfer
             return context.OutletAttached && context.PumpOn && !context.RegularOutletBusy;
         }
 
-        /// <summary>A hose in the hands, a free outlet, and no other hose end already in the hands.</summary>
+        /// <summary>A hose in the hands, a free shared outlet (no transfer hose, no nozzle hose), and no other hose end already in the hands.</summary>
         public static bool CanConnect(in PumpMenuContext context)
         {
-            return context.HoldsHose && !context.OutletAttached && !context.CarriesEnd;
+            return context.HoldsHose && !context.OutletAttached && !context.RegularOutletBusy && !context.CarriesEnd;
         }
 
         /// <summary>The hose is not taken off while water moves through it.</summary>

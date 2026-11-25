@@ -5,7 +5,8 @@ using WaterChaos.Water;
 namespace WaterChaos.WaterTransfer
 {
     /// <summary>
-    /// Dedicated transfer outlet on a pump, separate from its regular (nozzle) outlet.
+    /// Transfer side of the pump's single outlet. It has no connector of its own: the transfer hose starts at the
+    /// same anchor as the nozzle hose (<see cref="WaterConnectionPoint.HoseAnchor"/>), and only one of them is attached at a time.
     /// Put it on the pump object that has the collider, so the player can aim at it.
     /// Holds at most one transfer hose; reads the pump through its public API only.
     /// </summary>
@@ -14,9 +15,6 @@ namespace WaterChaos.WaterTransfer
         [Header("References")]
         [Tooltip("Pump this outlet belongs to. Empty = the PumpController on this object or its parents.")]
         [SerializeField] private PumpController _pump;
-
-        [Tooltip("Where the transfer hose starts. Empty = this transform.")]
-        [SerializeField] private Transform _anchor;
 
         [Header("Transfer")]
         [Tooltip("Flow the pump is set to when started for a transfer, in liters per second (L/s). Limited by the pump's max flow.")]
@@ -27,7 +25,8 @@ namespace WaterChaos.WaterTransfer
 
         public PumpController Pump => _pump;
 
-        public Transform Anchor => _anchor != null ? _anchor : transform;
+        /// <summary>Where the transfer hose starts: the pump outlet the nozzle hose uses; this transform if the pump has none.</summary>
+        public Transform Anchor => _regularOutlet != null ? _regularOutlet.HoseAnchor : transform;
 
         /// <summary>Transfer hose attached here; null if none.</summary>
         public TransferHose AttachedHose { get; private set; }
@@ -61,10 +60,10 @@ namespace WaterChaos.WaterTransfer
             _deployment = _pump.GetComponent<PumpDeployment>();
         }
 
-        /// <summary>Attaches the hose here. False if another hose is already attached or this outlet is off.</summary>
+        /// <summary>Attaches the hose here. False if the outlet is taken (transfer or nozzle hose) or off.</summary>
         public bool TryAttach(TransferHose hose)
         {
-            if (hose == null || IsAttached || !isActiveAndEnabled)
+            if (hose == null || IsAttached || IsRegularOutletBusy || !isActiveAndEnabled)
                 return false;
 
             AttachedHose = hose;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Hose;
 using WaterChaos.Items;
+using WaterChaos.Water;
 using WaterChaos.WaterTransfer;
 
 namespace WaterChaos.Player
@@ -13,6 +14,8 @@ namespace WaterChaos.Player
     /// F lays the carried end down; holding interact on a placed end takes it again.
     /// While an end is carried, the player is held within the hose length.
     /// F is left to the nozzle system while the nozzle hose is connected somewhere.
+    /// The pump has one outlet: the nozzle hose connecting to it takes the transfer hose off and drops it beside the player.
+    /// Taking another item into the hands while carrying the end drops the hose as a coil where the end was.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     [DefaultExecutionOrder(-20)]
@@ -29,7 +32,7 @@ namespace WaterChaos.Player
         [Tooltip("Where a carried hose end is held; a child of the camera. Empty = the camera.")]
         [SerializeField] private Transform _carryPoint;
 
-        [Tooltip("The nozzle hose connector, read only: while it has a connection, F belongs to it. Optional.")]
+        [Tooltip("The nozzle hose connector: while it has a connection, F belongs to it; its connecting to a pump takes the transfer hose off. Optional.")]
         [SerializeField] private PlayerHoseConnector _nozzleConnector;
 
         [Header("Settings")]
@@ -45,7 +48,7 @@ namespace WaterChaos.Player
         [Tooltip("Free hose needed before the 'length limit' state clears, in meters (m).")]
         [SerializeField, Min(0f)] private float _releaseMargin = 0.3f;
 
-        [Tooltip("Where a coil is dropped when the inventory is full, in meters (m) in front of the player.")]
+        [Tooltip("How far from the player a coil is dropped (inventory full: in front; nozzle took the pump: to the right), in meters (m).")]
         [SerializeField, Min(0f)] private float _dropDistance = 1f;
 
         private readonly RaycastHit[] _hits = new RaycastHit[HitBufferSize];
@@ -134,12 +137,16 @@ namespace WaterChaos.Player
         {
             if (_input != null)
                 _input.TogglePressed += OnTogglePressed;
+            if (_nozzleConnector != null)
+                _nozzleConnector.Connecting += OnNozzleConnecting;
         }
 
         private void OnDisable()
         {
             if (_input != null)
                 _input.TogglePressed -= OnTogglePressed;
+            if (_nozzleConnector != null)
+                _nozzleConnector.Connecting -= OnNozzleConnecting;
 
             ClearTarget();
             _holdTime = 0f;
@@ -184,6 +191,10 @@ namespace WaterChaos.Player
 
         private void Update()
         {
+            // Another item came into the hands (PlayerEquipment, last LateUpdate): the end stays where it was held.
+            if (_carried != null && HoldsOtherItem(_carried))
+                DropCoil(_carried, _carried.End.position);
+
             // The hose dropped its end itself (the pump left the world).
             if (_carried != null && _carried.State != TransferHoseState.Carried)
                 SetCarried(null);
@@ -304,6 +315,35 @@ namespace WaterChaos.Player
                 item.Release(transform.position + transform.forward * _dropDistance + Vector3.up * 0.5f, Vector3.zero);
 
             return true;
+        }
+
+        /// <summary>The nozzle hose is about to take the shared pump outlet: the transfer hose comes off first.</summary>
+        private void OnNozzleConnecting(WaterConnectionPoint point)
+        {
+            TransferConnectionPoint transfer = point != null ? point.GetComponentInParent<TransferConnectionPoint>() : null;
+            if (transfer == null || transfer.AttachedHose == null)
+                return;
+
+            Vector3 beside = _camera.position + transform.right * _dropDistance;
+            DropCoil(transfer.AttachedHose, beside);
+        }
+
+        /// <summary>Disconnects the hose (the pump stops) and leaves it in the world as a coil near <paramref name="preferred"/>.</summary>
+        private void DropCoil(TransferHose hose, Vector3 preferred)
+        {
+            if (!hose.TryDropCoil(preferred, _camera.position, _camera.forward))
+                return;
+
+            if (_carried == hose)
+                SetCarried(null);
+            if (_awaitingStart == hose)
+                _awaitingStart = null;
+        }
+
+        /// <summary>The hands hold an item other than this hose (its own item is still in them right after connecting).</summary>
+        private bool HoldsOtherItem(TransferHose hose)
+        {
+            return _equipment != null && _equipment.Current != null && _equipment.Current != (IPickableItem)hose.Item;
         }
 
         private void RefreshMenuActions()
