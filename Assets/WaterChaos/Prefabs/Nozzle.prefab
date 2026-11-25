@@ -4920,8 +4920,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterStreamTubeView
   _stream: {fileID: 2696170886430235844}
   _radius: 0.08
-  _tipRadiusScale: 0.7
-  _sides: 7
+  _tipRadiusScale: 2.79
+  _sides: 8
   _sortingOrder: 2
   _wobbleAmount: 0.15
   _wobbleFrequency: 8
