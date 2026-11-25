@@ -86,10 +86,15 @@ Shader "WaterChaos/WaterToon"
             {
                 float3 viewDir = normalize(GetWorldSpaceViewDir(input.positionWS));
 
+                // Both normals are turned toward the viewer, so the surface looks the same from either side
+                // (e.g. a line renderer ribbon seen from behind); a normal facing away would read as full rim (white).
+                float3 smoothNormal = normalize(input.normalWS);
+                smoothNormal *= dot(smoothNormal, viewDir) < 0.0 ? -1.0 : 1.0;
+
                 // Faceted: the normal of the flat triangle instead of the smooth vertex normal
                 float3 faceNormal = normalize(cross(ddy(input.positionWS), ddx(input.positionWS)));
                 faceNormal *= sign(dot(faceNormal, viewDir));
-                float3 normal = lerp(normalize(input.normalWS), faceNormal, _Faceted);
+                float3 normal = normalize(lerp(smoothNormal, faceNormal, _Faceted));
 
                 // Two-tone lighting from the main light
                 Light mainLight = GetMainLight();

@@ -305,6 +305,9 @@ namespace WaterChaos.EditorTools
             line.useWorldSpace = true;
             line.widthMultiplier = 0.07f;
             line.numCapVertices = 4;
+
+            // The WaterToon shader lights and rims by the normal; without lighting data the line has no real normals.
+            line.generateLightingData = true;
             line.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(StreamMaterialPath);
 
             WaterStream stream = discharge.AddComponent<WaterStream>();
