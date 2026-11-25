@@ -15,6 +15,12 @@ namespace WaterChaos.Water
 
         public bool IsEmpty => Volume <= 0f;
 
+        /// <summary>No more water fits in.</summary>
+        public bool IsFull => Volume >= Capacity;
+
+        /// <summary>Volume that still fits in, in liters (L); never negative.</summary>
+        public float FreeCapacity => Math.Max(0f, Capacity - Volume);
+
         /// <summary>Fill level (0..1) below which outflow weakens; 0 = never weakens.</summary>
         public float LowLevelRatio { get; }
         /// <summary>
@@ -46,6 +52,18 @@ namespace WaterChaos.Water
             float drawn = Math.Min(Sanitize(requested) * OutflowRatio, Volume);
             Volume -= drawn;
             return drawn;
+        }
+
+        /// <summary>
+        /// Puts up to the given volume into the reservoir (e.g. water pumped in from another one).
+        /// </summary>
+        /// <param name="amount">Offered volume in liters (L); negative and NaN are treated as 0.</param>
+        /// <returns>Volume actually accepted in liters (L), never more than <see cref="FreeCapacity"/>.</returns>
+        public float Add(float amount)
+        {
+            float accepted = Math.Min(Sanitize(amount), FreeCapacity);
+            Volume = Math.Min(Volume + accepted, Capacity);
+            return accepted;
         }
 
         private static float Sanitize(float value)

@@ -45,12 +45,16 @@ namespace WaterChaos.Pump
         private WaterConnectionPoint _outlet;
 
         private PumpModel _model;
+        private bool _externalOutletConnected;
 
         /// <summary>Raised when the pump state changes; argument is the new state.</summary>
         public event Action<PumpState> StateChanged;
 
         public bool isTurnOn => _model.IsTurnOn;
         public float MaxPressure => _model.MaxPressure;
+
+        /// <summary>Flow at max pressure, in liters per second (L/s).</summary>
+        public float MaxFlowRate => _maxFlowRate;
         public float TargetPressure => _model.TargetPressure;
         public float CurrentPressure => _model.CurrentPressure;
         public WaterFlowData Output => _model.Output;
@@ -104,9 +108,15 @@ namespace WaterChaos.Pump
 
         public void SetTargetPressure(float pressure) => _model.SetTargetPressure(pressure);
 
+        /// <summary>
+        /// Another system (e.g. the water transfer hose) delivers from its own connector:
+        /// counts as an attached outlet, in addition to the regular one.
+        /// </summary>
+        public void SetExternalOutletConnected(bool connected) => _externalOutletConnected = connected;
+
         private void RefreshOutlet()
         {
-            _model.SetOutletConnected(_outlet != null && _outlet.IsAttached);
+            _model.SetOutletConnected((_outlet != null && _outlet.IsAttached) || _externalOutletConnected);
         }
 
         private void OnModelStateChanged(PumpState state) => StateChanged?.Invoke(state);

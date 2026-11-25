@@ -164,5 +164,35 @@ namespace WaterChaos.Tests
 
             Assert.IsTrue(reservoir.IsEmpty);
         }
+
+        [Test]
+        public void Add_LessThanFreeCapacity_AcceptsAll()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 40f);
+
+            Assert.AreEqual(25f, reservoir.Add(25f), Tolerance);
+            Assert.AreEqual(65f, reservoir.Volume, Tolerance);
+            Assert.AreEqual(35f, reservoir.FreeCapacity, Tolerance);
+        }
+
+        [Test]
+        public void Add_MoreThanFreeCapacity_AcceptsOnlyWhatFits()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 95f);
+
+            Assert.AreEqual(5f, reservoir.Add(25f), Tolerance);
+            Assert.AreEqual(100f, reservoir.Volume, Tolerance);
+            Assert.IsTrue(reservoir.IsFull);
+        }
+
+        [TestCase(-10f)]
+        [TestCase(float.NaN)]
+        public void Add_InvalidAmount_ChangesNothing(float invalid)
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 40f);
+
+            Assert.AreEqual(0f, reservoir.Add(invalid));
+            Assert.AreEqual(40f, reservoir.Volume);
+        }
     }
 }

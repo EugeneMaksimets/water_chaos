@@ -16,6 +16,15 @@ namespace WaterChaos.Player
         /// <summary>Left mouse button is held down this frame: aiming a throw.</summary>
         public bool ThrowHeld { get; private set; }
 
+        /// <summary>Mouse cursor position in screen pixels, for menus that are picked with the mouse.</summary>
+        public Vector2 PointerPosition { get; private set; }
+
+        /// <summary>E was pressed this frame (single press, e.g. open a menu).</summary>
+        public event Action InteractPressed;
+
+        /// <summary>Escape was pressed this frame: close an open menu.</summary>
+        public event Action CancelPressed;
+
         /// <summary>F: turn the connected source on or off.</summary>
         public event Action TogglePressed;
 
@@ -43,6 +52,13 @@ namespace WaterChaos.Player
             }
 
             InteractHeld = keyboard.eKey.isPressed;
+            PointerPosition = mouse.position.ReadValue();
+
+            if (keyboard.eKey.wasPressedThisFrame)
+                InteractPressed?.Invoke();
+
+            if (keyboard.escapeKey.wasPressedThisFrame)
+                CancelPressed?.Invoke();
 
             if (keyboard.qKey.wasPressedThisFrame)
                 PickUpPressed?.Invoke();
