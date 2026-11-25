@@ -97,5 +97,35 @@ namespace WaterChaos.Tests
                 UnityEngine.Object.DestroyImmediate(hydrant);
             }
         }
+
+        [Test]
+        public void Action_UsesPrimaryButtonByDefault()
+        {
+            var action = new InteractionAction("Turn On", null, Nothing);
+
+            Assert.AreEqual(InteractionButton.Primary, action.Button);
+        }
+
+        [Test]
+        public void IndexOf_FindsFirstActionOfButton()
+        {
+            var actions = new List<InteractionAction>
+            {
+                new InteractionAction("Pick Up", null, Nothing, true, InteractionButton.Interact),
+                new InteractionAction("Connect", null, Nothing),
+                new InteractionAction("Place", null, Nothing),
+            };
+
+            Assert.AreEqual(1, PlayerInteraction.IndexOf(actions, InteractionButton.Primary));
+            Assert.AreEqual(0, PlayerInteraction.IndexOf(actions, InteractionButton.Interact));
+        }
+
+        [Test]
+        public void IndexOf_NoActionForButton_ReturnsMinusOne()
+        {
+            var actions = new List<InteractionAction> { new InteractionAction("Connect", null, Nothing) };
+
+            Assert.AreEqual(-1, PlayerInteraction.IndexOf(actions, InteractionButton.Interact));
+        }
     }
 }

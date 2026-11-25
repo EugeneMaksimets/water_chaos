@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using WaterChaos.Environment;
 using WaterChaos.Player;
 using WaterChaos.Rooms;
 using WaterChaos.UI;
@@ -191,7 +192,7 @@ namespace WaterChaos.EditorTools.MiniVillage
             GameObject ground = FindRoot(scene, "Ground");
             if (ground != null)
             {
-                ground.GetComponent<Renderer>().sharedMaterial = VillagePalette.Get("Grass");
+                SetupGround(ground);
                 Move(ground, terrain, null);
                 MarkStatic(ground);
             }
@@ -215,6 +216,153 @@ namespace WaterChaos.EditorTools.MiniVillage
             Hill(hills, "Mound_West", hillMesh, materials, new Vector3(-50f, -1.2f, 24f), new Vector3(9f, 3f, 8f), 20f);
             Hill(hills, "Mound_SouthWest", hillMesh, materials, new Vector3(-48f, -1.2f, -30f), new Vector3(8f, 2.8f, 9f), 70f);
             Hill(hills, "Mound_East", hillMesh, materials, new Vector3(58f, -1.2f, -30f), new Vector3(10f, 3.2f, 8f), 0f);
+        }
+
+        /// <summary>
+        /// The scene's ground plane becomes a flat 227 m square with a hole for the manhole of the underground
+        /// tank (same size and material, still flammable); its collider uses the same mesh.
+        /// </summary>
+        private static void SetupGround(GameObject ground)
+        {
+            const float half = 113.65f;
+            Rect hole = ManholeHole;
+            var model = new LowPolyMesh();
+            void Piece(float x0, float x1, float z0, float z1) =>
+                model.Box(new Vector3((x0 + x1) * 0.5f, -0.01f, (z0 + z1) * 0.5f), new Vector3(x1 - x0, 0.02f, z1 - z0), "Grass");
+
+            Piece(-half, half, -half, hole.yMin);
+            Piece(-half, half, hole.yMax, half);
+            Piece(-half, hole.xMin, hole.yMin, hole.yMax);
+            Piece(hole.xMax, half, hole.yMin, hole.yMax);
+
+            Mesh mesh = VillageAssets.SaveMesh(model, "Ground", "Ground", out string[] materials);
+            ground.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            ground.transform.localScale = Vector3.one;
+            ground.GetComponent<MeshFilter>().sharedMesh = mesh;
+            ground.GetComponent<Renderer>().sharedMaterials = VillagePalette.Get(materials);
+            if (ground.TryGetComponent(out MeshCollider collider))
+                collider.sharedMesh = mesh;
+        }
+
+        // ───────────── Underground tank by the gas station ─────────────
+
+        // Inner chamber 4 × 4 m around this point, by the road south of the main street (next to the hydrant);
+        // floor at -2.6 m, ceiling slab just under the ground. Everything below is placed relative to it.
+        private static readonly Vector3 TankCenter = new Vector3(8f, 0f, -10f);
+        private const float TankFloor = -2.6f;
+        private const float TankWaterDepth = 2.3f;
+        // Manhole: 1.4 m square against the north wall (the road side), where the ladder is.
+        private static readonly Rect ManholeHole = new Rect(TankCenter.x - 0.7f, TankCenter.z + 0.6f, 1.4f, 1.4f);
+
+        /// <summary>
+        /// Empty underground tank (a water body transfer hoses can fill) in a concrete chamber under a manhole,
+        /// with a ladder fixed to the wall so the player can climb down and back up.
+        /// </summary>
+        private static void BuildUndergroundTank(Transform waterSources, Transform structures, Renderer poolWater)
+        {
+            const float wall = 0.3f;
+            const float ceilingBottom = -0.26f;
+            float x0 = TankCenter.x - 2f, x1 = TankCenter.x + 2f, z0 = TankCenter.z - 2f, z1 = TankCenter.z + 2f;
+            float wallBottom = TankFloor - wall;
+            float wallHeight = -0.01f - wallBottom;
+            float wallY = wallBottom + wallHeight * 0.5f;
+            Rect hole = ManholeHole;
+
+            var m = new PropModel();
+            m.Part(new Vector3(TankCenter.x, TankFloor - wall * 0.5f, TankCenter.z), new Vector3(4f + wall * 2f, wall, 4f + wall * 2f), "Concrete", true);
+            m.Part(new Vector3(TankCenter.x, wallY, z1 + wall * 0.5f), new Vector3(4f + wall * 2f, wallHeight, wall), "Stone", true);
+            m.Part(new Vector3(TankCenter.x, wallY, z0 - wall * 0.5f), new Vector3(4f + wall * 2f, wallHeight, wall), "Stone", true);
+            m.Part(new Vector3(x0 - wall * 0.5f, wallY, TankCenter.z), new Vector3(wall, wallHeight, 4f), "Stone", true);
+            m.Part(new Vector3(x1 + wall * 0.5f, wallY, TankCenter.z), new Vector3(wall, wallHeight, 4f), "Stone", true);
+
+            // Ceiling slab around the manhole shaft.
+            float ceilingY = (ceilingBottom - 0.01f) * 0.5f;
+            float ceilingHeight = -0.01f - ceilingBottom;
+            void Ceiling(float ax, float bx, float az, float bz) =>
+                m.Part(new Vector3((ax + bx) * 0.5f, ceilingY, (az + bz) * 0.5f), new Vector3(bx - ax, ceilingHeight, bz - az), "Concrete", true);
+            Ceiling(x0, x1, z0, hole.yMin);
+            Ceiling(x0, hole.xMin, hole.yMin, hole.yMax);
+            Ceiling(hole.xMax, x1, hole.yMin, hole.yMax);
+
+            // Manhole frame on the surface and the lifted-off cover beside it.
+            const float frame = 0.2f;
+            void Frame(float ax, float bx, float az, float bz) =>
+                m.Part(new Vector3((ax + bx) * 0.5f, 0.03f, (az + bz) * 0.5f), new Vector3(bx - ax, 0.06f, bz - az), "Coping", true);
+            Frame(hole.xMin - frame, hole.xMax + frame, hole.yMax, hole.yMax + frame);
+            Frame(hole.xMin - frame, hole.xMax + frame, hole.yMin - frame, hole.yMin);
+            Frame(hole.xMin - frame, hole.xMin, hole.yMin, hole.yMax);
+            Frame(hole.xMax, hole.xMax + frame, hole.yMin, hole.yMax);
+            m.Mesh.Cylinder(new Vector3(hole.xMax + 1f, 0f, hole.center.y), 0.75f, 0.75f, 0.05f, 8, "MetalDark", true, 22.5f * Mathf.Deg2Rad);
+            m.Collider(new Vector3(hole.xMax + 1f, 0.025f, hole.center.y), new Vector3(1.4f, 0.05f, 1.4f));
+
+            // Ladder fixed into the north wall, its rails rising above the ground as grab handles.
+            float ladderZ = z1 - 0.12f;
+            float ladderX = hole.center.x;
+            foreach (float side in new[] { -0.35f, 0.35f })
+            {
+                m.Part(new Vector3(ladderX + side, (TankFloor + 0.9f) * 0.5f, ladderZ), new Vector3(0.05f, 0.9f - TankFloor, 0.05f), "Metal");
+                foreach (float y in new[] { TankFloor + 0.3f, -0.6f })
+                    m.Part(new Vector3(ladderX + side, y, ladderZ + 0.07f), new Vector3(0.04f, 0.04f, 0.14f), "Metal");
+            }
+            for (float y = TankFloor + 0.3f; y < 0f; y += 0.3f)
+                m.Part(new Vector3(ladderX, y, ladderZ), new Vector3(0.7f, 0.04f, 0.04f), "Metal");
+            m.Part(new Vector3(ladderX, 0.9f, ladderZ), new Vector3(0.75f, 0.05f, 0.05f), "Metal");
+
+            GameObject chamber = Bake(m, "UndergroundTank_Chamber", structures);
+
+            var zoneObject = new GameObject("LadderZone") { layer = 2 };
+            zoneObject.transform.SetParent(chamber.transform, false);
+            zoneObject.transform.position = new Vector3(ladderX, (TankFloor + 1.3f) * 0.5f, z1 - 0.5f);
+            zoneObject.AddComponent<BoxCollider>().size = new Vector3(0.9f, 1.3f - TankFloor, 1f);
+            zoneObject.AddComponent<Ladder>();
+
+            var lightObject = new GameObject("Tank Light");
+            lightObject.transform.SetParent(chamber.transform, false);
+            lightObject.transform.position = new Vector3(TankCenter.x, -0.6f, TankCenter.z - 0.8f);
+            var light = lightObject.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.range = 6f;
+            light.intensity = 1.2f;
+            light.color = new Color(0.8f, 0.9f, 1f);
+            light.shadows = LightShadows.None;
+
+            // The tank itself: an empty water body on the Water layer, like the pools.
+            var tank = new GameObject("UndergroundTank");
+            tank.transform.SetParent(waterSources, false);
+            tank.transform.position = new Vector3(TankCenter.x, TankFloor, TankCenter.z);
+
+            var volume = new GameObject("Water Volume") { layer = 4 };
+            volume.transform.SetParent(tank.transform, false);
+            var box = volume.AddComponent<BoxCollider>();
+            box.isTrigger = true;
+            box.center = new Vector3(0f, TankWaterDepth * 0.5f, 0f);
+            box.size = new Vector3(4f, TankWaterDepth, 4f);
+            var reservoir = volume.AddComponent<WaterReservoirComponent>();
+            SetFloat(reservoir, "_capacity", 4f * 4f * TankWaterDepth * 1000f);
+            SetFloat(reservoir, "_initialVolume", 0f);
+            volume.AddComponent<WaterBody>();
+
+            var water = new GameObject("Water");
+            water.transform.SetParent(tank.transform, false);
+            water.transform.localScale = new Vector3(4f, 0.02f, 4f);
+            if (poolWater != null)
+            {
+                water.AddComponent<MeshFilter>().sharedMesh = poolWater.GetComponent<MeshFilter>().sharedMesh;
+                water.AddComponent<MeshRenderer>().sharedMaterials = poolWater.sharedMaterials;
+            }
+
+            var level = tank.AddComponent<ReservoirLevelView>();
+            var data = new SerializedObject(level);
+            data.FindProperty("_reservoir").objectReferenceValue = reservoir;
+            data.FindProperty("_water").objectReferenceValue = water.transform;
+            data.FindProperty("_bottom").floatValue = 0f;
+            data.FindProperty("_fullHeight").floatValue = TankWaterDepth;
+            data.ApplyModifiedPropertiesWithoutUndo();
+
+            var target = tank.AddComponent<WaterReservoirTarget>();
+            var targetData = new SerializedObject(target);
+            targetData.FindProperty("_reservoir").objectReferenceValue = reservoir;
+            targetData.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void Hill(Transform parent, string name, Mesh mesh, Material[] materials, Vector3 position, Vector3 scale, float yaw)
@@ -466,7 +614,7 @@ namespace WaterChaos.EditorTools.MiniVillage
                 new Vector2(-36f, 30f), new Vector2(-24.5f, 32f), new Vector2(-20f, 28f), new Vector2(-9.5f, 30f), new Vector2(-5.5f, 24f),
                 new Vector2(6.5f, 30f), new Vector2(-36f, 9.5f), new Vector2(-2.4f, 8.8f), new Vector2(-36f, -30f), new Vector2(-24.5f, -32f),
                 new Vector2(-19f, -14f), new Vector2(-18.5f, -29f), new Vector2(-1f, -31f), new Vector2(5f, -22f), new Vector2(8f, -34f),
-                new Vector2(9.5f, -10f), new Vector2(7f, 36f), new Vector2(7f, 42f), new Vector2(52.5f, 12f), new Vector2(52.5f, 22f),
+                new Vector2(10.8f, -15f), new Vector2(7f, 36f), new Vector2(7f, 42f), new Vector2(52.5f, 12f), new Vector2(52.5f, 22f),
                 new Vector2(52.5f, 32f), new Vector2(25f, 41f), new Vector2(35f, 41.5f), new Vector2(45f, 41f), new Vector2(-45f, 10f),
                 new Vector2(-46f, -12f), new Vector2(-44f, 26f), new Vector2(-46f, 40f), new Vector2(-45f, -40f), new Vector2(60f, -20f),
                 new Vector2(61f, 20f), new Vector2(60f, 40f), new Vector2(-30f, 48f), new Vector2(-10f, 50f), new Vector2(10f, 49f),
@@ -652,6 +800,9 @@ namespace WaterChaos.EditorTools.MiniVillage
             BuildRectPool(FindRoot(scene, "Reservoir B"), waterSources);
             BuildOctagonPool(FindRoot(scene, "Reservoir B (1)"), waterSources);
             BuildPond(FindRoot(scene, "Lake"), waterSources);
+            Transform poolWater = waterSources.Find("Pool_Rectangular/Water");
+            BuildUndergroundTank(waterSources, GameObject.Find("MiniVillage/GasStation").transform,
+                poolWater != null ? poolWater.GetComponent<Renderer>() : null);
             FurnishPoolArea(poolArea);
 
             PlaceExisting(FindRoot(scene, "Pump"), pumps, new Vector3(23.6f, 0f, 22.2f), Paving);

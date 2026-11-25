@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using WaterChaos.Environment;
 
 namespace WaterChaos.Player
 {
@@ -18,6 +19,7 @@ namespace WaterChaos.Player
         [Tooltip("Optional: stops moving farther while the held hose is fully extended.")]
         [SerializeField] private PlayerHoseConnector _hoseConnector;
 
+        private readonly Collider[] _ladderHits = new Collider[8];
         private CharacterController _characterController;
         private Vector3 _velocity;
 
@@ -52,6 +54,12 @@ namespace WaterChaos.Player
 
             input = input.normalized;
 
+            if (TryGetLadder(out Ladder ladder))
+            {
+                Climb(input, ladder);
+                return;
+            }
+
             Vector3 direction = _cameraTransform.forward * input.y
                               + _cameraTransform.right * input.x;
 
@@ -84,6 +92,37 @@ namespace WaterChaos.Player
                 step = _hoseConnector.ConstrainMove(step);
 
             _characterController.Move(step);
+        }
+
+        /// <summary>On a ladder: no gravity, forward/back climbs (see <see cref="LadderMotion"/>).</summary>
+        private void Climb(Vector2 input, Ladder ladder)
+        {
+            _velocity = Vector3.zero;
+            Vector3 step = LadderMotion.Velocity(input, _cameraTransform.forward, _cameraTransform.right,
+                ladder.ClimbSpeed, ladder.MoveSpeed) * Time.deltaTime;
+
+            if (_hoseConnector != null)
+                step = _hoseConnector.ConstrainMove(step);
+
+            _characterController.Move(step);
+        }
+
+        /// <summary>The ladder whose climb zone the player's body is in, if any.</summary>
+        private bool TryGetLadder(out Ladder ladder)
+        {
+            Vector3 center = transform.TransformPoint(_characterController.center);
+            float half = Mathf.Max(0f, _characterController.height * 0.5f - _characterController.radius);
+            int count = Physics.OverlapCapsuleNonAlloc(center + Vector3.up * half, center - Vector3.up * half,
+                _characterController.radius, _ladderHits, ~0, QueryTriggerInteraction.Collide);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (_ladderHits[i].TryGetComponent(out ladder))
+                    return true;
+            }
+
+            ladder = null;
+            return false;
         }
     }
 }

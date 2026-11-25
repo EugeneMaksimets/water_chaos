@@ -108,6 +108,18 @@ namespace WaterChaos.Interaction
             return true;
         }
 
+        /// <summary>Index of the first action performed by <paramref name="button"/>; -1 if there is none.</summary>
+        public static int IndexOf(IReadOnlyList<InteractionAction> actions, InteractionButton button)
+        {
+            for (int i = 0; i < actions.Count; i++)
+            {
+                if (actions[i].Button == button)
+                    return i;
+            }
+
+            return -1;
+        }
+
         /// <summary>The object's <see cref="IDisplayName"/> (also on a parent, e.g. a hose end), else its cleaned scene name.</summary>
         private static string GetName(Transform focus)
         {

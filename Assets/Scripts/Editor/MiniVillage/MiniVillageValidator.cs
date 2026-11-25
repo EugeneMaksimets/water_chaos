@@ -60,7 +60,7 @@ namespace WaterChaos.EditorTools.MiniVillage
 
             foreach (string group in new[] { "MiniVillage", "Gameplay", "Lighting", "UI" })
                 Expect(all.Any(g => g.name == group && g.transform.parent == null), $"Root group {group}");
-            foreach (string name in new[] { "Player", "Pool_Rectangular", "Pool_Octagonal", "Pond", "Pump", "Pump (1)", "Nozzle", "FireHydrant_Red", "Canvas", "EventSystem", "FireTruck" })
+            foreach (string name in new[] { "Player", "Pool_Rectangular", "Pool_Octagonal", "Pond", "Pump", "Pump (1)", "Nozzle", "FireHydrant_Red", "Canvas", "EventSystem", "FireTruck", "UndergroundTank", "LadderZone" })
                 Expect(all.Any(g => g.name == name), $"Gameplay object {name}");
         }
 

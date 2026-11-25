@@ -5,13 +5,13 @@ namespace WaterChaos.Player
     /// <summary>Player buttons read by <see cref="PlayerInputHandler"/>.</summary>
     public enum PlayerControl
     {
-        /// <summary>Open or close the interaction menu.</summary>
+        /// <summary>Pick up the item under the crosshair; otherwise open or close the interaction menu.</summary>
         Interact,
 
         /// <summary>Close an open menu.</summary>
         Cancel,
 
-        /// <summary>Main action: the first interaction action (Pick Up, Water On/Off...). Never drops an item.</summary>
+        /// <summary>Main action: the first primary-button interaction action (Connect, Water On/Off...). Never picks up or drops an item.</summary>
         Primary,
 
         /// <summary>Put the held item down in front of the player. The only control that takes an item out of the hands.</summary>

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using WaterChaos.Interaction;
@@ -7,7 +8,8 @@ namespace WaterChaos.UI
 {
     /// <summary>
     /// The only interaction UI. While actions are available, a primary-button prompt (left mouse button) shows the
-    /// first action, which the primary button performs directly; with more than one action an "E" prompt offers the menu.
+    /// first primary-button action, which the primary button performs directly. Actions marked for E (Pick Up) are
+    /// performed by E directly and shown on the "E" prompt; without one, the "E" prompt offers the menu.
     /// E opens a half-circle menu with every action <see cref="PlayerInteraction"/> offers right now.
     /// The mouse direction from the screen center highlights one, a click performs it and closes the menu.
     /// E again or Escape closes it; it also closes when the target changes or nothing is left to do.
@@ -60,9 +62,8 @@ namespace WaterChaos.UI
         private int _count;
         private int _hovered = -1;
         private Transform _openFocus;
-        private string _primaryText;
-        private string _primaryLabel;
-        private string _primaryTitle;
+        private readonly PromptText _primaryText = new PromptText();
+        private readonly PromptText _interactText = new PromptText();
 
         public bool IsOpen { get; private set; }
 
@@ -127,63 +128,80 @@ namespace WaterChaos.UI
             SetHovered(RadialMenuLayout.GetIndex(offset, _count, _deadZone));
         }
 
-        /// <summary>Primary prompt with the first action; the E prompt only when the menu has more to offer.</summary>
+        /// <summary>
+        /// Primary prompt with the first primary-button action; the E prompt with the E action (Pick Up)
+        /// when there is one, else "More" when the menu has more to offer.
+        /// </summary>
         private void UpdatePrompt()
         {
-            int count = _interaction.Actions.Count;
-            if (count == 0)
+            IReadOnlyList<InteractionAction> actions = _interaction.Actions;
+            if (actions.Count == 0)
             {
                 _prompt.Hide();
                 _menuPrompt.Hide();
                 return;
             }
+
+            int primary = PlayerInteraction.IndexOf(actions, InteractionButton.Primary);
+            int interact = PlayerInteraction.IndexOf(actions, InteractionButton.Interact);
 
             // A learned action (e.g. "Water On/Off" after first use) still works on the primary button, without its prompt.
-            bool showPrimary = _interaction.Actions[0].ShowPrompt;
-            bool hasMore = count > 1;
+            bool showPrimary = primary >= 0 && actions[primary].ShowPrompt;
+            bool showInteract = interact >= 0 && actions[interact].ShowPrompt;
+            bool showMenu = showInteract || (interact < 0 && actions.Count > 1);
 
             if (showPrimary)
-                _prompt.Show(GetPrimaryText(), hasMore ? -PromptPairX : 0f, 1f);
+                _prompt.Show(GetText(actions[primary], _primaryText), showMenu ? -PromptPairX : 0f, 1f);
             else
                 _prompt.Hide();
 
-            if (hasMore)
-                _menuPrompt.Show(MenuText, showPrimary ? PromptPairX : 0f, 1f);
-            else
-                _menuPrompt.Hide();
-        }
-
-        /// <summary>"Pick Up — Nozzle": the first action and, when there is one, the object it is about.</summary>
-        private string GetPrimaryText()
-        {
-            InteractionAction primary = _interaction.Actions[0];
-            if (_interaction.Focus == null || _interaction.Title == primary.Label)
-                return primary.Label;
-
-            if (_primaryText == null || _primaryLabel != primary.Label || _primaryTitle != _interaction.Title)
+            if (showMenu)
             {
-                _primaryLabel = primary.Label;
-                _primaryTitle = _interaction.Title;
-                _primaryText = $"{_primaryLabel} — {_primaryTitle}";
+                string text = showInteract ? GetText(actions[interact], _interactText) : MenuText;
+                _menuPrompt.Show(text, showPrimary ? PromptPairX : 0f, 1f);
             }
-
-            return _primaryText;
+            else
+            {
+                _menuPrompt.Hide();
+            }
         }
 
-        /// <summary>Menu closed: the primary button performs the first action.</summary>
+        /// <summary>"Connect — Nozzle": the action and, when there is one, the object it is about.</summary>
+        private string GetText(InteractionAction action, PromptText cache)
+        {
+            if (_interaction.Focus == null || _interaction.Title == action.Label)
+                return action.Label;
+
+            return cache.Get(action.Label, _interaction.Title);
+        }
+
+        /// <summary>Menu closed: the primary button performs the first primary-button action (never Pick Up).</summary>
         private void OnPrimaryPressed()
         {
-            if (IsOpen || !_interaction.isActiveAndEnabled || _interaction.Actions.Count == 0)
+            if (IsOpen || !_interaction.isActiveAndEnabled)
                 return;
 
-            _interaction.Actions[0].Execute();
+            int index = PlayerInteraction.IndexOf(_interaction.Actions, InteractionButton.Primary);
+            if (index >= 0)
+                _interaction.Actions[index].Execute();
         }
 
+        /// <summary>E closes the open menu; otherwise performs the E action (Pick Up) if there is one, else opens the menu.</summary>
         private void OnInteractPressed()
         {
             if (IsOpen)
+            {
                 Close();
-            else if (_interaction.isActiveAndEnabled && _interaction.Actions.Count > 0)
+                return;
+            }
+
+            if (!_interaction.isActiveAndEnabled || _interaction.Actions.Count == 0)
+                return;
+
+            int index = PlayerInteraction.IndexOf(_interaction.Actions, InteractionButton.Interact);
+            if (index >= 0)
+                _interaction.Actions[index].Execute();
+            else
                 Open();
         }
 
@@ -337,6 +355,26 @@ namespace WaterChaos.UI
 
             _prompt = HudWidgets.CreateKeyPrompt("Primary Prompt", _canvas.transform, PlayerControl.Primary, new Vector2(0f, PromptY));
             _menuPrompt = HudWidgets.CreateKeyPrompt("Menu Prompt", _canvas.transform, PlayerControl.Interact, new Vector2(PromptPairX, PromptY));
+        }
+
+        /// <summary>"Label — Title" prompt text, built again only when the label or title changes (no garbage every frame).</summary>
+        private sealed class PromptText
+        {
+            private string _label;
+            private string _title;
+            private string _text;
+
+            public string Get(string label, string title)
+            {
+                if (_text == null || _label != label || _title != title)
+                {
+                    _label = label;
+                    _title = title;
+                    _text = $"{label} — {title}";
+                }
+
+                return _text;
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ using WaterChaos.Items;
 
 namespace WaterChaos.Player
 {
-    /// <summary>Offers "Pick Up" in the interaction menu for the item under the crosshair; picking moves it into the inventory.</summary>
+    /// <summary>Offers "Pick Up" on the interact key (E) for the item under the crosshair; picking moves it into the inventory.</summary>
     public sealed class PlayerItemInteractor : MonoBehaviour, IInteractionProvider
     {
         private const string PickUpText = "Pick Up";
@@ -56,7 +56,7 @@ namespace WaterChaos.Player
         public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
         {
             if (Target is Component item)
-                actions.Add(new InteractionAction(PickUpText, item, _pickUp));
+                actions.Add(new InteractionAction(PickUpText, item, _pickUp, true, InteractionButton.Interact));
         }
 
         private void PickUpTarget()
