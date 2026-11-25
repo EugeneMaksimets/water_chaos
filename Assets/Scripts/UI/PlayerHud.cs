@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WaterChaos.FireTruck;
 using WaterChaos.Player;
 using WaterChaos.Pump;
 using WaterChaos.Water;
@@ -116,7 +117,7 @@ namespace WaterChaos.UI
         }
 
         /// <summary>
-        /// 0 when detached; the tank level for a pump (0 without a tank);
+        /// 0 when detached; the tank level for a pump (0 without a tank) and for the fire truck;
         /// 1 for the hydrant, whose network never runs dry.
         /// </summary>
         private static float GetWaterRatio(WaterConnectionPoint connected)
@@ -126,6 +127,9 @@ namespace WaterChaos.UI
 
             if (connected.Source is PumpController pump)
                 return pump.Reservoir != null ? pump.Reservoir.FillRatio : 0f;
+
+            if (connected.Source is FireTruckController truck)
+                return truck.Reservoir != null ? truck.Reservoir.FillRatio : 0f;
 
             return 1f;
         }

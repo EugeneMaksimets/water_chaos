@@ -445,7 +445,8 @@ namespace WaterChaos.EditorTools.MiniVillage
 
                 model.Mesh.SetTransform(center, rotation);
                 model.Mesh.Box(Vector3.zero, size, spec.Roof);
-                model.Mesh.Box(new Vector3(0f, -0.05f, length * 0.5f - 0.04f), new Vector3(w + 0.72f, 0.18f, 0.08f), "Trim");
+                // Fascia board: its face stands 1.5 cm in front of the slab end (a shared plane would flicker).
+                model.Mesh.Box(new Vector3(0f, -0.05f, length * 0.5f - 0.025f), new Vector3(w + 0.74f, 0.18f, 0.08f), "Trim");
                 foreach (float end in new[] { -1f, 1f })
                 {
                     float x = end * (w * 0.5f + 0.02f);
@@ -474,11 +475,12 @@ namespace WaterChaos.EditorTools.MiniVillage
             foreach (float side in new[] { -1f, 1f })
             {
                 model.Part(new Vector3(side * (w * 0.5f + 0.1f), wallTop + 0.4f, d * 0.5f), new Vector3(0.2f, 0.4f, d + 0.3f), "Trim");
-                model.Part(new Vector3(0f, wallTop + 0.4f, d * 0.5f + side * (d * 0.5f + 0.1f)), new Vector3(w + 0.4f, 0.4f, 0.2f), "Trim");
+                // Slightly shorter than the side parapets, so their end faces do not share a plane.
+                model.Part(new Vector3(0f, wallTop + 0.4f, d * 0.5f + side * (d * 0.5f + 0.1f)), new Vector3(w + 0.36f, 0.4f, 0.2f), "Trim");
             }
 
             if (!string.IsNullOrEmpty(spec.Sign))
-                model.Part(new Vector3(0f, wallTop + 0.15f, -0.15f), new Vector3(w + 0.4f, 1.0f, 0.25f), "GasRed");
+                model.Part(new Vector3(0f, wallTop + 0.15f, -0.15f), new Vector3(w + 0.44f, 1.0f, 0.25f), "GasRed");
         }
 
         private static void BuildPorch(PropModel model, HouseSpec spec)
@@ -493,7 +495,7 @@ namespace WaterChaos.EditorTools.MiniVillage
                     foreach (float x in columns)
                         model.Part(new Vector3(x, FloorTop + 1.3f, -2.15f), new Vector3(0.22f, 2.6f, 0.22f), "Trim", true);
                     model.Part(new Vector3(0f, 2.82f, -1.25f), new Vector3(spec.Width + 0.3f, 0.14f, 2.75f), spec.Roof, true);
-                    model.Mesh.Box(new Vector3(0f, 2.74f, -2.6f), new Vector3(spec.Width + 0.32f, 0.22f, 0.06f), "Trim");
+                    model.Mesh.Box(new Vector3(0f, 2.74f, -2.64f), new Vector3(spec.Width + 0.34f, 0.22f, 0.06f), "Trim");
                     Railing(model, columns[0], columns[1], -2.15f);
                     Railing(model, columns[2], columns[3], -2.15f);
                     break;
@@ -510,7 +512,7 @@ namespace WaterChaos.EditorTools.MiniVillage
                     foreach (float x in new[] { -1.9f, 1.9f })
                         model.Part(new Vector3(x, FloorTop + columnHeight * 0.5f, -2f), new Vector3(0.2f, columnHeight, 0.2f), "Trim", true);
                     model.Part(new Vector3(0f, roofTop - 0.07f, (roofFront + roofBack) * 0.5f), new Vector3(4.6f, 0.14f, roofBack - roofFront), spec.Roof, true);
-                    model.Mesh.Box(new Vector3(0f, roofTop - 0.15f, roofFront + 0.02f), new Vector3(4.62f, 0.22f, 0.06f), "Trim");
+                    model.Mesh.Box(new Vector3(0f, roofTop - 0.15f, roofFront - 0.02f), new Vector3(4.64f, 0.22f, 0.06f), "Trim");
                     break;
                 }
                 case PorchKind.Canopy:

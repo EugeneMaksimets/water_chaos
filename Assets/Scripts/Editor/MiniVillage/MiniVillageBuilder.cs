@@ -54,6 +54,7 @@ namespace WaterChaos.EditorTools.MiniVillage
             Dictionary<string, HouseInfo> houses = BuildBuildingPrefabs();
             GameObject canopy = VillageBuildings.BuildCanopy();
             GameObject priceSign = VillageBuildings.BuildPriceSign();
+            GameObject fireTruck = VillageFireTruck.Build();
             AssetDatabase.SaveAssets();
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
@@ -93,7 +94,7 @@ namespace WaterChaos.EditorTools.MiniVillage
             BuildTrees(decoration);
             BuildDecor(decoration);
             FurnishInteriors(houses, placed);
-            SetupGameplay(scene, gameplay, poolArea, houses, placed);
+            SetupGameplay(scene, gameplay, poolArea, houses, placed, fireTruck);
             SetupLighting(scene, lighting);
             Move(FindRoot(scene, "Canvas"), ui, null);
             Move(FindRoot(scene, "EventSystem"), ui, null);
@@ -637,7 +638,7 @@ namespace WaterChaos.EditorTools.MiniVillage
         // ───────────── Gameplay ─────────────
 
         private static void SetupGameplay(Scene scene, Transform gameplay, Transform poolArea,
-            Dictionary<string, HouseInfo> houses, Dictionary<string, Transform> placed)
+            Dictionary<string, HouseInfo> houses, Dictionary<string, Transform> placed, GameObject fireTruck)
         {
             Transform waterSources = Group(gameplay, "WaterSources");
             Transform pumps = Group(gameplay, "Pump");
@@ -654,13 +655,22 @@ namespace WaterChaos.EditorTools.MiniVillage
             FurnishPoolArea(poolArea);
 
             PlaceExisting(FindRoot(scene, "Pump"), pumps, new Vector3(23.6f, 0f, 22.2f), Paving);
-            PlaceExisting(FindRoot(scene, "Pump (1)"), pumps, new Vector3(-10f, 0f, -18.7f), 0.62f);
             GameObject[] transferHoses = scene.GetRootGameObjects().Where(g => g.name.StartsWith("TransferHose_20m")).ToArray();
             if (transferHoses.Length > 0) PlaceExisting(transferHoses[0], hoses, new Vector3(23.4f, 0f, 24.4f), Paving);
-            if (transferHoses.Length > 1) PlaceExisting(transferHoses[1], hoses, new Vector3(-12f, 0f, -15.4f), 0f);
-            PlaceExisting(FindRoot(scene, "CoiledFireHoseYellow"), hoses, new Vector3(10f, 0f, -4.9f), Walk);
             PlaceExisting(FindRoot(scene, "FireHydrant_Red"), hydrants, new Vector3(8.6f, 0f, -5.4f), Walk);
-            PlaceExisting(FindRoot(scene, "Nozzle"), nozzles, new Vector3(7.4f, 0f, -4.9f), Walk);
+
+            // Fire truck by the spawn point, its left side (outlet, two compartments) towards the sidewalk.
+            // The second pump, a transfer hose and the nozzle are stowed in its compartments, with traffic cones
+            // and spares. (SampleScene's CoiledFireHoseYellow is inactive there, so it is left where it is.)
+            Transform truck = Instance(fireTruck, waterSources, new Vector3(3f, Road, -1.75f), -90f).transform;
+            Stow(FindRoot(scene, "Pump (1)"), pumps, truck, VillageFireTruck.Compartments[0], 0f, false);
+            Stow(FindRoot(scene, "Nozzle"), nozzles, truck, VillageFireTruck.Compartments[1], -0.4f, true);
+            foreach (float along in new[] { 0.35f, 0.85f })
+                Spawn("TrafficCone", _interactive, truck.TransformPoint(VillageFireTruck.Compartments[1].FloorCenter + new Vector3(0f, 0f, along)), 0f);
+            if (transferHoses.Length > 1) Stow(transferHoses[1], hoses, truck, VillageFireTruck.Compartments[2], 0f, false);
+            VillageFireTruck.Compartment spare = VillageFireTruck.Compartments[3];
+            Spawn("GasCanister", _interactive, truck.TransformPoint(spare.FloorCenter + new Vector3(0f, 0f, -0.4f)), -90f);
+            Spawn("Bucket_Red", _interactive, truck.TransformPoint(spare.FloorCenter + new Vector3(0f, 0f, 0.45f)), 0f);
 
             // Fires: the scene's fire in the bungalow living room, a second one in the beige house kitchen.
             Transform bungalow = placed["Bungalow"];
@@ -1110,6 +1120,34 @@ namespace WaterChaos.EditorTools.MiniVillage
         }
 
         /// <summary>Moves an existing scene object and sets it on the surface at <paramref name="surface"/> by its render bounds.</summary>
+        /// <summary>
+        /// Puts an existing item into a truck compartment (on its floor or shelf), turned so that it fits
+        /// the compartment depth; <paramref name="along"/> shifts it along the compartment, in meters (m).
+        /// </summary>
+        private static void Stow(GameObject item, Transform parent, Transform truck, VillageFireTruck.Compartment compartment, float along, bool onShelf)
+        {
+            if (item == null)
+                return;
+
+            Vector3 local = compartment.FloorCenter + new Vector3(0f, 0f, along);
+            float surface = truck.TransformPoint(new Vector3(0f, onShelf ? compartment.Shelf + 0.02f : compartment.Floor, 0f)).y;
+            PlaceExisting(item, parent, truck.TransformPoint(local), surface);
+
+            // Too deep for the compartment (0.8 m): turn it a quarter round.
+            Bounds bounds = WorldBounds(item);
+            Vector3 across = truck.right;
+            float depth = Mathf.Abs(bounds.size.x * across.x) + Mathf.Abs(bounds.size.z * across.z);
+            if (depth > 0.72f)
+            {
+                item.transform.Rotate(0f, 90f, 0f, Space.World);
+                PlaceExisting(item, parent, truck.TransformPoint(local), surface);
+            }
+
+            // Centre the item's bounds in the compartment (pivots are not always in the middle).
+            Vector3 offset = truck.TransformPoint(local) - WorldBounds(item).center;
+            item.transform.position += new Vector3(offset.x, 0f, offset.z);
+        }
+
         private static void PlaceExisting(GameObject go, Transform parent, Vector3 position, float surface)
         {
             if (go == null)

@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WaterChaos.FireTruck;
 using WaterChaos.Interaction;
 using WaterChaos.Rooms;
 using WaterChaos.Water;
@@ -59,7 +60,7 @@ namespace WaterChaos.EditorTools.MiniVillage
 
             foreach (string group in new[] { "MiniVillage", "Gameplay", "Lighting", "UI" })
                 Expect(all.Any(g => g.name == group && g.transform.parent == null), $"Root group {group}");
-            foreach (string name in new[] { "Player", "Pool_Rectangular", "Pool_Octagonal", "Pond", "Pump", "Pump (1)", "Nozzle", "FireHydrant_Red", "Canvas", "EventSystem" })
+            foreach (string name in new[] { "Player", "Pool_Rectangular", "Pool_Octagonal", "Pond", "Pump", "Pump (1)", "Nozzle", "FireHydrant_Red", "Canvas", "EventSystem", "FireTruck" })
                 Expect(all.Any(g => g.name == name), $"Gameplay object {name}");
         }
 
@@ -144,6 +145,7 @@ namespace WaterChaos.EditorTools.MiniVillage
 
                 TestPushes(all);
                 TestGlass(all);
+                TestFireTruck(all);
             }
             finally
             {
@@ -267,6 +269,46 @@ namespace WaterChaos.EditorTools.MiniVillage
             int fallen = shards.Where((s, i) => (s.position - start[i]).magnitude > 0.2f).Count();
             Expect(active == shards.Length, $"All {shards.Length} shards released with physics: {active}");
             Expect(fallen >= shards.Length / 2, $"Shards fly/fall away: {fallen} of {shards.Length} moved");
+        }
+
+        private static void TestFireTruck(GameObject[] all)
+        {
+            FireTruckController truck = all.Select(g => g.GetComponent<FireTruckController>()).FirstOrDefault(t => t != null);
+            if (truck == null)
+            {
+                Expect(false, "Fire truck found");
+                return;
+            }
+
+            WaterReservoirComponent tank = truck.GetComponent<WaterReservoirComponent>();
+            CallAwake(tank);
+            CallAwake(truck);
+            WaterConnectionPoint outlet = truck.GetComponentInChildren<WaterConnectionPoint>();
+            CallAwake(outlet);
+            Expect(outlet != null && ReferenceEquals(outlet.Source, truck), "Truck outlet feeds the nozzle hose from the truck");
+
+            float before = truck.Reservoir.Volume;
+            truck.Toggle();
+            MethodInfo fixedUpdate = typeof(FireTruckController).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+            for (int i = 0; i < 100; i++)
+                fixedUpdate.Invoke(truck, null);
+            float seconds = 100 * Time.fixedDeltaTime;
+            Info($"Truck: tank {before:0} L, after {seconds:0.0} s open {truck.Reservoir.Volume:0.0} L, output {truck.Output.Pressure:0} Pa / {truck.Output.FlowRate:0.0} L/s");
+            Expect(truck.Output.Pressure >= 499_000f, "Truck gives full pressure with the valve open");
+            Expect(truck.Reservoir.Volume < before, "Truck water comes out of its tank");
+
+            CompartmentDoor[] doors = truck.GetComponentsInChildren<CompartmentDoor>();
+            Expect(doors.Length == 4, $"Truck has 4 compartment doors: {doors.Length}");
+            if (doors.Length > 0)
+            {
+                CallAwake(doors[0]);
+                var actions = new List<InteractionAction>();
+                doors[0].CollectActions(null, actions);
+                actions[0].Execute();
+                actions.Clear();
+                doors[0].CollectActions(null, actions);
+                Expect(actions.Count == 1 && actions[0].Label == "Close", "Compartment door opens from the interaction menu");
+            }
         }
 
         // ───────────── Helpers ─────────────
