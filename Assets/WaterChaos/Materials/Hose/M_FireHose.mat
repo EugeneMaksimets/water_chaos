@@ -25,21 +25,21 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _DirtAmount: 0.25
-    - _Gloss: 0.18
+    - _DirtAmount: 0.2
+    - _Gloss: 0.32
     - _PulseAmount: 0.08
     - _PulseSpacing: 1.25
-    - _RibStrength: 0.2
-    - _SpecularPower: 14
+    - _RibStrength: 0.08
+    - _SpecularPower: 18
     - _SwellAmount: 0.06
     - _WaterTintStrength: 0.18
     - _WeaveDensity: 12
-    - _WeaveStrength: 0.35
+    - _WeaveStrength: 0.12
     - _WetGloss: 0.3
     m_Colors:
-    - _BaseColor: {r: 1, g: 0.8, b: 0.12, a: 1}
-    - _DirtColor: {r: 0.62, g: 0.42, b: 0.12, a: 1}
-    - _ShadeColor: {r: 0.86, g: 0.46, b: 0.05, a: 1}
+    - _BaseColor: {r: 0.72, g: 0.14, b: 0.11, a: 1}
+    - _DirtColor: {r: 0.22, g: 0.12, b: 0.1, a: 1}
+    - _ShadeColor: {r: 0.32, g: 0.05, b: 0.05, a: 1}
     - _WaterTint: {r: 0.55, g: 0.85, b: 1, a: 1}
   m_BuildTextureStreamingData: []
   m_AllowLocking: 1

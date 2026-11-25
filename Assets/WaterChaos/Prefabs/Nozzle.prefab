@@ -2516,7 +2516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Hose.HoseView
   _hose: {fileID: 8886715139356573652}
-  _width: 0.05
+  _width: 0.1
   _material: {fileID: 2100000, guid: 09479acf728e46e493451902ff93c8ae, type: 2}
   _roundness: 6
   _showWater: 1
@@ -5172,7 +5172,7 @@ MonoBehaviour:
   _icon: {fileID: 509628020344910026, guid: 4384375b64b004787b6aaec73c902397, type: 3}
   _heldPosition: {x: 0, y: 0, z: 0}
   _heldRotation: {x: 0, y: -90, z: 0}
-  _heldScale: 1
+  _heldScale: 1.6
   _disableWhileHeld: []
   _keepUpright: 0
 --- !u!114 &5053214067466336079

@@ -398,7 +398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.WaterTransfer.TransferHoseView
   _hose: {fileID: 6659364289387479359}
   _transfer: {fileID: 576379101632307824}
-  _width: 0.05
+  _width: 0.1
   _material: {fileID: 2100000, guid: 09479acf728e46e493451902ff93c8ae, type: 2}
   _roundness: 4
   _groundMask:

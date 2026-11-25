@@ -28,7 +28,7 @@ namespace WaterChaos.Hose
 
         [Header("Look")]
         [Tooltip("Hose diameter, in meters (m). Applies along the whole hose, also during Play Mode.")]
-        [SerializeField, Range(0.02f, 0.15f)] private float _width = 0.05f;
+        [SerializeField, Range(0.02f, 0.25f)] private float _width = 0.1f;
 
         [Tooltip("Fire hose material (WaterChaos/FireHose shader). Empty keeps the LineRenderer's material.")]
         [SerializeField] private Material _material;
