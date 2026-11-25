@@ -1,5 +1,7 @@
+using System.Globalization;
 using UnityEngine;
 using WaterChaos.Hose;
+using WaterChaos.Interaction;
 using WaterChaos.Items;
 
 namespace WaterChaos.WaterTransfer
@@ -11,7 +13,7 @@ namespace WaterChaos.WaterTransfer
     /// </summary>
     [RequireComponent(typeof(PickableItem))]
     [DefaultExecutionOrder(ExecutionOrder)]
-    public sealed class TransferHose : MonoBehaviour
+    public sealed class TransferHose : MonoBehaviour, IDisplayName
     {
         /// <summary>After the player's length check (-20), before the stream (0) and the hose look (10).</summary>
         public const int ExecutionOrder = -10;
@@ -66,6 +68,9 @@ namespace WaterChaos.WaterTransfer
         private PickableItem _item;
         private Rigidbody _body;
         private Transform _carrier;
+
+        /// <summary>Menu name, e.g. "Hose 25m".</summary>
+        public string DisplayName => FormatDisplayName(_maxLength);
 
         public TransferHoseModel Model => _model;
         public TransferHoseState State => _model.State;
@@ -126,6 +131,12 @@ namespace WaterChaos.WaterTransfer
         /// the free end follows <paramref name="carrier"/> until it is placed.
         /// </summary>
         /// <param name="playerRoot">The carrying player; its colliders never block the hose.</param>
+        /// <summary>"Hose" and the length in meters (m), e.g. "Hose 12.5m".</summary>
+        public static string FormatDisplayName(float meters)
+        {
+            return "Hose " + meters.ToString("0.#", CultureInfo.InvariantCulture) + "m";
+        }
+
         public bool TryConnect(TransferConnectionPoint point, Transform carrier, Transform playerRoot)
         {
             if (!enabled || !_model.CanConnect || point == null || carrier == null || !point.TryAttach(this))

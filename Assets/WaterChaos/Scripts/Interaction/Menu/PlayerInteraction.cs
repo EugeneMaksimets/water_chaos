@@ -76,7 +76,7 @@ namespace WaterChaos.Interaction
                 Collect(world);
 
             Focus = FindFocus(_actions);
-            Title = Focus != null ? CleanName(Focus.name) : _actions.Count == 1 ? _actions[0].Label : DefaultTitle;
+            Title = Focus != null ? GetName(Focus) : _actions.Count == 1 ? _actions[0].Label : DefaultTitle;
         }
 
         private void Collect(IInteractionProvider provider)
@@ -98,6 +98,13 @@ namespace WaterChaos.Interaction
 
             actions.Add(action);
             return true;
+        }
+
+        /// <summary>The object's <see cref="IDisplayName"/> (also on a parent, e.g. a hose end), else its cleaned scene name.</summary>
+        private static string GetName(Transform focus)
+        {
+            IDisplayName named = focus.GetComponentInParent<IDisplayName>();
+            return named != null ? named.DisplayName : CleanName(focus.name);
         }
 
         /// <summary>Scene name without Unity's duplicate suffix: "Pump (1)" becomes "Pump".</summary>

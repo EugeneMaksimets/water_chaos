@@ -28,7 +28,6 @@ namespace WaterChaos.EditorTools.MiniVillage
         private const string SourceScenePath = "Assets/Scenes/SampleScene.unity";
         private const string FirePrefabPath = "Assets/WaterChaos/Prefabs/Cartoon Fire.prefab";
         private const string FridgePrefabPath = "Assets/WaterChaos/Prefabs/Fridge.prefab";
-        private const string TransferHosePrefabPath = "Assets/WaterChaos/Prefabs/WaterTransfer/TransferHose_20m 1.prefab";
         private const string TreePath = "Assets/Downloads/FireFighter/FirefightersPack/Models/Prefabs/Enviroment/";
 
         // Surface heights in meters (m).
@@ -656,7 +655,7 @@ namespace WaterChaos.EditorTools.MiniVillage
 
             PlaceExisting(FindRoot(scene, "Pump"), pumps, new Vector3(23.6f, 0f, 22.2f), Paving);
             PlaceExisting(FindRoot(scene, "Pump (1)"), pumps, new Vector3(-10f, 0f, -18.7f), 0.62f);
-            GameObject[] transferHoses = ReplaceMissingTransferHoses(scene);
+            GameObject[] transferHoses = scene.GetRootGameObjects().Where(g => g.name.StartsWith("TransferHose_20m")).ToArray();
             if (transferHoses.Length > 0) PlaceExisting(transferHoses[0], hoses, new Vector3(23.4f, 0f, 24.4f), Paving);
             if (transferHoses.Length > 1) PlaceExisting(transferHoses[1], hoses, new Vector3(-12f, 0f, -15.4f), 0f);
             PlaceExisting(FindRoot(scene, "CoiledFireHoseYellow"), hoses, new Vector3(10f, 0f, -4.9f), Walk);
@@ -685,32 +684,6 @@ namespace WaterChaos.EditorTools.MiniVillage
                 Move(player, gameplay, null);
                 SetupRoomVisitor(player);
             }
-        }
-
-        /// <summary>
-        /// SampleScene's transfer hoses point at a prefab GUID that no longer exists (the prefab was renamed
-        /// with a new GUID). In this scene they are replaced by instances of the current prefab.
-        /// </summary>
-        private static GameObject[] ReplaceMissingTransferHoses(Scene scene)
-        {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(TransferHosePrefabPath);
-            var result = new List<GameObject>();
-            foreach (GameObject root in scene.GetRootGameObjects().Where(g => g.name.StartsWith("TransferHose_20m")).ToArray())
-            {
-                if (!PrefabUtility.IsPrefabAssetMissing(root) || prefab == null)
-                {
-                    result.Add(root);
-                    continue;
-                }
-
-                var replacement = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
-                replacement.name = root.name;
-                replacement.transform.SetPositionAndRotation(root.transform.position, root.transform.rotation);
-                Object.DestroyImmediate(root);
-                result.Add(replacement);
-            }
-
-            return result.ToArray();
         }
 
         private static void BuildRectPool(GameObject tank, Transform waterSources)

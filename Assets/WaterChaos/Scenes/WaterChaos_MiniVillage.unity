@@ -32772,7 +32772,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6616886570449710289, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
       propertyPath: m_Name
-      value: 'TransferHose_20m (1) (Missing Prefab with guid: cccff4ffc90d9409186c5f60a5b83c06)'
+      value: TransferHose_20m (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8916132763222254561, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -35358,7 +35358,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6616886570449710289, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
       propertyPath: m_Name
-      value: 'TransferHose_20m (Missing Prefab with guid: cccff4ffc90d9409186c5f60a5b83c06)'
+      value: TransferHose_20m
       objectReference: {fileID: 0}
     - target: {fileID: 8916132763222254561, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
       propertyPath: m_LocalPosition.x
