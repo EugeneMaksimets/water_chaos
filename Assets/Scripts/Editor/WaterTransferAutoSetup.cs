@@ -8,7 +8,7 @@ namespace WaterChaos.EditorTools
 {
     /// <summary>
     /// After scripts reload, sets up the water transfer prototype in the open game scene if it is not there yet
-    /// (no pump menu in the scene), applies scene upgrades, and saves the scene when anything changed.
+    /// (no interaction menu in the scene), applies scene upgrades, and saves the scene when anything changed.
     /// The same setup is available by hand: Water Chaos/Setup Water Transfer.
     /// </summary>
     [InitializeOnLoad]
@@ -29,7 +29,7 @@ namespace WaterChaos.EditorTools
                 return;
 
             bool changed = false;
-            if (Object.FindAnyObjectByType<PumpRadialMenu>(FindObjectsInactive.Include) == null)
+            if (Object.FindAnyObjectByType<RadialInteractionMenu>(FindObjectsInactive.Include) == null)
             {
                 if (!WaterTransferSetup.Run())
                     return;

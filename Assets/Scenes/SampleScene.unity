@@ -11000,6 +11000,7 @@ GameObject:
   - component: {fileID: 1633715736}
   - component: {fileID: 1633715738}
   - component: {fileID: 1633715737}
+  - component: {fileID: 1633715739}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -11187,13 +11188,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6d965a0093594503b3d3ab4537c598d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerHoseConnector
-  _input: {fileID: 1633715727}
   _camera: {fileID: 330585546}
   _maxDistance: 3
   _interactMask:
     serializedVersion: 2
     m_Bits: 111
-  _holdDuration: 0.8
 --- !u!114 &1633715727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11219,7 +11218,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.PlayerHud
   _hose: {fileID: 1633715726}
-  _itemInteractor: {fileID: 1633715729}
   _tuning: {fileID: 11400000, guid: 9dcc7f736528c4cbf8588caab8f55821, type: 2}
   _crosshairSize: 6
   _crosshairColor: {r: 1, g: 1, b: 1, a: 0.9}
@@ -11238,7 +11236,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a614ac77e1940ad9b76fc0d777afeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerItemInteractor
-  _input: {fileID: 1633715727}
   _inventory: {fileID: 1633715730}
   _camera: {fileID: 330585546}
   _maxDistance: 3
@@ -11430,7 +11427,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.TransferHoseHud
   _interactor: {fileID: 1633715735}
   _menu: {fileID: 1633715736}
-  _itemInteractor: {fileID: 1633715729}
 --- !u!114 &1633715735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11443,7 +11439,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9243113e672c487c8445612a07b964a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerTransferHoseInteractor
-  _input: {fileID: 1633715727}
   _inventory: {fileID: 1633715730}
   _equipment: {fileID: 1633715733}
   _camera: {fileID: 330585546}
@@ -11453,7 +11448,6 @@ MonoBehaviour:
   _interactMask:
     serializedVersion: 2
     m_Bits: 4294967167
-  _holdDuration: 0.8
   _releaseMargin: 0.3
   _dropDistance: 1
 --- !u!114 &1633715736
@@ -11469,12 +11463,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.PumpRadialMenu
   _input: {fileID: 1633715727}
-  _interactor: {fileID: 1633715735}
+  _interaction: {fileID: 1633715739}
   _blockWhileOpen:
   - {fileID: 1633715723}
   - {fileID: 1633715717}
   - {fileID: 1633715732}
-  - {fileID: 1633715729}
+  - {fileID: 1633715725}
   - {fileID: 1633715730}
   _outerRadius: 200
   _innerRadius: 90
@@ -11496,6 +11490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.WaterReservoirInfoUI
   _detector: {fileID: 1633715738}
+  _menu: {fileID: 1633715736}
   _panelPosition: {x: 0, y: 150}
 --- !u!114 &1633715738
 MonoBehaviour:
@@ -11512,6 +11507,23 @@ MonoBehaviour:
   _camera: {fileID: 330585546}
   _maxDistance: 4
   _mask:
+    serializedVersion: 2
+    m_Bits: 4294967167
+--- !u!114 &1633715739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2da2e4e883ec4dbd9193e21a35489ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.PlayerInteraction
+  _camera: {fileID: 330585546}
+  _maxDistance: 3
+  _interactMask:
     serializedVersion: 2
     m_Bits: 4294967167
 --- !u!1 &1694194528

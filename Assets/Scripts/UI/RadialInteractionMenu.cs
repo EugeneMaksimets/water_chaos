@@ -1,31 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WaterChaos.Interaction;
 using WaterChaos.Player;
-using WaterChaos.WaterTransfer;
 
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Half-circle pump menu. E at a pump opens it with the actions valid right now; the mouse direction from the
-    /// screen center highlights one, a click performs it and closes the menu. E again or Escape closes it.
-    /// While open: the cursor is free, and the listed player behaviours (look, movement, throw, pick up, slot keys)
-    /// are switched off so the click and the mouse never act on the game underneath.
-    /// Presentation only: actions go through <see cref="PlayerTransferHoseInteractor.Execute"/>.
+    /// The only interaction UI. While actions are available, one "E" prompt names the target;
+    /// E opens a half-circle menu with every action <see cref="PlayerInteraction"/> offers right now.
+    /// The mouse direction from the screen center highlights one, a click performs it and closes the menu.
+    /// E again or Escape closes it; it also closes when the target changes or nothing is left to do.
+    /// While open: the cursor is free and the listed player behaviours (look, movement, throw, slot keys, source control)
+    /// are switched off, so the mouse and the click never act on the game underneath.
+    /// Generic: it knows nothing about pumps, hoses or items — only labels and actions.
     /// </summary>
-    public sealed class PumpRadialMenu : MonoBehaviour
+    public sealed class RadialInteractionMenu : MonoBehaviour
     {
-        private const int MaxOptions = 4;
+        private const int MaxOptions = 6;
+        private const float PromptY = -90f;
 
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;
-        [SerializeField] private PlayerTransferHoseInteractor _interactor;
+        [SerializeField] private PlayerInteraction _interaction;
 
-        [Tooltip("Player behaviours switched off while the menu is open, e.g. PlayerLook, PlayerMovement, PlayerItemThrower, PlayerItemInteractor, PlayerInventory.")]
+        [Tooltip("Player behaviours switched off while the menu is open, e.g. PlayerLook, PlayerMovement, PlayerItemThrower, PlayerInventory, PlayerSourceControl. Never action providers.")]
         [SerializeField] private Behaviour[] _blockWhileOpen = new Behaviour[0];
 
         [Header("Look")]
         [Tooltip("Outer radius of the half circle, in canvas pixels (1920x1080).")]
-        [SerializeField, Min(50f)] private float _outerRadius = 200f;
+        [SerializeField, Min(50f)] private float _outerRadius = 220f;
 
         [Tooltip("Inner radius of the half circle, in canvas pixels.")]
         [SerializeField, Min(10f)] private float _innerRadius = 90f;
@@ -40,24 +43,26 @@ namespace WaterChaos.UI
         [SerializeField] private Color _highlightColor = new Color(1f, 1f, 1f, 0.9f);
         [SerializeField] private Color _highlightTextColor = new Color(0.08f, 0.08f, 0.08f);
 
-        private readonly PumpMenuAction[] _shown = new PumpMenuAction[MaxOptions];
+        private readonly InteractionAction[] _shown = new InteractionAction[MaxOptions];
         private readonly bool[] _wasEnabled = new bool[32];
 
         private Canvas _canvas;
         private RectTransform _root;
         private Image[] _sectors;
         private Text[] _labels;
+        private Text _title;
+        private KeyPrompt _prompt;
         private int _count;
         private int _hovered = -1;
-        private TransferConnectionPoint _openPoint;
+        private Transform _openFocus;
 
         public bool IsOpen { get; private set; }
 
         private void Awake()
         {
-            if (_input == null || _interactor == null)
+            if (_input == null || _interaction == null)
             {
-                Debug.LogError($"{name}: PumpRadialMenu needs Input and Interactor references.", this);
+                Debug.LogError($"{name}: RadialInteractionMenu needs Input and Interaction references.", this);
                 enabled = false;
                 return;
             }
@@ -85,15 +90,20 @@ namespace WaterChaos.UI
             }
 
             Close();
+            _prompt?.Hide();
         }
 
-        private void Update()
+        // LateUpdate: PlayerInteraction has gathered this frame's actions in Update.
+        private void LateUpdate()
         {
             if (!IsOpen)
+            {
+                UpdatePrompt();
                 return;
+            }
 
-            // Out of reach or nothing left to do (e.g. the pump was taken away): close without acting.
-            if (_interactor.TargetPoint != _openPoint || _interactor.MenuActions.Count == 0)
+            // Out of reach, another target or nothing left to do (e.g. the pump was taken away): close without acting.
+            if (_interaction.Focus != _openFocus || _interaction.Actions.Count == 0)
             {
                 Close();
                 return;
@@ -106,11 +116,19 @@ namespace WaterChaos.UI
             SetHovered(RadialMenuLayout.GetIndex(offset, _count, _deadZone));
         }
 
+        private void UpdatePrompt()
+        {
+            if (_interaction.Actions.Count > 0)
+                _prompt.Show(_interaction.Title, 0f, 1f);
+            else
+                _prompt.Hide();
+        }
+
         private void OnInteractPressed()
         {
             if (IsOpen)
                 Close();
-            else if (_interactor.CanOpenMenu)
+            else if (_interaction.isActiveAndEnabled && _interaction.Actions.Count > 0)
                 Open();
         }
 
@@ -119,16 +137,16 @@ namespace WaterChaos.UI
             if (!IsOpen || _hovered < 0)
                 return;
 
-            PumpMenuAction action = _shown[_hovered];
+            InteractionAction action = _shown[_hovered];
             Close();
-            _interactor.Execute(action);
+            action.Execute();
         }
 
         private void Open()
         {
             IsOpen = true;
-            _openPoint = _interactor.TargetPoint;
-            _interactor.SetMenuOpen(true);
+            _openFocus = _interaction.Focus;
+            _prompt.Hide();
 
             for (int i = 0; i < _blockWhileOpen.Length && i < _wasEnabled.Length; i++)
             {
@@ -151,9 +169,8 @@ namespace WaterChaos.UI
                 return;
 
             IsOpen = false;
-            _openPoint = null;
+            _openFocus = null;
             _root.gameObject.SetActive(false);
-            _interactor.SetMenuOpen(false);
 
             for (int i = 0; i < _blockWhileOpen.Length && i < _wasEnabled.Length; i++)
             {
@@ -167,22 +184,26 @@ namespace WaterChaos.UI
 
         private bool SameAsShown()
         {
-            if (_interactor.MenuActions.Count != _count)
+            int count = Mathf.Min(_interaction.Actions.Count, MaxOptions);
+            if (count != _count)
                 return false;
 
             for (int i = 0; i < _count; i++)
             {
-                if (_interactor.MenuActions[i] != _shown[i])
+                InteractionAction action = _interaction.Actions[i];
+                if (action.Label != _shown[i].Label || action.Target != _shown[i].Target)
                     return false;
             }
 
             return true;
         }
 
-        /// <summary>Places the current valid actions on the half circle, left to right; unused slots are hidden.</summary>
+        /// <summary>Places the current actions on the half circle, left to right; unused slots are hidden.</summary>
         private void Layout()
         {
-            _count = Mathf.Min(_interactor.MenuActions.Count, MaxOptions);
+            _count = Mathf.Min(_interaction.Actions.Count, MaxOptions);
+            _title.text = _interaction.Title;
+
             float sector = RadialMenuLayout.SectorAngle(_count);
             float labelRadius = (_outerRadius + _innerRadius) * 0.5f;
 
@@ -192,10 +213,13 @@ namespace WaterChaos.UI
                 _sectors[i].gameObject.SetActive(used);
                 _labels[i].gameObject.SetActive(used);
                 if (!used)
+                {
+                    _shown[i] = default;
                     continue;
+                }
 
-                _shown[i] = _interactor.MenuActions[i];
-                _labels[i].text = GetLabel(_shown[i]);
+                _shown[i] = _interaction.Actions[i];
+                _labels[i].text = _shown[i].Label;
                 _labels[i].rectTransform.anchoredPosition = RadialMenuLayout.CenterDirection(i, _count) * labelRadius;
 
                 // Filled clockwise from the left: rotating clockwise by the sectors before it puts it in place.
@@ -222,24 +246,12 @@ namespace WaterChaos.UI
             }
         }
 
-        private static string GetLabel(PumpMenuAction action)
-        {
-            switch (action)
-            {
-                case PumpMenuAction.TurnOn: return "Turn On";
-                case PumpMenuAction.TurnOff: return "Turn Off";
-                case PumpMenuAction.Connect: return "Connect";
-                case PumpMenuAction.PickUp: return "Pick Up";
-                default: return string.Empty;
-            }
-        }
-
         /// <summary>Everything is created once; opening only shows, places and colors it.</summary>
         private void Build()
         {
-            _canvas = HudWidgets.CreateCanvas(transform, "Pump Menu Canvas", 20);
+            _canvas = HudWidgets.CreateCanvas(transform, "Interaction Menu Canvas", 20);
             Vector2 size = Vector2.one * (_outerRadius * 2f);
-            _root = HudWidgets.CreateRect("Pump Menu", _canvas.transform, Vector2.zero, size);
+            _root = HudWidgets.CreateRect("Interaction Menu", _canvas.transform, Vector2.zero, size);
 
             Sprite ring = HudWidgets.CreateCircleSprite(256, _innerRadius / _outerRadius);
 
@@ -257,13 +269,14 @@ namespace WaterChaos.UI
 
             // Labels after all sectors, so no sector covers a label.
             for (int i = 0; i < MaxOptions; i++)
-                _labels[i] = HudWidgets.CreateText($"Label {i}", _root, Vector2.zero, new Vector2(160f, 30f), 22, TextAnchor.MiddleCenter);
+                _labels[i] = HudWidgets.CreateText($"Label {i}", _root, Vector2.zero, new Vector2(160f, 30f), 20, TextAnchor.MiddleCenter);
 
-            Text title = HudWidgets.CreateText("Title", _root, new Vector2(0f, 24f), new Vector2(160f, 30f), 20, TextAnchor.MiddleCenter);
-            title.text = "Pump";
-            title.fontStyle = FontStyle.Bold;
+            _title = HudWidgets.CreateText("Title", _root, new Vector2(0f, 24f), new Vector2(170f, 30f), 20, TextAnchor.MiddleCenter);
+            _title.fontStyle = FontStyle.Bold;
 
             _root.gameObject.SetActive(false);
+
+            _prompt = HudWidgets.CreateKeyPrompt("Interact Prompt", _canvas.transform, "E", new Vector2(0f, PromptY));
         }
     }
 }

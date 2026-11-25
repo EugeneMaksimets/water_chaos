@@ -1,14 +1,17 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using WaterChaos.Interaction;
 using WaterChaos.Items;
 
 namespace WaterChaos.Player
 {
-    /// <summary>Pressing pick up on an item under the crosshair moves it into the inventory.</summary>
-    public sealed class PlayerItemInteractor : MonoBehaviour
+    /// <summary>Offers "Pick Up" in the interaction menu for the item under the crosshair; picking moves it into the inventory.</summary>
+    public sealed class PlayerItemInteractor : MonoBehaviour, IInteractionProvider
     {
+        private const string PickUpText = "Pick Up";
+
         [Header("References")]
-        [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private PlayerInventory _inventory;
 
         [Tooltip("The pickup ray starts here and goes along its forward.")]
@@ -21,6 +24,8 @@ namespace WaterChaos.Player
         [Tooltip("Layers the pickup ray can hit. Exclude the Player layer.")]
         [SerializeField] private LayerMask _interactMask = ~0;
 
+        private Action _pickUp;
+
         /// <summary>The player tried to pick up an item, but every slot is taken.</summary>
         public event Action BackpackFull;
 
@@ -29,21 +34,17 @@ namespace WaterChaos.Player
 
         private void Awake()
         {
-            if (_input == null || _inventory == null || _camera == null)
+            _pickUp = PickUpTarget;
+
+            if (_inventory == null || _camera == null)
             {
-                Debug.LogError($"{name}: PlayerItemInteractor needs Input, Inventory and Camera references.", this);
+                Debug.LogError($"{name}: PlayerItemInteractor needs Inventory and Camera references.", this);
                 enabled = false;
             }
         }
 
-        private void OnEnable()
-        {
-            _input.PickUpPressed += OnPickUpPressed;
-        }
-
         private void OnDisable()
         {
-            _input.PickUpPressed -= OnPickUpPressed;
             Target = null;
         }
 
@@ -52,7 +53,13 @@ namespace WaterChaos.Player
             Target = FindTarget();
         }
 
-        private void OnPickUpPressed()
+        public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
+        {
+            if (Target is Component item)
+                actions.Add(new InteractionAction(PickUpText, item, _pickUp));
+        }
+
+        private void PickUpTarget()
         {
             IPickableItem item = FindTarget();
             if (item == null)

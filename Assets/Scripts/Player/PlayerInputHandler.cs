@@ -10,16 +10,13 @@ namespace WaterChaos.Player
     /// </summary>
     public class PlayerInputHandler : MonoBehaviour
     {
-        /// <summary>E is held down this frame: attach or detach the hose (hold action).</summary>
-        public bool InteractHeld { get; private set; }
-
         /// <summary>Left mouse button is held down this frame: aiming a throw.</summary>
         public bool ThrowHeld { get; private set; }
 
         /// <summary>Mouse cursor position in screen pixels, for menus that are picked with the mouse.</summary>
         public Vector2 PointerPosition { get; private set; }
 
-        /// <summary>E was pressed this frame (single press, e.g. open a menu).</summary>
+        /// <summary>E was pressed this frame: open or close the interaction menu.</summary>
         public event Action InteractPressed;
 
         /// <summary>Escape was pressed this frame: close an open menu.</summary>
@@ -30,9 +27,6 @@ namespace WaterChaos.Player
 
         /// <summary>Mouse wheel: +1 = more pressure, -1 = less.</summary>
         public event Action<int> PressureScrolled;
-
-        /// <summary>Q was pressed this frame: pick up the item under the crosshair.</summary>
-        public event Action PickUpPressed;
 
         /// <summary>1, 2, 3: select an inventory slot; the argument is the slot index from 0.</summary>
         public event Action<int> SlotSelected;
@@ -46,12 +40,10 @@ namespace WaterChaos.Player
             Mouse mouse = Mouse.current;
             if (keyboard == null || mouse == null)
             {
-                InteractHeld = false;
                 ThrowHeld = false;
                 return;
             }
 
-            InteractHeld = keyboard.eKey.isPressed;
             PointerPosition = mouse.position.ReadValue();
 
             if (keyboard.eKey.wasPressedThisFrame)
@@ -59,9 +51,6 @@ namespace WaterChaos.Player
 
             if (keyboard.escapeKey.wasPressedThisFrame)
                 CancelPressed?.Invoke();
-
-            if (keyboard.qKey.wasPressedThisFrame)
-                PickUpPressed?.Invoke();
 
             if (keyboard.fKey.wasPressedThisFrame)
                 TogglePressed?.Invoke();

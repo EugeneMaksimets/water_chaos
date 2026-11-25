@@ -1,19 +1,23 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Hose;
+using WaterChaos.Interaction;
 using WaterChaos.Water;
 
 namespace WaterChaos.Player
 {
     /// <summary>
-    /// Holding interact on a connection point attaches the hose to it.
-    /// Holding it on the attached point detaches the hose; on another point switches to it.
+    /// Offers "Connect Nozzle" in the interaction menu for a connection point under the crosshair
+    /// ("Disconnect Nozzle" on the attached one; connecting to another point switches to it).
     /// Works only while a nozzle is in the hands (see <see cref="AttachNozzle"/>); disabled otherwise.
     /// </summary>
-    public class PlayerHoseConnector : MonoBehaviour
+    public class PlayerHoseConnector : MonoBehaviour, IInteractionProvider
     {
+        private const string ConnectText = "Connect Nozzle";
+        private const string DisconnectText = "Disconnect Nozzle";
+
         [Header("References")]
-        [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private Transform _camera;
 
         [Header("Settings")]
@@ -21,15 +25,11 @@ namespace WaterChaos.Player
         [SerializeField, Min(0f)] private float _maxDistance = 3f;
         [SerializeField] private LayerMask _interactMask = ~0;
 
-        [Tooltip("How long interact must be held to attach or detach, in seconds (s).")]
-        [SerializeField, Min(0.01f)] private float _holdDuration = 0.8f;
-
         private WaterStream _stream;
         private HoseController _hose;
         private WaterConnectionPoint _connected;
         private WaterConnectionPoint _target;
-        private float _holdTime;
-        private bool _waitForRelease;
+        private Action _interactTarget;
 
         /// <summary>The held hose is at full length and holds the player back; false without a hose.</summary>
         public event Action<bool> LimitReachedChanged;
@@ -42,20 +42,19 @@ namespace WaterChaos.Player
 
         public WaterConnectionPoint Connected => _connected;
 
-        /// <summary>Connection point under the crosshair that interact would act on; null if none.</summary>
+        /// <summary>Connection point under the crosshair that the menu action would act on; null if none.</summary>
         public WaterConnectionPoint Target => _target;
 
-        /// <summary>True when finishing the hold on the target would detach the hose.</summary>
+        /// <summary>True when the menu action on the target would detach the hose.</summary>
         public bool TargetIsConnected => _target != null && _target == _connected;
-
-        /// <summary>How far the current hold is, 0..1.</summary>
-        public float HoldProgress => Mathf.Clamp01(_holdTime / _holdDuration);
 
         /// <summary>The held hose is at full length; false without a hose.</summary>
         public bool IsLimitReached => _hose != null && _hose.IsLimitReached;
 
         private void Awake()
         {
+            _interactTarget = InteractTarget;
+
             // No nozzle in the hands yet.
             enabled = false;
         }
@@ -63,8 +62,12 @@ namespace WaterChaos.Player
         private void OnDisable()
         {
             _target = null;
-            _holdTime = 0f;
-            _waitForRelease = false;
+        }
+
+        public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
+        {
+            if (_target != null)
+                actions.Add(new InteractionAction(TargetIsConnected ? DisconnectText : ConnectText, _target, _interactTarget));
         }
 
         /// <summary>A nozzle came into the hands: interact now connects its stream and optional hose.</summary>
@@ -113,31 +116,18 @@ namespace WaterChaos.Player
             if (_connected != null && !_connected.isActiveAndEnabled)
                 Disconnect();
 
+            _target = FindTarget();
+        }
+
+        /// <summary>Menu action: acts on the point under the crosshair now, if there still is one.</summary>
+        private void InteractTarget()
+        {
+            if (!isActiveAndEnabled)
+                return;
+
             WaterConnectionPoint target = FindTarget();
-            if (target != _target)
-            {
-                _target = target;
-                _holdTime = 0f;
-            }
-
-            if (!_input.InteractHeld)
-            {
-                _waitForRelease = false;
-                _holdTime = 0f;
-                return;
-            }
-
-            // After an action the key must be released before the next hold starts.
-            if (_waitForRelease || _target == null)
-                return;
-
-            _holdTime += Time.deltaTime;
-            if (_holdTime < _holdDuration)
-                return;
-
-            _holdTime = 0f;
-            _waitForRelease = true;
-            Interact(_target);
+            if (target != null)
+                Interact(target);
         }
 
         private WaterConnectionPoint FindTarget()

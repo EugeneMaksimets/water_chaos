@@ -16,6 +16,9 @@ namespace WaterChaos.UI
         [Tooltip("Gives the reservoir under the crosshair; the panel shows only while it has one.")]
         [SerializeField] private WaterReservoirDetector _detector;
 
+        [Tooltip("Interaction menu; the panel hides while it is open, so they do not overlap. Optional.")]
+        [SerializeField] private RadialInteractionMenu _menu;
+
         [Header("Layout")]
         [Tooltip("Panel center relative to the screen center, in reference pixels (1920x1080).")]
         [SerializeField] private Vector2 _panelPosition = new Vector2(0f, 150f);
@@ -60,7 +63,7 @@ namespace WaterChaos.UI
             WaterReservoirComponent target = _detector.Target;
             WaterReservoir reservoir = target != null ? target.Reservoir : null;
 
-            bool visible = reservoir != null;
+            bool visible = reservoir != null && (_menu == null || !_menu.IsOpen);
             if (_panel.activeSelf != visible)
                 _panel.SetActive(visible);
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Hose;
+using WaterChaos.Interaction;
 using WaterChaos.Items;
 using WaterChaos.Water;
 using WaterChaos.WaterTransfer;
@@ -10,21 +11,26 @@ namespace WaterChaos.Player
 {
     /// <summary>
     /// Player side of the transfer hose, separate from the nozzle hose.
-    /// Pump under the crosshair: offers the valid pump menu actions (<see cref="MenuActions"/>) and performs the chosen one.
-    /// F lays the carried end down; holding interact on a placed end takes it again.
+    /// Offers its actions in the interaction menu: the valid pump actions (<see cref="PumpMenuRules"/>) for the pump
+    /// under the crosshair, "Pull Hose" on a placed end and "Place Hose" while an end is carried.
     /// While an end is carried, the player is held within the hose length.
-    /// F is left to the nozzle system while the nozzle hose is connected somewhere.
     /// The pump has one outlet: the nozzle hose connecting to it takes the transfer hose off and drops it beside the player.
     /// Taking another item into the hands while carrying the end drops the hose as a coil where the end was.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     [DefaultExecutionOrder(-20)]
-    public sealed class PlayerTransferHoseInteractor : MonoBehaviour
+    public sealed class PlayerTransferHoseInteractor : MonoBehaviour, IInteractionProvider
     {
         private const int HitBufferSize = 16;
 
+        private const string TurnOnText = "Turn On";
+        private const string TurnOffText = "Turn Off";
+        private const string ConnectText = "Connect Hose";
+        private const string PickUpText = "Pick Up Hose";
+        private const string PullText = "Pull Hose";
+        private const string PlaceText = "Place Hose";
+
         [Header("References")]
-        [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private PlayerInventory _inventory;
         [SerializeField] private PlayerEquipment _equipment;
         [SerializeField] private Transform _camera;
@@ -32,7 +38,7 @@ namespace WaterChaos.Player
         [Tooltip("Where a carried hose end is held; a child of the camera. Empty = the camera.")]
         [SerializeField] private Transform _carryPoint;
 
-        [Tooltip("The nozzle hose connector: while it has a connection, F belongs to it; its connecting to a pump takes the transfer hose off. Optional.")]
+        [Tooltip("The nozzle hose connector: its connecting to a pump takes the transfer hose off. Optional.")]
         [SerializeField] private PlayerHoseConnector _nozzleConnector;
 
         [Header("Settings")]
@@ -41,9 +47,6 @@ namespace WaterChaos.Player
 
         [Tooltip("Layers the interact ray can hit. Exclude the Player layer.")]
         [SerializeField] private LayerMask _interactMask = ~0;
-
-        [Tooltip("How long interact must be held to take a placed hose end, in seconds (s).")]
-        [SerializeField, Min(0.01f)] private float _holdDuration = 0.8f;
 
         [Tooltip("Free hose needed before the 'length limit' state clears, in meters (m).")]
         [SerializeField, Min(0f)] private float _releaseMargin = 0.3f;
@@ -59,10 +62,9 @@ namespace WaterChaos.Player
         private TransferHose _carried;
         private TransferHose _lastHose;
         private TransferHose _awaitingStart;
-        private UnityEngine.Object _targetObject;
-        private float _holdTime;
-        private bool _waitForRelease;
-        private bool _menuOpen;
+        private Action[] _pumpActions;
+        private Action _pullHose;
+        private Action _placeHose;
 
         /// <summary>The carried end was laid down successfully.</summary>
         public event Action HosePlaced;
@@ -76,23 +78,8 @@ namespace WaterChaos.Player
         /// <summary>Transfer hose whose placed end is under the crosshair; null if none.</summary>
         public TransferHose TargetEnd { get; private set; }
 
-        /// <summary>What finishing the hold on the placed end under the crosshair would do.</summary>
-        public TransferHoseAction TargetAction { get; private set; }
-
-        /// <summary>How far the current hold is, 0..1.</summary>
-        public float HoldProgress => Mathf.Clamp01(_holdTime / _holdDuration);
-
-        /// <summary>Valid actions for the pump under the crosshair, in menu order; empty without one. Do not modify.</summary>
-        public IReadOnlyList<PumpMenuAction> MenuActions => _menuActions;
-
-        /// <summary>The pump menu can open: a pump is under the crosshair, the hands allow it and something can be done.</summary>
-        public bool CanOpenMenu => TargetPoint != null && HandsFreeForTransfer && _menuActions.Count > 0;
-
         /// <summary>Transfer hose whose free end is in the hands; null if none.</summary>
         public TransferHose Carried => _carried;
-
-        /// <summary>F would lay the carried end down.</summary>
-        public bool CanPlace => _carried != null && !_menuOpen && !NozzleOwnsF;
 
         /// <summary>The carried hose is at full length and holds the player back.</summary>
         public bool IsLimitReached { get; private set; }
@@ -116,8 +103,6 @@ namespace WaterChaos.Player
             }
         }
 
-        private bool NozzleOwnsF => _nozzleConnector != null && _nozzleConnector.Connected != null;
-
         private Transform CarryPoint => _carryPoint != null ? _carryPoint : _camera;
 
         /// <summary>Hands are empty or hold a transfer hose, so nothing else (e.g. the nozzle) reacts at the pump.</summary>
@@ -126,31 +111,53 @@ namespace WaterChaos.Player
         private void Awake()
         {
             _body = GetComponent<CharacterController>();
-            if (_input == null || _inventory == null || _camera == null)
+
+            // Indexed by PumpMenuAction; cached so collecting menu actions does not allocate.
+            _pumpActions = new Action[]
             {
-                Debug.LogError($"{name}: PlayerTransferHoseInteractor needs Input, Inventory and Camera references.", this);
+                () => Execute(PumpMenuAction.TurnOn),
+                () => Execute(PumpMenuAction.TurnOff),
+                () => Execute(PumpMenuAction.Connect),
+                () => Execute(PumpMenuAction.PickUp)
+            };
+            _pullHose = PullHose;
+            _placeHose = PlaceCarried;
+
+            if (_inventory == null || _camera == null)
+            {
+                Debug.LogError($"{name}: PlayerTransferHoseInteractor needs Inventory and Camera references.", this);
                 enabled = false;
             }
         }
 
         private void OnEnable()
         {
-            if (_input != null)
-                _input.TogglePressed += OnTogglePressed;
             if (_nozzleConnector != null)
                 _nozzleConnector.Connecting += OnNozzleConnecting;
         }
 
         private void OnDisable()
         {
-            if (_input != null)
-                _input.TogglePressed -= OnTogglePressed;
             if (_nozzleConnector != null)
                 _nozzleConnector.Connecting -= OnNozzleConnecting;
 
             ClearTarget();
-            _holdTime = 0f;
-            _waitForRelease = false;
+        }
+
+        public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
+        {
+            // Hands empty or holding a transfer hose, so the pump menu does not compete with e.g. the nozzle.
+            if (TargetPoint != null && HandsFreeForTransfer)
+            {
+                foreach (PumpMenuAction action in _menuActions)
+                    actions.Add(new InteractionAction(GetLabel(action), TargetPoint, _pumpActions[(int)action]));
+            }
+
+            if (TargetEnd != null && _carried == null)
+                actions.Add(new InteractionAction(PullText, TargetEnd, _pullHose));
+
+            if (_carried != null)
+                actions.Add(new InteractionAction(PlaceText, null, _placeHose));
         }
 
         /// <summary>A transfer hose item came into the hands.</summary>
@@ -163,11 +170,8 @@ namespace WaterChaos.Player
                 _heldHose = null;
         }
 
-        /// <summary>The pump menu is open: F and the hose-end hold are ignored meanwhile.</summary>
-        public void SetMenuOpen(bool open) => _menuOpen = open;
-
         /// <summary>Performs a pump menu action on the pump under the crosshair. False if it is not valid now.</summary>
-        public bool Execute(PumpMenuAction action)
+        private bool Execute(PumpMenuAction action)
         {
             if (TargetPoint == null || !_menuActions.Contains(action))
                 return false;
@@ -202,7 +206,6 @@ namespace WaterChaos.Player
             UpdateAwaitingStart();
             FindTarget();
             RefreshMenuActions();
-            UpdateEndHold();
         }
 
         // After PlayerMovement (Update) and before the hose end follows the hands (TransferHose, -10).
@@ -246,31 +249,17 @@ namespace WaterChaos.Player
                 _awaitingStart = null;
         }
 
-        private void UpdateEndHold()
+        /// <summary>Menu action: takes the placed end under the crosshair again.</summary>
+        private void PullHose()
         {
-            if (!_input.InteractHeld || _menuOpen)
-            {
-                _waitForRelease = false;
-                _holdTime = 0f;
-                return;
-            }
-
-            if (_waitForRelease || TargetAction != TransferHoseAction.PullHose)
-                return;
-
-            _holdTime += Time.deltaTime;
-            if (_holdTime < _holdDuration)
-                return;
-
-            _holdTime = 0f;
-            _waitForRelease = true;
-            if (TargetEnd.TryPickUpEnd(CarryPoint))
+            if (TargetEnd != null && _carried == null && TargetEnd.TryPickUpEnd(CarryPoint))
                 SetCarried(TargetEnd);
         }
 
-        private void OnTogglePressed()
+        /// <summary>Menu action: lays the carried end down where the player looks.</summary>
+        private void PlaceCarried()
         {
-            if (!CanPlace)
+            if (_carried == null)
                 return;
 
             TransferHose hose = _carried;
@@ -414,21 +403,24 @@ namespace WaterChaos.Player
                 }
             }
 
-            if (TargetEnd != null)
-                TargetAction = _carried != null ? TransferHoseAction.PlaceCarriedFirst : TransferHoseAction.PullHose;
-
-            if (TargetPoint != _targetObject && TargetEnd != _targetObject)
-            {
-                _targetObject = TargetPoint != null ? TargetPoint : TargetEnd;
-                _holdTime = 0f;
-            }
         }
 
         private void ClearTarget()
         {
             TargetPoint = null;
             TargetEnd = null;
-            TargetAction = TransferHoseAction.None;
+        }
+
+        private static string GetLabel(PumpMenuAction action)
+        {
+            switch (action)
+            {
+                case PumpMenuAction.TurnOn: return TurnOnText;
+                case PumpMenuAction.TurnOff: return TurnOffText;
+                case PumpMenuAction.Connect: return ConnectText;
+                case PumpMenuAction.PickUp: return PickUpText;
+                default: return action.ToString();
+            }
         }
 
         private void SetCarried(TransferHose hose)

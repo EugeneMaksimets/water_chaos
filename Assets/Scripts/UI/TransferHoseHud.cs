@@ -6,39 +6,25 @@ using WaterChaos.WaterTransfer;
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Transfer hose prompts in the PlayerHud key-prompt style:
-    /// E (pump menu / pull hose), "Press F to Place Hose", "Return to the Pump and Start It",
-    /// and a status line that only shows problems (no flow or liters).
+    /// Transfer hose guidance in the PlayerHud style: "Return to the Pump and Start It" after a hose is placed,
+    /// and a status line that only shows problems (no flow or liters), including a failed placement.
+    /// Actions themselves (pump menu, pull, place) are in the interaction menu.
     /// </summary>
     public sealed class TransferHoseHud : MonoBehaviour
     {
-        private const float PromptY = -90f;
         private const float InstructionY = -215f;
         private const float StatusY = -300f;
-
-        /// <summary>Shift sideways when the regular HUD shows its pick up prompt at the center, in canvas pixels.</summary>
-        private const float SideOffset = 170f;
-
         private const float PlaceFailedShowTime = 2f;
 
-        private const string MenuText = "Pump Menu";
-        private const string PullText = "Pull Hose";
-        private const string PlaceCarriedFirstText = "Place the carried hose first";
-        private const string PlaceText = "Press F to Place Hose";
         private const string ReturnText = "Return to the Pump and Start It";
         private const string PlaceFailedText = "No ground here - cannot place the hose";
 
         [Header("References")]
         [SerializeField] private PlayerTransferHoseInteractor _interactor;
 
-        [Tooltip("Pump menu; prompts hide while it is open. Optional.")]
-        [SerializeField] private PumpRadialMenu _menu;
+        [Tooltip("Interaction menu; the instruction hides while it is open. Optional.")]
+        [SerializeField] private RadialInteractionMenu _menu;
 
-        [Tooltip("Regular pick up target; the E prompt moves aside when the Q prompt is shown. Optional.")]
-        [SerializeField] private PlayerItemInteractor _itemInteractor;
-
-        private KeyPrompt _interactPrompt;
-        private KeyPrompt _placePrompt;
         private KeyPrompt _instruction;
         private Text _status;
 
@@ -57,8 +43,6 @@ namespace WaterChaos.UI
             }
 
             Transform canvas = HudWidgets.CreateCanvas(transform, "Transfer HUD Canvas", 5).transform;
-            _interactPrompt = HudWidgets.CreateKeyPrompt("Transfer Interact Prompt", canvas, "E", new Vector2(0f, PromptY));
-            _placePrompt = HudWidgets.CreateKeyPrompt("Transfer Place Prompt", canvas, "F", new Vector2(0f, PromptY));
             _instruction = HudWidgets.CreateKeyPrompt("Transfer Instruction", canvas, "!", new Vector2(0f, InstructionY));
 
             _status = HudWidgets.CreateText("Transfer Status", canvas, new Vector2(0f, StatusY), new Vector2(1000f, 32f), 20, TextAnchor.MiddleCenter);
@@ -90,10 +74,6 @@ namespace WaterChaos.UI
         private void Update()
         {
             bool menuOpen = _menu != null && _menu.IsOpen;
-            float x = _itemInteractor != null && _itemInteractor.Target != null ? -SideOffset : 0f;
-
-            UpdateInteractPrompt(menuOpen, x);
-            UpdatePlacePrompt(menuOpen, x);
 
             if (_interactor.IsAwaitingPumpStart && !menuOpen)
                 _instruction.Show(ReturnText, 0f, 1f);
@@ -101,33 +81,6 @@ namespace WaterChaos.UI
                 _instruction.Hide();
 
             UpdateStatus();
-        }
-
-        private void UpdateInteractPrompt(bool menuOpen, float x)
-        {
-            if (menuOpen)
-                _interactPrompt.Hide();
-            else if (_interactor.CanOpenMenu)
-                _interactPrompt.Show(MenuText, x, 1f);
-            else if (_interactor.TargetAction == TransferHoseAction.PullHose)
-                _interactPrompt.Show(PullText, x, _interactor.HoldProgress);
-            else if (_interactor.TargetAction == TransferHoseAction.PlaceCarriedFirst)
-                _interactPrompt.Show(PlaceCarriedFirstText, x, 0f, true);
-            else
-                _interactPrompt.Hide();
-        }
-
-        private void UpdatePlacePrompt(bool menuOpen, float x)
-        {
-            bool placeFailed = _placeFailedTime >= 0f && Time.time - _placeFailedTime < PlaceFailedShowTime;
-
-            // Next to the E prompt when both are shown.
-            float placeX = _interactor.CanOpenMenu || _interactor.TargetAction != TransferHoseAction.None ? x + SideOffset : x;
-
-            if (_interactor.CanPlace && !menuOpen)
-                _placePrompt.Show(placeFailed ? PlaceFailedText : PlaceText, placeX, 1f, placeFailed);
-            else
-                _placePrompt.Hide();
         }
 
         /// <summary>Flow and problems of the active transfer hose; rebuilt only when what it shows changes.</summary>
@@ -141,8 +94,9 @@ namespace WaterChaos.UI
                 _shownStatusKey = int.MinValue;
             }
 
+            bool placeFailed = _placeFailedTime >= 0f && Time.time - _placeFailedTime < PlaceFailedShowTime;
             TransferStatus status = _transfer != null ? _transfer.Status : TransferStatus.NotConnected;
-            string text = GetStatusText(status);
+            string text = placeFailed ? PlaceFailedText : GetStatusText(status);
             if (text == null)
             {
                 if (_status.gameObject.activeSelf)
@@ -151,10 +105,11 @@ namespace WaterChaos.UI
                 return;
             }
 
-            if ((int)status == _shownStatusKey)
+            int key = placeFailed ? -1 : (int)status;
+            if (key == _shownStatusKey)
                 return;
 
-            _shownStatusKey = (int)status;
+            _shownStatusKey = key;
             _status.gameObject.SetActive(true);
             _status.text = text;
             _status.color = HudWidgets.ProblemColor;

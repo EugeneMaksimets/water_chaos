@@ -373,7 +373,6 @@ namespace WaterChaos.EditorTools
                 interactor = Undo.AddComponent<PlayerTransferHoseInteractor>(player);
 
             SerializedObject data = new SerializedObject(interactor);
-            data.FindProperty("_input").objectReferenceValue = input;
             data.FindProperty("_inventory").objectReferenceValue = inventory;
             data.FindProperty("_equipment").objectReferenceValue = player.GetComponent<PlayerEquipment>();
             data.FindProperty("_camera").objectReferenceValue = camera.transform;
@@ -382,33 +381,7 @@ namespace WaterChaos.EditorTools
             data.FindProperty("_interactMask").intValue = ~(1 << player.layer);
             data.ApplyModifiedProperties();
 
-            if (!player.TryGetComponent(out PumpRadialMenu menu))
-                menu = Undo.AddComponent<PumpRadialMenu>(player);
-
-            // Everything that would react to the mouse, the click or movement keys while the menu is open.
-            Behaviour[] blocked =
-            {
-                player.GetComponentInChildren<PlayerLook>(true),
-                player.GetComponentInChildren<PlayerMovement>(true),
-                player.GetComponentInChildren<PlayerItemThrower>(true),
-                player.GetComponentInChildren<PlayerItemInteractor>(true),
-                inventory
-            };
-
-            SerializedObject menuData = new SerializedObject(menu);
-            menuData.FindProperty("_input").objectReferenceValue = input;
-            menuData.FindProperty("_interactor").objectReferenceValue = interactor;
-            SerializedProperty list = menuData.FindProperty("_blockWhileOpen");
-            list.arraySize = 0;
-            foreach (Behaviour behaviour in blocked)
-            {
-                if (behaviour == null)
-                    continue;
-
-                list.arraySize++;
-                list.GetArrayElementAtIndex(list.arraySize - 1).objectReferenceValue = behaviour;
-            }
-            menuData.ApplyModifiedProperties();
+            RadialInteractionMenu menu = InteractionMenuSetup.SetupPlayer(player);
 
             if (!player.TryGetComponent(out TransferHoseHud hud))
                 hud = Undo.AddComponent<TransferHoseHud>(player);
@@ -416,7 +389,6 @@ namespace WaterChaos.EditorTools
             SerializedObject hudData = new SerializedObject(hud);
             hudData.FindProperty("_interactor").objectReferenceValue = interactor;
             hudData.FindProperty("_menu").objectReferenceValue = menu;
-            hudData.FindProperty("_itemInteractor").objectReferenceValue = player.GetComponent<PlayerItemInteractor>();
             hudData.ApplyModifiedProperties();
         }
 
