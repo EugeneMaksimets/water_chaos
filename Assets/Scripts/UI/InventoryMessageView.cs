@@ -4,12 +4,12 @@ using WaterChaos.Player;
 
 namespace WaterChaos.UI
 {
-    /// <summary>Inventory texts: the short "backpack is full" notice and the throw hint.</summary>
+    /// <summary>Inventory texts: the short "backpack is full" notice and the throw / drop hint (keys from the bindings).</summary>
     public sealed class InventoryMessageView : MonoBehaviour
     {
         private const string FullText = "Backpack is full!";
-        private const string ReadyText = "Hold LMB to throw";
-        private const string AimingText = "Release LMB to throw";
+        private string _readyText;
+        private string _aimingText;
 
         [Header("References")]
         [SerializeField] private PlayerItemInteractor _interactor;
@@ -35,6 +35,11 @@ namespace WaterChaos.UI
                 enabled = false;
                 return;
             }
+
+            string primary = PlayerControls.GetDisplayName(PlayerControl.Primary);
+            string drop = PlayerControls.GetDisplayName(PlayerControl.Drop);
+            _readyText = $"Hold {primary} to throw · {drop} to drop";
+            _aimingText = $"Release {primary} to throw";
 
             _notice.gameObject.SetActive(false);
             _hint.gameObject.SetActive(false);
@@ -78,7 +83,7 @@ namespace WaterChaos.UI
             bool visible = _thrower.CanThrow;
             _hint.gameObject.SetActive(visible);
             if (visible)
-                _hint.text = _thrower.IsAiming ? AimingText : ReadyText;
+                _hint.text = _thrower.IsAiming ? _aimingText : _readyText;
         }
     }
 }

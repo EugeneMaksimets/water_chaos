@@ -14,7 +14,7 @@ namespace WaterChaos.Interaction
         /// <summary>Text in the menu, e.g. "Turn On". Actions with the same label are shown once.</summary>
         public string Label { get; }
 
-        /// <summary>Object the action is about (its root names the menu); null for hands-only actions like placing a carried hose.</summary>
+        /// <summary>Object the action is about (its whole object names the menu); null for hands-only actions like placing a carried hose.</summary>
         public Component Target { get; }
 
         /// <param name="label">Menu text; must not be empty.</param>

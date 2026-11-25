@@ -6,24 +6,28 @@ using WaterChaos.Player;
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// The only interaction UI. While actions are available, one "E" prompt names the target;
+    /// The only interaction UI. While actions are available, a primary-button prompt (left mouse button) shows the
+    /// first action, which the primary button performs directly; with more than one action an "E" prompt offers the menu.
     /// E opens a half-circle menu with every action <see cref="PlayerInteraction"/> offers right now.
     /// The mouse direction from the screen center highlights one, a click performs it and closes the menu.
     /// E again or Escape closes it; it also closes when the target changes or nothing is left to do.
-    /// While open: the cursor is free and the listed player behaviours (look, movement, throw, slot keys, source control)
-    /// are switched off, so the mouse and the click never act on the game underneath.
+    /// While open: the cursor is free, gameplay input is blocked in <see cref="PlayerInputHandler"/> and the listed
+    /// player behaviours (look, movement, throw, slot keys) are switched off, so the mouse and the click never act
+    /// on the game underneath. Action providers in that list stay on, so their actions stay in the menu.
     /// Generic: it knows nothing about pumps, hoses or items — only labels and actions.
     /// </summary>
     public sealed class RadialInteractionMenu : MonoBehaviour
     {
         private const int MaxOptions = 6;
         private const float PromptY = -90f;
+        private const float PromptPairX = 110f;
+        private const string MenuText = "More";
 
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;
         [SerializeField] private PlayerInteraction _interaction;
 
-        [Tooltip("Player behaviours switched off while the menu is open, e.g. PlayerLook, PlayerMovement, PlayerItemThrower, PlayerInventory, PlayerSourceControl. Never action providers.")]
+        [Tooltip("Player behaviours switched off while the menu is open, e.g. PlayerLook, PlayerMovement, PlayerItemThrower, PlayerInventory. Action providers listed here are skipped.")]
         [SerializeField] private Behaviour[] _blockWhileOpen = new Behaviour[0];
 
         [Header("Look")]
@@ -52,9 +56,13 @@ namespace WaterChaos.UI
         private Text[] _labels;
         private Text _title;
         private KeyPrompt _prompt;
+        private KeyPrompt _menuPrompt;
         private int _count;
         private int _hovered = -1;
         private Transform _openFocus;
+        private string _primaryText;
+        private string _primaryLabel;
+        private string _primaryTitle;
 
         public bool IsOpen { get; private set; }
 
@@ -77,7 +85,8 @@ namespace WaterChaos.UI
 
             _input.InteractPressed += OnInteractPressed;
             _input.CancelPressed += Close;
-            _input.ThrowReleased += OnClick;
+            _input.PrimaryPressed += OnPrimaryPressed;
+            _input.PointerReleased += OnClick;
         }
 
         private void OnDisable()
@@ -86,11 +95,13 @@ namespace WaterChaos.UI
             {
                 _input.InteractPressed -= OnInteractPressed;
                 _input.CancelPressed -= Close;
-                _input.ThrowReleased -= OnClick;
+                _input.PrimaryPressed -= OnPrimaryPressed;
+                _input.PointerReleased -= OnClick;
             }
 
             Close();
             _prompt?.Hide();
+            _menuPrompt?.Hide();
         }
 
         // LateUpdate: PlayerInteraction has gathered this frame's actions in Update.
@@ -116,12 +127,50 @@ namespace WaterChaos.UI
             SetHovered(RadialMenuLayout.GetIndex(offset, _count, _deadZone));
         }
 
+        /// <summary>Primary prompt with the first action; the E prompt only when the menu has more to offer.</summary>
         private void UpdatePrompt()
         {
-            if (_interaction.Actions.Count > 0)
-                _prompt.Show(_interaction.Title, 0f, 1f);
-            else
+            int count = _interaction.Actions.Count;
+            if (count == 0)
+            {
                 _prompt.Hide();
+                _menuPrompt.Hide();
+                return;
+            }
+
+            bool hasMore = count > 1;
+            _prompt.Show(GetPrimaryText(), hasMore ? -PromptPairX : 0f, 1f);
+            if (hasMore)
+                _menuPrompt.Show(MenuText, PromptPairX, 1f);
+            else
+                _menuPrompt.Hide();
+        }
+
+        /// <summary>"Pick Up — Nozzle": the first action and, when there is one, the object it is about.</summary>
+        private string GetPrimaryText()
+        {
+            InteractionAction primary = _interaction.Actions[0];
+            if (_interaction.Focus == null || _interaction.Title == primary.Label)
+                return primary.Label;
+
+            if (_primaryText == null || _primaryLabel != primary.Label || _primaryTitle != _interaction.Title)
+            {
+                _primaryLabel = primary.Label;
+                _primaryTitle = _interaction.Title;
+                _primaryText = $"{_primaryLabel} — {_primaryTitle}";
+            }
+
+            return _primaryText;
+        }
+
+        /// <summary>Menu closed: the primary button performs the first action instead of aiming a throw.</summary>
+        private void OnPrimaryPressed()
+        {
+            if (IsOpen || !_interaction.isActiveAndEnabled || _interaction.Actions.Count == 0)
+                return;
+
+            _input.ConsumePrimary();
+            _interaction.Actions[0].Execute();
         }
 
         private void OnInteractPressed()
@@ -146,12 +195,15 @@ namespace WaterChaos.UI
         {
             IsOpen = true;
             _openFocus = _interaction.Focus;
+            _input.GameplayBlocked = true;
             _prompt.Hide();
+            _menuPrompt.Hide();
 
             for (int i = 0; i < _blockWhileOpen.Length && i < _wasEnabled.Length; i++)
             {
                 Behaviour behaviour = _blockWhileOpen[i];
-                _wasEnabled[i] = behaviour != null && behaviour.enabled;
+                // Switching off a provider would remove its actions from the open menu.
+                _wasEnabled[i] = behaviour != null && behaviour.enabled && !(behaviour is IInteractionProvider);
                 if (_wasEnabled[i])
                     behaviour.enabled = false;
             }
@@ -170,6 +222,7 @@ namespace WaterChaos.UI
 
             IsOpen = false;
             _openFocus = null;
+            _input.GameplayBlocked = false;
             _root.gameObject.SetActive(false);
 
             for (int i = 0; i < _blockWhileOpen.Length && i < _wasEnabled.Length; i++)
@@ -276,7 +329,8 @@ namespace WaterChaos.UI
 
             _root.gameObject.SetActive(false);
 
-            _prompt = HudWidgets.CreateKeyPrompt("Interact Prompt", _canvas.transform, "E", new Vector2(0f, PromptY));
+            _prompt = HudWidgets.CreateKeyPrompt("Primary Prompt", _canvas.transform, PlayerControl.Primary, new Vector2(0f, PromptY));
+            _menuPrompt = HudWidgets.CreateKeyPrompt("Menu Prompt", _canvas.transform, PlayerControl.Interact, new Vector2(PromptPairX, PromptY));
         }
     }
 }

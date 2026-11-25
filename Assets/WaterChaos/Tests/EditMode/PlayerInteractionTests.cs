@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEngine;
 using WaterChaos.Interaction;
 
 namespace WaterChaos.Tests
@@ -56,6 +57,45 @@ namespace WaterChaos.Tests
         public void CleanName_DropsDuplicateSuffixOnly(string objectName, string expected)
         {
             Assert.AreEqual(expected, PlayerInteraction.CleanName(objectName));
+        }
+
+        [Test]
+        public void FocusOf_StopsBelowEmptyGroupObjects()
+        {
+            // Gameplay (empty group) / Pumps (empty group) / Pump (has a collider) / HoseAttachPoint (target)
+            GameObject gameplay = new GameObject("Gameplay");
+            GameObject pumps = new GameObject("Pumps");
+            GameObject pump = new GameObject("Pump", typeof(BoxCollider));
+            GameObject point = new GameObject("HoseAttachPoint");
+            pumps.transform.SetParent(gameplay.transform);
+            pump.transform.SetParent(pumps.transform);
+            point.transform.SetParent(pump.transform);
+
+            try
+            {
+                Assert.AreSame(pump.transform, PlayerInteraction.FocusOf(point.transform));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(gameplay);
+            }
+        }
+
+        [Test]
+        public void FocusOf_ObjectWithoutGroup_IsItsRoot()
+        {
+            GameObject hydrant = new GameObject("FireHydrant_Red", typeof(CapsuleCollider));
+            GameObject anchor = new GameObject("HoseAnchor");
+            anchor.transform.SetParent(hydrant.transform);
+
+            try
+            {
+                Assert.AreSame(hydrant.transform, PlayerInteraction.FocusOf(anchor.transform));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(hydrant);
+            }
         }
     }
 }

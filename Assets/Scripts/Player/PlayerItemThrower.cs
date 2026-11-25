@@ -4,8 +4,8 @@ using WaterChaos.Items;
 namespace WaterChaos.Player
 {
     /// <summary>
-    /// Holding throw aims the selected item and shows its predicted path;
-    /// releasing it throws the item along the camera forward.
+    /// Holding primary aims the selected item and shows its predicted path; releasing it throws the item
+    /// along the camera forward. Drop puts the item down in front of the player without a push.
     /// </summary>
     public sealed class PlayerItemThrower : MonoBehaviour
     {
@@ -60,12 +60,14 @@ namespace WaterChaos.Player
 
         private void OnEnable()
         {
-            _input.ThrowReleased += OnThrowReleased;
+            _input.PrimaryReleased += OnThrowReleased;
+            _input.DropPressed += OnDropPressed;
         }
 
         private void OnDisable()
         {
-            _input.ThrowReleased -= OnThrowReleased;
+            _input.PrimaryReleased -= OnThrowReleased;
+            _input.DropPressed -= OnDropPressed;
             CanThrow = false;
             IsAiming = false;
             HideTrajectory();
@@ -75,7 +77,7 @@ namespace WaterChaos.Player
         {
             IPickableItem item = _inventory.Model.SelectedItem;
             CanThrow = item != null;
-            IsAiming = CanThrow && _input.ThrowHeld;
+            IsAiming = CanThrow && _input.PrimaryHeld;
 
             if (IsAiming)
                 DrawTrajectory(item);
@@ -85,11 +87,23 @@ namespace WaterChaos.Player
 
         private void OnThrowReleased()
         {
+            ReleaseSelected(_camera.forward * _throwImpulse);
+        }
+
+        private void OnDropPressed()
+        {
+            ReleaseSelected(Vector3.zero);
+        }
+
+        /// <summary>Takes the selected item out of the inventory into the world; does nothing when the slot is empty.</summary>
+        /// <param name="impulse">Push given to the item, in newton-seconds (N·s); zero just lets it fall.</param>
+        private void ReleaseSelected(Vector3 impulse)
+        {
             IPickableItem item = _inventory.Model.RemoveSelected();
             if (item == null)
                 return;
 
-            item.Release(GetSpawnPosition(), _camera.forward * _throwImpulse);
+            item.Release(GetSpawnPosition(), impulse);
         }
 
         /// <summary>A point in front of the camera, pulled back if a wall is closer, so the item is not spawned inside it.</summary>

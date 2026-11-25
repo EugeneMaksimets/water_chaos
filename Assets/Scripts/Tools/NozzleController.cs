@@ -7,7 +7,7 @@ namespace WaterChaos.Tools
 {
     /// <summary>
     /// Nozzle in the hands: hands its stream and hose to the player's hose connector,
-    /// so interact connects it to a source and F / mouse wheel control that source.
+    /// so interact connects it to a source; "Water On/Off" (primary button or menu) and the mouse wheel control it.
     /// Unequipping takes the hose off and stops the source, so no water flows after switching.
     /// </summary>
     public sealed class NozzleController : MonoBehaviour, IEquippable

@@ -80,14 +80,14 @@ namespace WaterChaos.EditorTools
             if (!player.TryGetComponent(out RadialInteractionMenu menu))
                 menu = Undo.AddComponent<RadialInteractionMenu>(player);
 
-            // Everything that would react to the mouse, the click, the wheel or movement keys while the menu is open.
-            // Action providers (item, hose and transfer interactors) stay on, or the menu would lose its actions.
+            // Everything that would react to the mouse, the click or movement keys while the menu is open
+            // (the wheel and gameplay buttons are also blocked in PlayerInputHandler).
+            // Action providers (item, hose, transfer interactors, source control) stay on, or the menu would lose its actions.
             Behaviour[] blocked =
             {
                 player.GetComponentInChildren<PlayerLook>(true),
                 player.GetComponentInChildren<PlayerMovement>(true),
                 player.GetComponentInChildren<PlayerItemThrower>(true),
-                player.GetComponentInChildren<PlayerSourceControl>(true),
                 player.GetComponent<PlayerInventory>()
             };
 

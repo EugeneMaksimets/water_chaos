@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WaterChaos.Player;
 
 namespace WaterChaos.UI
 {
@@ -10,6 +11,8 @@ namespace WaterChaos.UI
     public static class HudWidgets
     {
         public const float PromptSize = 72f;
+        private const float MouseIconWidth = 28f;
+        private const float MouseIconHeight = 40f;
         public static readonly Color PanelColor = new Color(0f, 0f, 0f, 0.55f);
         public static readonly Color TrackColor = new Color(1f, 1f, 1f, 0.2f);
         public static readonly Color ProblemColor = new Color(1f, 0.55f, 0.45f);
@@ -36,14 +39,34 @@ namespace WaterChaos.UI
             return canvas;
         }
 
+        /// <summary>
+        /// Round prompt for a player control: a mouse icon with the bound button lit for mouse bindings,
+        /// otherwise the key name from the binding (e.g. "F").
+        /// </summary>
+        public static KeyPrompt CreateKeyPrompt(string name, Transform parent, PlayerControl control, Vector2 position)
+        {
+            if (!PlayerControls.IsMouseButton(control, out bool isLeft, out bool isRight))
+                return CreateKeyPrompt(name, parent, PlayerControls.GetDisplayName(control), position);
+
+            KeyPrompt prompt = CreateKeyPrompt(name, parent, string.Empty, position, out RectTransform root);
+            Sprite mouse = CreateMouseSprite(isLeft, isRight);
+            CreateImage("Mouse Icon", root, Vector2.zero, new Vector2(MouseIconWidth, MouseIconHeight), mouse, Color.white);
+            return prompt;
+        }
+
         /// <summary>Round key prompt: panel, ring track, progress ring, key letter and a label under it.</summary>
         public static KeyPrompt CreateKeyPrompt(string name, Transform parent, string key, Vector2 position)
+        {
+            return CreateKeyPrompt(name, parent, key, position, out _);
+        }
+
+        private static KeyPrompt CreateKeyPrompt(string name, Transform parent, string key, Vector2 position, out RectTransform root)
         {
             Sprite disc = CreateCircleSprite(128, 0f);
             Sprite ring = CreateCircleSprite(128, 0.82f);
             Vector2 size = new Vector2(PromptSize, PromptSize);
 
-            RectTransform root = CreateRect(name, parent, position, size);
+            root = CreateRect(name, parent, position, size);
             CreateImage("Background", root, Vector2.zero, size, disc, PanelColor);
             CreateImage("Track", root, Vector2.zero, size, ring, TrackColor);
 
@@ -96,6 +119,65 @@ namespace WaterChaos.UI
             text.raycastTarget = false;
             text.gameObject.AddComponent<Shadow>();
             return text;
+        }
+
+        /// <summary>
+        /// White mouse outline: an oval body split into two buttons; the lit button is filled.
+        /// Drawn in code like the other prompt sprites, so no texture asset is needed.
+        /// </summary>
+        public static Sprite CreateMouseSprite(bool leftLit, bool rightLit)
+        {
+            const int width = 56;
+            const int height = 80;
+            const float line = 4f;
+            Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
+
+            float cx = width * 0.5f;
+            float cy = height * 0.5f;
+            float rx = cx - 1f;
+            float ry = cy - 1f;
+            float split = cy + ry * 0.15f; // buttons are above this line (texture y goes up)
+            Color32[] pixels = new Color32[width * height];
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    float px = x + 0.5f;
+                    float py = y + 0.5f;
+                    float dx = (px - cx) / rx;
+                    float dy = (py - cy) / ry;
+                    float radius = Mathf.Sqrt(dx * dx + dy * dy);
+                    float alpha = 0f;
+
+                    if (radius <= 1f)
+                    {
+                        // Distance to the edge in pixels, approximated along the smaller radius.
+                        float edge = (1f - radius) * Mathf.Min(rx, ry);
+                        bool outline = edge < line;
+                        bool buttonArea = py > split;
+                        bool divider = buttonArea && Mathf.Abs(px - cx) < line * 0.5f;
+                        bool splitLine = Mathf.Abs(py - split) < line * 0.5f;
+                        bool lit = buttonArea && ((leftLit && px < cx) || (rightLit && px > cx));
+
+                        if (outline || divider || splitLine)
+                            alpha = 1f;
+                        else if (lit)
+                            alpha = 0.95f;
+                        else
+                            alpha = 0.15f;
+
+                        alpha *= Mathf.Clamp01(edge + 0.5f); // soft outer edge
+                    }
+
+                    pixels[y * width + x] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f));
         }
 
         /// <summary>White anti-aliased disc (innerRatio = 0) or ring sprite.</summary>

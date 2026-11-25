@@ -34,7 +34,7 @@ namespace WaterChaos.Interaction
         /// <summary>Valid actions this frame, without duplicate labels. Do not modify.</summary>
         public IReadOnlyList<InteractionAction> Actions => _actions;
 
-        /// <summary>Root of the object the actions are about; null when there is none (e.g. only hands actions).</summary>
+        /// <summary>Object the actions are about (see <see cref="FocusOf"/>); null when there is none (e.g. only hands actions).</summary>
         public Transform Focus { get; private set; }
 
         /// <summary>Menu title: the focus object's name, the only action's label, or "Interact".</summary>
@@ -149,10 +149,28 @@ namespace WaterChaos.Interaction
             foreach (InteractionAction action in actions)
             {
                 if (action.Target != null)
-                    return action.Target.transform.root;
+                    return FocusOf(action.Target.transform);
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The whole object a target belongs to: its highest ancestor below any empty group objects
+        /// (scene folders like "Gameplay/Pumps" that hold only a Transform), e.g. HoseAttachPoint → Pump.
+        /// </summary>
+        public static Transform FocusOf(Transform target)
+        {
+            Transform focus = target;
+            while (focus.parent != null && !IsGroup(focus.parent))
+                focus = focus.parent;
+
+            return focus;
+        }
+
+        private static bool IsGroup(Transform transform)
+        {
+            return transform.gameObject.GetComponentCount() == 1;
         }
     }
 }
