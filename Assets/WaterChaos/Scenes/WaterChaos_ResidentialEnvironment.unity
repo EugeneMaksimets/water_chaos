@@ -34565,11 +34565,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b803164b8174b2d8c86f998424bcb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Rooms.RoomTemperature
-  _displayName: Living Room
+  _displayName: First Floor
   _startTemperature: 25
   _minTemperature: -100
   _coolingLimit: 100
-  _heatPerFire: 10
+  _initialFireHeat: 5
+  _extinguishHeatLoss: 5
+  _heatInterval: 2
+  _heatPerInterval: 1
   _overheatCooling: 2.5
   _reigniteDelay: 15
 --- !u!54 &462166292
@@ -122164,6 +122167,9 @@ MonoBehaviour:
   _criticalColor: {r: 1, g: 0.25, b: 0.2, a: 1}
   _coolingColor: {r: 0.3, g: 0.6, b: 1, a: 1}
   _freezingColor: {r: 0.45, g: 0.95, b: 1, a: 1}
+  _hintTemperature: 80
+  _hintDuration: 3
+  _hintRearmMargin: 5
   _valueSmoothing: 6
 --- !u!114 &1633715741
 MonoBehaviour:

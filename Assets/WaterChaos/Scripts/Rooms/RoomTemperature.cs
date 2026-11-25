@@ -32,8 +32,11 @@ namespace WaterChaos.Rooms
         [SerializeField] private float _coolingLimit = 100f;
 
         [Header("Fire Heat")]
-        [Tooltip("Heat a fire adds once when it starts burning in the room (°C); the same amount goes away when it is extinguished.")]
+        [Tooltip("Heat a fire adds once when it starts burning in the room (°C).")]
         [SerializeField, Min(0f)] private float _initialFireHeat = 5f;
+
+        [Tooltip("Degrees (°C) the room loses once when a fire in it is extinguished (or leaves the room).")]
+        [SerializeField, Min(0f)] private float _extinguishHeatLoss = 5f;
 
         [Tooltip("Seconds (s) between heating steps of one burning fire. Each fire runs its own timer.")]
         [SerializeField, Min(0.1f)] private float _heatInterval = 5f;
@@ -96,7 +99,7 @@ namespace WaterChaos.Rooms
             body.useGravity = false;
 
             _model = new RoomTemperatureModel(_startTemperature, Mathf.Min(_minTemperature, _coolingLimit),
-                _coolingLimit, _initialFireHeat, _heatInterval, _heatPerInterval, _overheatCooling, _reigniteDelay);
+                _coolingLimit, _initialFireHeat, _extinguishHeatLoss, _heatInterval, _heatPerInterval, _overheatCooling, _reigniteDelay);
 
             _onFireChanged = OnFireChanged;
             _onApplianceChanged = OnApplianceChanged;

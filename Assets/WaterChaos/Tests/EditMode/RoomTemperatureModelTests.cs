@@ -18,10 +18,11 @@ namespace WaterChaos.Tests
 
         private readonly List<int> _ready = new List<int>();
 
-        private static RoomTemperatureModel CreateRoom(float heatPerInterval = HeatPerInterval)
+        private static RoomTemperatureModel CreateRoom(float heatPerInterval = HeatPerInterval,
+            float extinguishHeatLoss = InitialFireHeat)
         {
-            return new RoomTemperatureModel(Start, Min, Limit, InitialFireHeat, HeatInterval, heatPerInterval,
-                OverheatCooling, ReigniteDelay);
+            return new RoomTemperatureModel(Start, Min, Limit, InitialFireHeat, extinguishHeatLoss, HeatInterval,
+                heatPerInterval, OverheatCooling, ReigniteDelay);
         }
 
         /// <summary>Room with fires 1..<paramref name="fires"/> burning; each adds 5 °C at once.</summary>
@@ -175,6 +176,17 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(30f, room.Temperature, Tolerance);
             Assert.AreEqual(1, room.ActiveFires);
+        }
+
+        [Test]
+        public void RemoveFire_LowersTemperatureByExtinguishHeatLoss()
+        {
+            RoomTemperatureModel room = CreateRoom(extinguishHeatLoss: 12f);
+            room.AddFire(1);                              // 30
+
+            room.RemoveFire(1);
+
+            Assert.AreEqual(18f, room.Temperature, Tolerance);
         }
 
         [Test]

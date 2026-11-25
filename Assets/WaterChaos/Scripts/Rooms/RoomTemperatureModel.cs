@@ -7,8 +7,8 @@ namespace WaterChaos.Rooms
     /// <summary>
     /// Pure gameplay model of one room's temperature, in degrees Celsius (°C).
     /// Every burning fire (keyed by an id the caller chooses) adds an initial heat once when it starts,
-    /// then a fixed amount once per heating interval on its own timer, and takes the initial heat back once
-    /// when it goes out. Working coolers lower the temperature over time while fires keep heating.
+    /// then a fixed amount once per heating interval on its own timer, and lowers the room by the extinguish
+    /// heat loss once when it goes out. Working coolers lower the temperature over time while fires keep heating.
     /// Only when every cooler in the room works is the room protected: fires cannot heat it above
     /// the cooling limit, it cools down to the limit faster, and fires neither spread nor re-ignite.
     /// Also keeps the re-ignition timers of extinguished fires, keyed by an id the caller chooses.
@@ -20,6 +20,7 @@ namespace WaterChaos.Rooms
         private readonly float _minTemperature;
         private readonly float _coolingLimit;
         private readonly float _initialFireHeat;
+        private readonly float _extinguishHeatLoss;
         private readonly float _heatInterval;
         private readonly float _heatPerInterval;
         private readonly float _overheatCooling;
@@ -69,13 +70,14 @@ namespace WaterChaos.Rooms
         /// <param name="startTemperature">Starting temperature (°C).</param>
         /// <param name="minTemperature">Lowest possible temperature (°C).</param>
         /// <param name="coolingLimit">Temperature (°C) fires cannot heat above while cooling works.</param>
-        /// <param name="initialFireHeat">Heat (°C) a fire adds once when it starts; also removed when it goes out.</param>
+        /// <param name="initialFireHeat">Heat (°C) a fire adds once when it starts.</param>
+        /// <param name="extinguishHeatLoss">Degrees (°C) the room loses once when a fire goes out or leaves it.</param>
         /// <param name="heatInterval">Seconds (s) between heating steps of one burning fire; 0 = no periodic heat.</param>
         /// <param name="heatPerInterval">Heat (°C) one burning fire adds every heating interval.</param>
         /// <param name="overheatCooling">Cooling (°C/s) while above the limit with cooling on.</param>
         /// <param name="reigniteDelay">Seconds (s) before an extinguished fire may burn again.</param>
         public RoomTemperatureModel(float startTemperature, float minTemperature, float coolingLimit,
-            float initialFireHeat, float heatInterval, float heatPerInterval, float overheatCooling, float reigniteDelay)
+            float initialFireHeat, float extinguishHeatLoss, float heatInterval, float heatPerInterval, float overheatCooling, float reigniteDelay)
         {
             if (float.IsNaN(startTemperature) || float.IsNaN(minTemperature) || float.IsNaN(coolingLimit))
                 throw new ArgumentException("Room temperatures must be numbers.");
@@ -85,6 +87,7 @@ namespace WaterChaos.Rooms
             _minTemperature = minTemperature;
             _coolingLimit = coolingLimit;
             _initialFireHeat = Sanitize(initialFireHeat);
+            _extinguishHeatLoss = Sanitize(extinguishHeatLoss);
             _heatInterval = Sanitize(heatInterval);
             _heatPerInterval = Sanitize(heatPerInterval);
             _overheatCooling = Sanitize(overheatCooling);
@@ -127,7 +130,7 @@ namespace WaterChaos.Rooms
         }
 
         /// <summary>
-        /// A burning fire went out or left the room: its initial heat goes away once and it stops heating.
+        /// A burning fire went out or left the room: the room loses the extinguish heat loss once and the fire stops heating.
         /// Returns false (and changes nothing) if this fire was not burning here.
         /// </summary>
         public bool RemoveFire(int fireId)
@@ -135,7 +138,7 @@ namespace WaterChaos.Rooms
             if (!_fireHeatTimers.Remove(fireId))
                 return false;
 
-            Temperature = Math.Max(Temperature - _initialFireHeat, _minTemperature);
+            Temperature = Math.Max(Temperature - _extinguishHeatLoss, _minTemperature);
             return true;
         }
 
