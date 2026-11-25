@@ -257,6 +257,8 @@ namespace WaterChaos.EditorTools.MiniVillage
 
             var renderer = (Renderer)Field(strong, "_pane");
             Expect(!renderer.enabled && !strong.GetComponent<Collider>().enabled, "Broken pane hides its glass and stops blocking water");
+            var breakOff = (GameObject[])Field(strong, "_breakOff");
+            Expect(breakOff.Length > 0 && breakOff.All(p => !p.activeSelf), $"Window bars break with the glass ({breakOff.Length} intact part(s) hidden)");
 
             var shards = (Rigidbody[])Field(strong, "_fragments");
             Vector3[] start = shards.Select(s => s.position).ToArray();

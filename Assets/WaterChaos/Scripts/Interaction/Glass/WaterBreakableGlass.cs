@@ -30,6 +30,9 @@ namespace WaterChaos.Interaction
         [Tooltip("Crack lines shown while the glass is cracked.")]
         [SerializeField] private GameObject _cracks;
 
+        [Tooltip("Intact parts that go with the glass when it breaks (e.g. window bars); their pieces are among the fragments.")]
+        [SerializeField] private GameObject[] _breakOff = new GameObject[0];
+
         [Header("Fragments")]
         [Tooltip("Inactive child shards released when the glass breaks.")]
         [SerializeField] private Rigidbody[] _fragments = new Rigidbody[0];
@@ -87,6 +90,11 @@ namespace WaterChaos.Interaction
                 _pane.enabled = false;
             if (_cracks != null)
                 _cracks.SetActive(false);
+            foreach (GameObject part in _breakOff)
+            {
+                if (part != null)
+                    part.SetActive(false);
+            }
 
             Vector3 push = impact.Direction.sqrMagnitude > 0f ? impact.Direction.normalized : -transform.forward;
 

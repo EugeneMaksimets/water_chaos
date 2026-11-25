@@ -59,6 +59,7 @@ namespace WaterChaos.EditorTools.MiniVillage
         {
             Profiles.Clear();
             _wet = null;
+            _text = null;
             foreach (string folder in new[] { ModelFolder, PrefabFolder, ProfileFolder })
                 Directory.CreateDirectory(folder);
             AssetDatabase.Refresh();
@@ -200,17 +201,14 @@ namespace WaterChaos.EditorTools.MiniVillage
             float hh = height * 0.5f;
 
             // Frame around the opening, a sill, and optional cross bars and shutters.
-            frameModel.Box(new Vector3(0f, hh + frame * 0.5f, 0f), new Vector3(width + frame * 2f, frame, depth), frameMaterial);
-            frameModel.Box(new Vector3(0f, -hh - frame * 0.5f, 0f), new Vector3(width + frame * 2f, frame, depth), frameMaterial);
-            frameModel.Box(new Vector3(-hw - frame * 0.5f, 0f, 0f), new Vector3(frame, height, depth), frameMaterial);
-            frameModel.Box(new Vector3(hw + frame * 0.5f, 0f, 0f), new Vector3(frame, height, depth), frameMaterial);
+            // The frame reaches 1.5 cm into the opening: its inner faces must not lie in the plane of the
+            // wall's opening edges, or the two surfaces flicker (z-fighting).
+            const float overlap = 0.015f;
+            frameModel.Box(new Vector3(0f, hh + frame * 0.5f - overlap, 0f), new Vector3(width + frame * 2f, frame, depth), frameMaterial);
+            frameModel.Box(new Vector3(0f, -hh - frame * 0.5f + overlap, 0f), new Vector3(width + frame * 2f, frame, depth), frameMaterial);
+            frameModel.Box(new Vector3(-hw - frame * 0.5f + overlap, 0f, 0f), new Vector3(frame, height, depth), frameMaterial);
+            frameModel.Box(new Vector3(hw + frame * 0.5f - overlap, 0f, 0f), new Vector3(frame, height, depth), frameMaterial);
             frameModel.Box(new Vector3(0f, -hh - frame - 0.03f, -0.08f), new Vector3(width + 0.35f, 0.06f, 0.3f), frameMaterial);
-
-            if (mullions)
-            {
-                frameModel.Box(new Vector3(0f, 0f, -0.05f), new Vector3(0.05f, height, 0.05f), frameMaterial);
-                frameModel.Box(new Vector3(0f, 0f, -0.05f), new Vector3(width, 0.05f, 0.05f), frameMaterial);
-            }
 
             if (shutterMaterial != null)
             {
@@ -244,6 +242,25 @@ namespace WaterChaos.EditorTools.MiniVillage
             foreach (Vector2[] shard in BuildShardOutlines(width, height, shardColumns, shardRows))
                 shards.Add(CreateShard(glass.transform, name, shard, shards.Count));
 
+            // Window bars break with the glass: the intact cross is hidden and its four arms fall as fragments.
+            GameObject bars = null;
+            if (mullions)
+            {
+                const float bar = 0.05f;
+                const float barZ = -0.05f;
+                var barsModel = new LowPolyMesh();
+                barsModel.Box(new Vector3(0f, 0f, barZ), new Vector3(bar, height, bar), frameMaterial);
+                barsModel.Box(new Vector3(0f, 0f, barZ), new Vector3(width, bar, bar), frameMaterial);
+                bars = CreateMeshObject("Bars", barsModel, name);
+                bars.transform.SetParent(glass.transform, false);
+
+                float arm = hh - bar * 0.5f;
+                shards.Add(CreateBarPiece(glass.transform, name, frameMaterial, new Vector3(0f, (hh + bar * 0.5f) * 0.5f, barZ), new Vector3(bar, arm, bar), shards.Count));
+                shards.Add(CreateBarPiece(glass.transform, name, frameMaterial, new Vector3(0f, -(hh + bar * 0.5f) * 0.5f, barZ), new Vector3(bar, arm, bar), shards.Count));
+                shards.Add(CreateBarPiece(glass.transform, name, frameMaterial, new Vector3(-hw * 0.5f, 0f, barZ), new Vector3(hw, bar, bar), shards.Count));
+                shards.Add(CreateBarPiece(glass.transform, name, frameMaterial, new Vector3(hw * 0.5f, 0f, barZ), new Vector3(hw, bar, bar), shards.Count));
+            }
+
             var breakable = glass.AddComponent<WaterBreakableGlass>();
             var data = new SerializedObject(breakable);
             data.FindProperty("_minImpactForce").floatValue = minForce;
@@ -251,6 +268,10 @@ namespace WaterChaos.EditorTools.MiniVillage
             data.FindProperty("_breakImpulse").floatValue = breakImpulse;
             data.FindProperty("_pane").objectReferenceValue = glass.GetComponent<MeshRenderer>();
             data.FindProperty("_cracks").objectReferenceValue = cracks;
+            SerializedProperty breakOff = data.FindProperty("_breakOff");
+            breakOff.arraySize = bars != null ? 1 : 0;
+            if (bars != null)
+                breakOff.GetArrayElementAtIndex(0).objectReferenceValue = bars;
             SerializedProperty fragments = data.FindProperty("_fragments");
             fragments.arraySize = shards.Count;
             for (int i = 0; i < shards.Count; i++)
@@ -377,6 +398,23 @@ namespace WaterChaos.EditorTools.MiniVillage
             return body;
         }
 
+        private static Rigidbody CreateBarPiece(Transform glass, string assetName, string material, Vector3 center, Vector3 size, int index)
+        {
+            var mesh = new LowPolyMesh();
+            mesh.Box(Vector3.zero, size, material);
+            GameObject piece = CreateMeshObject("BarPiece_" + index, mesh, assetName);
+            piece.layer = ShardLayer;
+            piece.transform.SetParent(glass, false);
+            piece.transform.localPosition = center;
+            piece.AddComponent<BoxCollider>().size = size;
+
+            var body = piece.AddComponent<Rigidbody>();
+            body.mass = 0.3f;
+            body.isKinematic = true;
+            piece.SetActive(false);
+            return body;
+        }
+
         // ───────────── Doors ─────────────
 
         /// <summary>
@@ -435,7 +473,29 @@ namespace WaterChaos.EditorTools.MiniVillage
             mesh.anchor = TextAnchor.MiddleCenter;
             mesh.alignment = TextAlignment.Center;
             mesh.color = color;
-            go.GetComponent<MeshRenderer>().sharedMaterial = font.material;
+            go.GetComponent<MeshRenderer>().sharedMaterial = TextMaterial(font);
+        }
+
+        private static Material _text;
+
+        /// <summary>Font material on WaterChaos/Text3D: depth-tested, so walls and boards hide text behind them.</summary>
+        private static Material TextMaterial(Font font)
+        {
+            if (_text != null)
+                return _text;
+
+            string path = VillagePalette.Root + "/Materials/M_Text3D.mat";
+            _text = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (_text == null)
+            {
+                _text = new Material(Shader.Find("WaterChaos/Text3D"));
+                AssetDatabase.CreateAsset(_text, path);
+            }
+
+            _text.shader = Shader.Find("WaterChaos/Text3D");
+            _text.mainTexture = font.material.mainTexture;
+            EditorUtility.SetDirty(_text);
+            return _text;
         }
 
         private static PhysicsMaterial _wet;

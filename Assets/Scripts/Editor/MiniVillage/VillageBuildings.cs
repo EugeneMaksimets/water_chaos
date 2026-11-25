@@ -267,12 +267,15 @@ namespace WaterChaos.EditorTools.MiniVillage
                     WallPiece(model, spec, side, a, b, y, wallTop, interior);
             }
 
-            // Trim band between storeys and under the eaves.
+            // Trim band between storeys, and a taller frieze under the eaves that also covers the joint
+            // between the wall top and the roof slabs (they sit a little above the wall).
             for (int floor = 1; floor <= spec.Floors; floor++)
             {
-                float bandY = floor == spec.Floors ? wallTop - 0.1f : floor * spec.StoreyHeight + 0.1f;
+                bool eaves = floor == spec.Floors;
+                float bandY = eaves ? wallTop - 0.05f : floor * spec.StoreyHeight + 0.1f;
+                float bandHeight = eaves ? 0.3f : 0.14f;
                 Vector3 center = Place(spec, side, (uMin + uMax) * 0.5f, bandY, -0.02f);
-                model.Mesh.Box(center, Size(side, uMax - uMin + (alongX ? 0.1f : 0f), 0.14f, 0.05f), "Trim");
+                model.Mesh.Box(center, Size(side, uMax - uMin + (alongX ? 0.1f : 0f), bandHeight, 0.05f), "Trim");
             }
         }
 
@@ -425,24 +428,34 @@ namespace WaterChaos.EditorTools.MiniVillage
 
             model.Mesh.Gable(new Vector3(0f, wallTop, half), w, spec.Depth, height, spec.Exterior);
 
+            // Roof slabs sit 3 cm above the gable slopes (coplanar faces would flicker) and run a little past
+            // the ridge so the two slopes overlap there; white barge boards close the gap at the gable ends.
+            const float lift = 0.03f;
+            const float thickness = 0.16f;
+            const float pastRidge = 0.25f;
             float slope = Mathf.Atan2(height, half);
-            float length = (half + overhang) / Mathf.Cos(slope);
+            float length = (half + overhang) / Mathf.Cos(slope) + pastRidge;
             foreach (float sign in new[] { -1f, 1f })
             {
                 var direction = new Vector3(0f, -Mathf.Sin(slope), sign * Mathf.Cos(slope));
                 var normal = new Vector3(0f, Mathf.Cos(slope), sign * Mathf.Sin(slope));
-                Vector3 center = ridge + direction * (length * 0.5f) + normal * 0.08f;
+                Vector3 center = ridge + direction * (length * 0.5f - pastRidge) + normal * (thickness * 0.5f + lift);
                 Quaternion rotation = Quaternion.LookRotation(direction, normal);
-                var size = new Vector3(w + 0.7f, 0.16f, length);
+                var size = new Vector3(w + 0.7f, thickness, length);
 
                 model.Mesh.SetTransform(center, rotation);
                 model.Mesh.Box(Vector3.zero, size, spec.Roof);
                 model.Mesh.Box(new Vector3(0f, -0.05f, length * 0.5f - 0.04f), new Vector3(w + 0.72f, 0.18f, 0.08f), "Trim");
+                foreach (float end in new[] { -1f, 1f })
+                {
+                    float x = end * (w * 0.5f + 0.02f);
+                    model.Mesh.Box(new Vector3(x, -thickness * 0.5f - 0.06f, pastRidge * 0.5f), new Vector3(0.06f, 0.24f, length - pastRidge), "Trim");
+                }
                 model.Mesh.ResetTransform();
                 colliders.Add((center, size, rotation));
             }
 
-            model.Mesh.Box(ridge + Vector3.up * 0.12f, new Vector3(w + 0.75f, 0.12f, 0.3f), spec.Roof);
+            model.Mesh.Box(ridge + Vector3.up * (thickness + lift + 0.1f), new Vector3(w + 0.75f, 0.14f, 0.42f), spec.Roof);
 
             if (spec.Chimney)
             {
@@ -486,12 +499,20 @@ namespace WaterChaos.EditorTools.MiniVillage
                     break;
                 }
                 case PorchKind.Small:
+                {
+                    // Used on single-storey houses: the main roof's eave hangs low, so the porch roof sits
+                    // below it and stops in front of it instead of running into it.
+                    const float roofTop = 2.62f;
+                    const float roofFront = -2.4f;
+                    const float roofBack = -0.55f;
+                    float columnHeight = roofTop - 0.14f - FloorTop;
                     model.Part(new Vector3(0f, FloorTop * 0.5f, -1.1f), new Vector3(4.2f, FloorTop, 2.2f), "WoodLight", true);
                     foreach (float x in new[] { -1.9f, 1.9f })
-                        model.Part(new Vector3(x, FloorTop + 1.3f, -2f), new Vector3(0.2f, 2.6f, 0.2f), "Trim", true);
-                    model.Part(new Vector3(0f, 2.82f, -1.15f), new Vector3(4.6f, 0.14f, 2.5f), spec.Roof, true);
-                    model.Mesh.Box(new Vector3(0f, 2.74f, -2.38f), new Vector3(4.62f, 0.22f, 0.06f), "Trim");
+                        model.Part(new Vector3(x, FloorTop + columnHeight * 0.5f, -2f), new Vector3(0.2f, columnHeight, 0.2f), "Trim", true);
+                    model.Part(new Vector3(0f, roofTop - 0.07f, (roofFront + roofBack) * 0.5f), new Vector3(4.6f, 0.14f, roofBack - roofFront), spec.Roof, true);
+                    model.Mesh.Box(new Vector3(0f, roofTop - 0.15f, roofFront + 0.02f), new Vector3(4.62f, 0.22f, 0.06f), "Trim");
                     break;
+                }
                 case PorchKind.Canopy:
                     model.Part(new Vector3(0f, FloorTop * 0.5f, -0.65f), new Vector3(2.4f, FloorTop, 1.3f), "Concrete", true);
                     model.Part(new Vector3(0f, 2.75f, -0.6f), new Vector3(2.4f, 0.12f, 1.2f), spec.Roof, true);
