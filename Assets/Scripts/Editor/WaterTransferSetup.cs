@@ -52,6 +52,15 @@ namespace WaterChaos.EditorTools
         private const float TankStartVolume = 100f;
         private const float TankOffset = 6f;
 
+        /// <summary>
+        /// Lake volume, in liters (L): small enough that filling Reservoir B visibly lowers the lake
+        /// (about 1900 L moved = 38 % of its depth).
+        /// </summary>
+        private const float LakeVolume = 5000f;
+
+        private const string LakeSurfaceName = "Surface";
+        private const string OldCarryPointName = "HoseCarryPoint";
+
         private static readonly (string Name, float Length, float Mass)[] Hoses =
         {
             ("TransferHose_5m", 5f, 4f),
@@ -232,7 +241,8 @@ namespace WaterChaos.EditorTools
 
                 Rigidbody body = root.AddComponent<Rigidbody>();
                 body.mass = mass;
-                body.interpolation = RigidbodyInterpolation.Interpolate;
+                // No interpolation, like the other items: a kinematic body held under the moving camera would lag and jitter.
+                body.interpolation = RigidbodyInterpolation.None;
 
                 PickableItem item = root.AddComponent<PickableItem>();
                 Set(item, data =>
@@ -491,6 +501,97 @@ namespace WaterChaos.EditorTools
                 data.FindProperty("_bottom").floatValue = FloorThickness;
                 data.FindProperty("_fullHeight").floatValue = TankHeight - FloorThickness;
             });
+        }
+
+        /// <summary>
+        /// Brings an already set up scene up to date; true if anything changed:
+        /// removes leftovers of the first (reverted) transfer version (a duplicate "Reservoir B" with a missing script,
+        /// the unused "HoseCarryPoint") and lets natural water bodies (the lake) show their level.
+        /// </summary>
+        internal static bool UpgradeScene()
+        {
+            bool changed = RemoveOldLeftovers();
+            changed |= AddSurfaceViews();
+
+            return changed;
+        }
+
+        private static bool RemoveOldLeftovers()
+        {
+            bool changed = false;
+            foreach (GameObject root in EditorSceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                if (root.name != ReservoirName || !HasMissingScripts(root))
+                    continue;
+
+                Undo.DestroyObjectImmediate(root);
+                changed = true;
+            }
+
+            PlayerInventory inventory = Object.FindAnyObjectByType<PlayerInventory>(FindObjectsInactive.Include);
+            Camera camera = inventory != null ? inventory.GetComponentInChildren<Camera>(true) : null;
+            Transform oldCarry = camera != null ? camera.transform.Find(OldCarryPointName) : null;
+            if (oldCarry != null && oldCarry.childCount == 0 && oldCarry.GetComponents<Component>().Length == 1)
+            {
+                Undo.DestroyObjectImmediate(oldCarry.gameObject);
+                changed = true;
+            }
+
+            return changed;
+        }
+
+        private static bool HasMissingScripts(GameObject root)
+        {
+            foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(child.gameObject) > 0)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Water bodies with a "Surface" next to them and no level look yet (the lake): the surface now sinks
+        /// as the water is pumped out, between the volume bottom and its current height.
+        /// </summary>
+        private static bool AddSurfaceViews()
+        {
+            bool changed = false;
+            WaterBody[] bodies = Object.FindObjectsByType<WaterBody>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (WaterBody body in bodies)
+            {
+                Transform parent = body.transform.parent;
+                if (parent == null || parent.GetComponent<ReservoirLevelView>() != null || parent.GetComponent<ReservoirSurfaceView>() != null)
+                    continue;
+
+                Transform surface = parent.Find(LakeSurfaceName);
+                BoxCollider box = body.GetComponent<BoxCollider>();
+                WaterReservoirComponent reservoir = body.GetComponent<WaterReservoirComponent>();
+                if (surface == null || box == null || reservoir == null)
+                    continue;
+
+                Undo.RecordObject(reservoir, UndoName);
+                Set(reservoir, data =>
+                {
+                    data.FindProperty("_capacity").floatValue = LakeVolume;
+                    data.FindProperty("_initialVolume").floatValue = LakeVolume;
+                });
+
+                float bottom = parent.InverseTransformPoint(body.transform.TransformPoint(box.center - Vector3.up * (box.size.y * 0.5f))).y;
+                ReservoirSurfaceView view = Undo.AddComponent<ReservoirSurfaceView>(parent.gameObject);
+                Set(view, data =>
+                {
+                    data.FindProperty("_reservoir").objectReferenceValue = reservoir;
+                    data.FindProperty("_surface").objectReferenceValue = surface;
+                    data.FindProperty("_fullY").floatValue = surface.localPosition.y;
+                    data.FindProperty("_emptyY").floatValue = bottom + 0.01f;
+                });
+
+                changed = true;
+            }
+
+            return changed;
         }
 
         private static void CreateBlock(string name, Transform parent, Vector3 position, Vector3 size)

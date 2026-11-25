@@ -46,6 +46,7 @@ namespace WaterChaos.Pump
 
         private PumpModel _model;
         private bool _externalOutletConnected;
+        private float _lastTickTime = -1f;
 
         /// <summary>Raised when the pump state changes; argument is the new state.</summary>
         public event Action<PumpState> StateChanged;
@@ -69,6 +70,12 @@ namespace WaterChaos.Pump
         /// <summary>Water the pump draws from; null means no supply.</summary>
         public WaterReservoir Reservoir => _model.Source;
 
+        /// <summary>Volume drawn in the current physics step, in liters (L); 0 if the pump has not ticked in it.</summary>
+        public float DrawnThisStep => _lastTickTime == Time.fixedTime ? _model.LastDrawnVolume : 0f;
+
+        /// <summary>Reservoir the current physics step's water came from; null if none.</summary>
+        public WaterReservoir DrawnSourceThisStep => _lastTickTime == Time.fixedTime ? _model.LastDrawnSource : null;
+
         private void Awake()
         {
             _model = new PumpModel(_maxPressure, _maxFlowRate, _pressureChangeRate);
@@ -89,6 +96,7 @@ namespace WaterChaos.Pump
         {
             RefreshOutlet();
             _model.Tick(Time.fixedDeltaTime);
+            _lastTickTime = Time.fixedTime;
         }
 
         public void Toggle()

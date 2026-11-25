@@ -33,10 +33,6 @@ namespace WaterChaos.WaterTransfer
         private TransferConnectionPoint _point;
         private bool _delivering;
 
-        // Source volume right after the last settle, so the next step sees exactly what the pump took.
-        private WaterReservoir _trackedSource;
-        private float _sourceVolumeBefore;
-
         /// <summary>Water body the hose end lies in; null if none.</summary>
         public WaterBody DestinationBody { get; private set; }
 
@@ -105,11 +101,10 @@ namespace WaterChaos.WaterTransfer
             WaterReservoir destination = Destination;
             bool outletBusy = point.IsRegularOutletBusy;
 
-            // The pump ticked earlier this step. Its drop in source volume is exactly what it drew,
-            // even on the step the source runs dry (its output already reads 0 then).
-            // Measured on the reservoir recorded last step, in case the pump switched source after its tick.
-            if (_delivering && !outletBusy && _trackedSource != null)
-                LastResult = WaterTransferSettlement.Settle(_trackedSource, destination, _sourceVolumeBefore - _trackedSource.Volume);
+            // The pump ticked earlier this step and reports exactly what it drew and from where.
+            // Not measured from the source volume: another transfer may fill the same reservoir in the same step.
+            if (_delivering && !outletBusy)
+                LastResult = WaterTransferSettlement.Settle(pump.DrawnSourceThisStep, destination, pump.DrawnThisStep);
             else
                 LastResult = default;
 
@@ -119,15 +114,12 @@ namespace WaterChaos.WaterTransfer
             if (_discharge != null)
                 _discharge.SetSource(_delivering && destination == null ? pump : null);
 
-            _trackedSource = pump.Reservoir;
-            _sourceVolumeBefore = _trackedSource != null ? _trackedSource.Volume : 0f;
         }
 
         private void Clear()
         {
             _delivering = false;
             _point = null;
-            _trackedSource = null;
             DestinationBody = null;
             LastResult = default;
 

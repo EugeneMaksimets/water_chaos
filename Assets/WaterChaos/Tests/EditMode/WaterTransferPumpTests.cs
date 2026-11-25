@@ -30,12 +30,11 @@ namespace WaterChaos.Tests
             public float Tick()
             {
                 Pump.SetOutletConnected(Delivering || OutletBusy);
-                float before = Source.Volume;
                 Pump.Tick(Step);
 
                 float discharged = 0f;
                 if (Delivering && !OutletBusy)
-                    discharged = WaterTransferSettlement.Settle(Source, Destination, before - Source.Volume).Discharged;
+                    discharged = WaterTransferSettlement.Settle(Pump.LastDrawnSource, Destination, Pump.LastDrawnVolume).Discharged;
 
                 Delivering = TransferRules.CanDeliver(HoseState, OutletBusy, Destination != null && Destination.IsFull);
                 return discharged;
@@ -199,6 +198,53 @@ namespace WaterChaos.Tests
             rig.Run(5f);
 
             Assert.AreEqual(100f, rig.Destination.Volume, Tolerance);
+        }
+
+        [Test]
+        public void Chain_LakeToTankOneToTankTwo_TankTwoFillsAndWaterIsConserved()
+        {
+            WaterReservoir lake = new WaterReservoir(5000f, 5000f);
+            WaterReservoir tankOne = new WaterReservoir(2000f, 100f);
+            WaterReservoir tankTwo = new WaterReservoir(200f, 10f);
+            PumpModel first = CreateRunningPump(lake);
+            PumpModel second = CreateRunningPump(tankOne);
+
+            // Both pumps tick, then both transfers settle what their pump drew, as in one physics step.
+            for (int i = 0; i < 50; i++)
+            {
+                first.Tick(Step);
+                second.Tick(Step);
+                WaterTransferSettlement.Settle(first.LastDrawnSource, tankOne, first.LastDrawnVolume);
+                WaterTransferSettlement.Settle(second.LastDrawnSource, tankTwo, second.LastDrawnVolume);
+            }
+
+            Assert.AreEqual(60f, tankTwo.Volume, Tolerance);
+            Assert.AreEqual(100f, tankOne.Volume, Tolerance);
+            Assert.AreEqual(4950f, lake.Volume, Tolerance);
+            Assert.AreEqual(5110f, lake.Volume + tankOne.Volume + tankTwo.Volume, Tolerance);
+        }
+
+        [Test]
+        public void LastDrawn_IsResetEveryTick()
+        {
+            PumpModel pump = CreateRunningPump(new WaterReservoir(1000f, 500f));
+            pump.Tick(Step);
+            Assert.AreEqual(1f, pump.LastDrawnVolume, Tolerance);
+
+            pump.Stop();
+            pump.Tick(Step);
+
+            Assert.AreEqual(0f, pump.LastDrawnVolume);
+        }
+
+        private static PumpModel CreateRunningPump(WaterReservoir source)
+        {
+            PumpModel pump = new PumpModel(MaxPressure, MaxFlowRate, InstantChangeRate);
+            pump.SetSource(source);
+            pump.SetOutletConnected(true);
+            pump.SetTargetPressure(MaxPressure);
+            pump.Start();
+            return pump;
         }
     }
 }

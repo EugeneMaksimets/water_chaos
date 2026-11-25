@@ -51,6 +51,12 @@ namespace WaterChaos.Pump
 
         public PumpState State { get; private set; } = PumpState.NoWater;
 
+        /// <summary>Volume drawn by the last <see cref="Tick"/>, in liters (L); 0 if it drew nothing.</summary>
+        public float LastDrawnVolume { get; private set; }
+
+        /// <summary>Reservoir the last <see cref="Tick"/> drew from; null if it drew nothing.</summary>
+        public WaterReservoir LastDrawnSource { get; private set; }
+
         /// <summary>
         /// Share of the demanded water the intake actually gets: 1 = enough, 0 = dry.
         /// </summary>
@@ -130,6 +136,9 @@ namespace WaterChaos.Pump
             if (deltaTime <= 0f || float.IsNaN(deltaTime))
                 return;
 
+            LastDrawnVolume = 0f;
+            LastDrawnSource = null;
+
             float goal = IsTurnOn && CanRun ? TargetPressure : 0f;
             float maxStep = _pressureChangeRate * deltaTime;
             float difference = goal - CurrentPressure;
@@ -152,6 +161,9 @@ namespace WaterChaos.Pump
 
             float drawn = Source.Draw(requested);
             SetSupplyRatio(drawn / requested);
+
+            LastDrawnVolume = drawn;
+            LastDrawnSource = drawn > 0f ? Source : null;
         }
 
         private void UpdateState()
