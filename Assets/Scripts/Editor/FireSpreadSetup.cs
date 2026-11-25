@@ -2,12 +2,13 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using WaterChaos.Interaction;
+using WaterChaos.Rooms;
 
 namespace WaterChaos.EditorTools
 {
     /// <summary>
     /// One-click setup of fire spreading: settings asset, FireSpreader on the fire prefab and on every fire
-    /// in the open scene, and the scene ground marked as a flammable surface.
+    /// in the open scene, and the scene ground plus the floors inside rooms marked as flammable surfaces.
     /// Run "Setup Fire Layer" first so fires have their own layer. Safe to run again.
     /// Scene changes are undo-able; save the scene afterwards.
     /// </summary>
@@ -17,6 +18,10 @@ namespace WaterChaos.EditorTools
         private const string SettingsFolder = "Assets/WaterChaos/ScriptableObjects/Fire";
         private const string SettingsPath = SettingsFolder + "/FireSpreadSettings.asset";
         private const string GroundName = "Ground";
+        // Floor tiles of the house kit are prefab instances named "Floor".
+        private const string FloorTileName = "Floor";
+        // How far above a floor's top surface the room check is made, in meters (m).
+        private const float FloorProbeHeight = 0.05f;
         private const string OldTestCratesName = "Flammable Test Crates";
 
         [MenuItem("Water Chaos/Setup Fire Spread")]
@@ -39,10 +44,12 @@ namespace WaterChaos.EditorTools
 
             RemoveOldTestCrates();
             MarkGroundFlammable();
+            int floors = MarkRoomFloorsFlammable();
 
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             Selection.activeObject = settings;
-            Debug.Log($"Fire spread setup: done, {fires.Length} scene fire(s) can spread over \"{GroundName}\". Save the scene (Cmd+S).");
+            Debug.Log($"Fire spread setup: done, {fires.Length} scene fire(s) can spread over \"{GroundName}\" " +
+                      $"and {floors} newly marked floor tile(s) inside rooms. Save the scene (Cmd+S).");
         }
 
         private static FireSpreadSettings GetOrCreateSettings(FireExtinguishHandler firePrefab)
@@ -126,6 +133,58 @@ namespace WaterChaos.EditorTools
 
             if (ground.GetComponent<FlammableSurface>() == null)
                 Undo.AddComponent<FlammableSurface>(ground);
+        }
+
+        /// <summary>
+        /// Fires inside a room look for flammable ground inside the same room; without it they can never spread.
+        /// Marks every floor tile whose top lies inside a room. Returns how many tiles were newly marked.
+        /// </summary>
+        private static int MarkRoomFloorsFlammable()
+        {
+            RoomTemperature[] rooms = Object.FindObjectsByType<RoomTemperature>(FindObjectsSortMode.None);
+            if (rooms.Length == 0)
+                return 0;
+
+            int marked = 0;
+            Collider[] colliders = Object.FindObjectsByType<Collider>(FindObjectsSortMode.None);
+            foreach (Collider part in colliders)
+            {
+                if (part.isTrigger)
+                    continue;
+
+                GameObject tile = PrefabUtility.GetOutermostPrefabInstanceRoot(part.gameObject);
+                if (tile == null)
+                    tile = part.gameObject;
+
+                if (!tile.name.StartsWith(FloorTileName) || tile.GetComponentInParent<FlammableSurface>() != null)
+                    continue;
+
+                Bounds bounds = part.bounds;
+                Vector3 top = new Vector3(bounds.center.x, bounds.max.y + FloorProbeHeight, bounds.center.z);
+                if (!IsInsideAnyRoom(rooms, top))
+                    continue;
+
+                Undo.AddComponent<FlammableSurface>(tile);
+                marked++;
+            }
+
+            return marked;
+        }
+
+        // RoomTemperature.Contains works only in Play Mode (it caches its box in Awake), so the box is read here.
+        private static bool IsInsideAnyRoom(RoomTemperature[] rooms, Vector3 point)
+        {
+            foreach (RoomTemperature room in rooms)
+            {
+                if (!room.TryGetComponent(out BoxCollider box))
+                    continue;
+
+                Vector3 offset = room.transform.InverseTransformPoint(point) - box.center;
+                if (RoomTemperatureModel.IsInsideBox(offset, box.size))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

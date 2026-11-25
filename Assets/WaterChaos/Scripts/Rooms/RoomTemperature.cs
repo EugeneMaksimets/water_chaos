@@ -9,6 +9,7 @@ namespace WaterChaos.Rooms
     /// <see cref="RoomTemperatureModel"/> turns them into the room temperature.
     /// Ownership rule: an object belongs to the room whose box contains its pivot (half-open box),
     /// so an object on a shared wall is never counted by two rooms.
+    /// Every burning fire heats the room once when it starts and then periodically (see <see cref="RoomTemperatureModel"/>).
     /// Fires ask the room (as their <see cref="IFireArea"/>) where they may spread; the room re-ignites
     /// extinguished fires while it stays above the limit. Never touches water, pump, hose or player code.
     /// </summary>
@@ -27,13 +28,22 @@ namespace WaterChaos.Rooms
         [Tooltip("Lowest possible temperature (°C).")]
         [SerializeField] private float _minTemperature = -100f;
 
-        [Tooltip("While any cooler is on, fires cannot heat the room above this (°C). Also the re-ignition threshold.")]
+        [Tooltip("While every cooler in the room is on, fires cannot heat the room above this (°C). Also the re-ignition threshold.")]
         [SerializeField] private float _coolingLimit = 100f;
 
-        [Tooltip("Heat one burning fire adds (°C); the same amount goes away when it is extinguished.")]
-        [SerializeField, Min(0f)] private float _heatPerFire = 10f;
+        [Header("Fire Heat")]
+        [Tooltip("Heat a fire adds once when it starts burning in the room (°C); the same amount goes away when it is extinguished.")]
+        [SerializeField, Min(0f)] private float _initialFireHeat = 5f;
 
-        [Tooltip("Cooling while above the limit with a cooler on, in degrees per second (°C/s).")]
+        [Tooltip("Seconds (s) between heating steps of one burning fire. Each fire runs its own timer.")]
+        [SerializeField, Min(0.1f)] private float _heatInterval = 5f;
+
+        [Tooltip("Heat one burning fire adds every heating interval (°C).")]
+        [SerializeField, Min(0f)] private float _heatPerInterval = 1f;
+
+        [Header("Cooling")]
+
+        [Tooltip("Cooling while above the limit with every cooler on, in degrees per second (°C/s).")]
         [SerializeField, Min(0f)] private float _overheatCooling = 2.5f;
 
         [Header("Fire")]
@@ -47,7 +57,6 @@ namespace WaterChaos.Rooms
 
         // Owned fires and the id the model knows them by.
         private readonly Dictionary<FireExtinguishHandler, int> _fireIds = new Dictionary<FireExtinguishHandler, int>();
-        private readonly HashSet<FireExtinguishHandler> _burning = new HashSet<FireExtinguishHandler>();
         private readonly List<CoolingAppliance> _appliances = new List<CoolingAppliance>();
         private readonly List<int> _readyToReignite = new List<int>();
 
@@ -64,6 +73,10 @@ namespace WaterChaos.Rooms
         public int ActiveFireCount => _model.ActiveFires;
         public int ActiveCoolerCount => _model.ActiveCoolers;
         public bool IsCoolingActive => _model.IsCoolingActive;
+        /// <summary>Every cooler in the room is on: fires cannot heat above the limit or spread.</summary>
+        public bool IsProtected => _model.IsProtected;
+        /// <summary>Coolers take away at least as much heat as the fires add.</summary>
+        public bool IsCoolingWinning => _model.IsCoolingWinning;
         public bool IsOverheated => _model.IsOverheated;
         public bool AllowsSpread => _model.AllowsFireSpread;
 
@@ -83,7 +96,7 @@ namespace WaterChaos.Rooms
             body.useGravity = false;
 
             _model = new RoomTemperatureModel(_startTemperature, Mathf.Min(_minTemperature, _coolingLimit),
-                _coolingLimit, _heatPerFire, _overheatCooling, _reigniteDelay);
+                _coolingLimit, _initialFireHeat, _heatInterval, _heatPerInterval, _overheatCooling, _reigniteDelay);
 
             _onFireChanged = OnFireChanged;
             _onApplianceChanged = OnApplianceChanged;
@@ -215,23 +228,26 @@ namespace WaterChaos.Rooms
 
         private void RegisterFire(FireExtinguishHandler fire)
         {
-            _fireIds.Add(fire, ++_nextFireId);
+            int fireId = ++_nextFireId;
+            _fireIds.Add(fire, fireId);
             fire.SetArea(this);
             fire.BurningChanged += _onFireChanged;
 
-            if (fire.IsBurning && _burning.Add(fire))
-                _model.AddFire();
+            if (fire.IsBurning)
+                _model.AddFire(fireId);
         }
 
         private void UnregisterFire(FireExtinguishHandler fire)
         {
             if (_fireIds.TryGetValue(fire, out int fireId))
+            {
                 _model.CancelReignite(fireId);
+                // A disabled, destroyed or departed fire stops heating at once.
+                _model.RemoveFire(fireId);
+            }
+
             _fireIds.Remove(fire);
             fire.BurningChanged -= _onFireChanged;
-
-            if (_burning.Remove(fire))
-                _model.RemoveFire();
 
             if (fire != null && ReferenceEquals(fire.Area, this))
                 fire.SetArea(null);
@@ -245,17 +261,13 @@ namespace WaterChaos.Rooms
             if (fire.IsBurning)
             {
                 _model.CancelReignite(fireId);
-                if (_burning.Add(fire))
-                    _model.AddFire();
+                _model.AddFire(fireId);
                 return;
             }
 
             // Extinguished: its heat goes away once, and it may come back if the room stays too hot.
-            if (_burning.Remove(fire))
-            {
-                _model.RemoveFire();
+            if (_model.RemoveFire(fireId))
                 _model.ScheduleReignite(fireId);
-            }
         }
 
         private void ReigniteFire(int fireId)
@@ -333,7 +345,7 @@ namespace WaterChaos.Rooms
             AirConditionerCount = airConditioners;
             ActiveRefrigeratorCount = activeRefrigerators;
             ActiveAirConditionerCount = activeAirConditioners;
-            _model.SetCooling(activeRefrigerators + activeAirConditioners, cooling);
+            _model.SetCooling(refrigerators + airConditioners, activeRefrigerators + activeAirConditioners, cooling);
         }
     }
 }

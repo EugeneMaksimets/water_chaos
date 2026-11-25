@@ -101,6 +101,56 @@ namespace WaterChaos.Tests
             Assert.IsTrue(model.Tick(FireSpreadModel.MinInterval, 1f, Success));
         }
 
+        // ── Random interval (jitter) ──
+
+        [Test]
+        public void Jitter_FirstInterval_UsesFirstRoll()
+        {
+            // Interval 4 s ± 50 %: roll 0 → 2 s.
+            FireSpreadModel model = new FireSpreadModel(Interval, MinIntensity, 1f, 0.5f, 0f);
+
+            Assert.IsFalse(model.Tick(1.9f, 1f, Success));
+            Assert.IsTrue(model.Tick(0.2f, 1f, Success));
+        }
+
+        [Test]
+        public void Jitter_HighRoll_LengthensNextInterval()
+        {
+            FireSpreadModel model = new FireSpreadModel(Interval, MinIntensity, 1f, 0.5f, 0.5f);
+            Assert.IsTrue(model.Tick(Interval, 1f, Success, 1f)); // next wait: 6 s
+
+            Assert.IsFalse(model.Tick(5.9f, 1f, Success));
+            Assert.IsTrue(model.Tick(0.2f, 1f, Success));
+        }
+
+        [Test]
+        public void Jitter_AppliesAfterFailedAttemptToo()
+        {
+            FireSpreadModel model = new FireSpreadModel(Interval, MinIntensity, 0.5f, 0.5f, 0.5f);
+            Assert.IsFalse(model.Tick(Interval, 1f, Failure, 0f)); // next wait: 2 s
+
+            Assert.IsTrue(model.Tick(2f, 1f, Success));
+        }
+
+        [Test]
+        public void Jitter_NeverGoesBelowMinimumInterval()
+        {
+            FireSpreadModel model = new FireSpreadModel(FireSpreadModel.MinInterval, MinIntensity, 1f, 1f, 0f);
+
+            Assert.IsFalse(model.Tick(FireSpreadModel.MinInterval - 0.01f, 1f, Success));
+            Assert.IsTrue(model.Tick(0.02f, 1f, Success));
+        }
+
+        [Test]
+        public void FreshFire_SpreadsWithoutAnyFireBeingExtinguished()
+        {
+            FireSpreadModel first = CreateModel();
+            FireSpreadModel second = CreateModel();
+
+            Assert.IsTrue(first.Tick(Interval, 1f, Success));
+            Assert.IsTrue(second.Tick(Interval, 1f, Success));
+        }
+
         [Test]
         public void InvalidDeltaTime_IsIgnored()
         {

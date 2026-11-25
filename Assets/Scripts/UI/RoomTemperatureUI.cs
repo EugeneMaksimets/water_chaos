@@ -26,6 +26,10 @@ namespace WaterChaos.UI
         private static readonly Color ShadowColor = new Color(0f, 0f, 0f, 0.35f);
         private static readonly Color OutlineColor = new Color(0f, 0f, 0f, 0.85f);
         private static readonly Color TubeColor = new Color(1f, 1f, 1f, 0.9f);
+        private static readonly Vector2 HintSize = new Vector2(420f, 70f);
+        private const string HintText = "At 100°C the fire will start spreading to other surfaces!";
+        // Seconds (s) the hint takes to fade in and out.
+        private const float HintFade = 0.3f;
 
         [Header("References")]
         [Tooltip("Player's room visitor; found on this object or its parents if empty.")]
@@ -52,6 +56,16 @@ namespace WaterChaos.UI
         [SerializeField] private Color _coolingColor = new Color(0.3f, 0.6f, 1f);
         [SerializeField] private Color _freezingColor = new Color(0.45f, 0.95f, 1f);
 
+        [Header("Heat Hint")]
+        [Tooltip("From this temperature (°C) a hint warns that fire spreads at 100 °C.")]
+        [SerializeField] private float _hintTemperature = 80f;
+
+        [Tooltip("Seconds (s) the hint stays on screen.")]
+        [SerializeField, Min(0.5f)] private float _hintDuration = 4f;
+
+        [Tooltip("Degrees (°C) below the hint temperature the room must cool before the hint can show again.")]
+        [SerializeField, Min(0f)] private float _hintRearmMargin = 5f;
+
         [Header("Animation")]
         [Tooltip("How fast the shown value follows the real one (1/s).")]
         [SerializeField, Min(0.1f)] private float _valueSmoothing = 6f;
@@ -73,6 +87,8 @@ namespace WaterChaos.UI
         private Image _badgeSnow;
         private RectTransform _fireIcon;
         private RectTransform _snowIcon;
+        private CanvasGroup _hint;
+        private HeatWarningHint _hintTimer;
 
         private RoomTemperature _shownRoom;
         private float _shownTemperature;
@@ -94,6 +110,7 @@ namespace WaterChaos.UI
                 return;
             }
 
+            _hintTimer = new HeatWarningHint(_hintTemperature, _hintDuration, _hintRearmMargin);
             Build(HudWidgets.CreateCanvas(transform, "Room Temperature Canvas", 3).transform);
             _root.SetActive(false);
         }
@@ -122,6 +139,7 @@ namespace WaterChaos.UI
                 _shownRoom = room;
                 _shownTemperature = room.Temperature;
                 _root.SetActive(true);
+                _hintTimer.Reset();
             }
 
             float dt = Time.unscaledDeltaTime;
@@ -134,6 +152,20 @@ namespace WaterChaos.UI
             if (state != _shownState)
                 ApplyState(state);
             Animate(state, Time.unscaledTime);
+            UpdateHint(room, dt);
+        }
+
+        private void UpdateHint(RoomTemperature room, float dt)
+        {
+            _hintTimer.Tick(room.Temperature, dt);
+
+            bool visible = _hintTimer.IsVisible;
+            float target = visible ? 1f : 0f;
+            _hint.alpha = Mathf.MoveTowards(_hint.alpha, target, dt / HintFade);
+
+            bool shown = _hint.alpha > 0f;
+            if (_hint.gameObject.activeSelf != shown)
+                _hint.gameObject.SetActive(shown);
         }
 
         private State GetState(RoomTemperature room)
@@ -141,7 +173,8 @@ namespace WaterChaos.UI
             float temperature = room.Temperature;
             if (temperature < 0f)
                 return State.Freezing;
-            if (room.IsCoolingActive)
+            // Blue only while cooling beats the fires; otherwise the temperature decides the color.
+            if (room.IsCoolingWinning)
                 return State.Cooling;
             if (temperature >= _criticalTemperature)
                 return State.Critical;
@@ -332,6 +365,29 @@ namespace WaterChaos.UI
             AddOutline(_badgeFlame);
             AddOutline(_badgeSnow);
             _badge.gameObject.SetActive(false);
+
+            BuildHint();
+        }
+
+        /// <summary>Warning text right under the panel (right-aligned with it), hidden until the room gets hot.</summary>
+        private void BuildHint()
+        {
+            // Right edges of the text and the panel line up, so the wider text grows to the left, not off screen.
+            Vector2 position = new Vector2((PanelSize.x - HintSize.x) * 0.5f, -PanelSize.y * 0.5f - 10f - HintSize.y * 0.5f);
+            RectTransform box = HudWidgets.CreateRect("Heat Hint", _panel, position, HintSize);
+            _hint = box.gameObject.AddComponent<CanvasGroup>();
+            _hint.alpha = 0f;
+            _hint.blocksRaycasts = false;
+
+            Text text = HudWidgets.CreateText("Text", box, Vector2.zero, HintSize, 21, TextAnchor.MiddleCenter);
+            // HUD texts are single-line by default; this one wraps onto two lines within its width.
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            text.text = HintText;
+            text.fontStyle = FontStyle.Bold;
+            text.color = _criticalColor;
+            AddOutline(text);
+
+            box.gameObject.SetActive(false);
         }
 
         private void BuildThermometer(RectTransform panel, Sprite rounded, Sprite disc)

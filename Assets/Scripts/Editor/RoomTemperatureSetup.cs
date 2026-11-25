@@ -275,7 +275,9 @@ namespace WaterChaos.EditorTools
             data.FindProperty("_startTemperature").floatValue = 25f;
             data.FindProperty("_minTemperature").floatValue = -100f;
             data.FindProperty("_coolingLimit").floatValue = 100f;
-            data.FindProperty("_heatPerFire").floatValue = 10f;
+            data.FindProperty("_initialFireHeat").floatValue = 5f;
+            data.FindProperty("_heatInterval").floatValue = 5f;
+            data.FindProperty("_heatPerInterval").floatValue = 1f;
             data.FindProperty("_overheatCooling").floatValue = 2.5f;
             data.FindProperty("_reigniteDelay").floatValue = 15f;
             data.ApplyModifiedPropertiesWithoutUndo();

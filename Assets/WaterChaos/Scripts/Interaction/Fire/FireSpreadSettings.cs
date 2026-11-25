@@ -23,6 +23,9 @@ namespace WaterChaos.Interaction
         [Tooltip("Intensity (0..1) a fire needs to spread; watering it below this stops spreading.")]
         [SerializeField, Range(0f, 1f)] private float _minIntensity = 0.5f;
 
+        [Tooltip("Random spread of the interval (0..1): 0.5 = each wait is 50 %..150 % of the interval.")]
+        [SerializeField, Range(0f, 1f)] private float _intervalJitter = 0.5f;
+
         [Tooltip("Probability (0..1) that a spread attempt succeeds.")]
         [SerializeField, Range(0f, 1f)] private float _ignitionChance = 0.5f;
 
@@ -59,6 +62,7 @@ namespace WaterChaos.Interaction
         public float SpreadRadius => _spreadRadius;
         public float SpreadInterval => _spreadInterval;
         public float MinIntensity => _minIntensity;
+        public float IntervalJitter => _intervalJitter;
         public float IgnitionChance => _ignitionChance;
         public float IgnitionDelay => _ignitionDelay;
         public int SurfaceSamples => _surfaceSamples;

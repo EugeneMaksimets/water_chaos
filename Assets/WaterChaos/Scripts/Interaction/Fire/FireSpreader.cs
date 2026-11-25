@@ -42,6 +42,16 @@ namespace WaterChaos.Interaction
             public Vector3 FirePosition;
         }
 
+        // Domain reload on entering Play Mode is off in this project, so statics survive between runs:
+        // a stale fire count or reserved spot from the last run would block spreading from the start.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            ActiveCount = 0;
+            s_reserved.Clear();
+            s_candidates.Clear();
+        }
+
         private void Awake()
         {
             _fire = GetComponent<FireExtinguishHandler>();
@@ -53,7 +63,9 @@ namespace WaterChaos.Interaction
                 return;
             }
 
-            _model = new FireSpreadModel(_settings.SpreadInterval, _settings.MinIntensity, _settings.IgnitionChance);
+            // A random first wait, so fires placed in the scene do not all spread at the same moment.
+            _model = new FireSpreadModel(_settings.SpreadInterval, _settings.MinIntensity, _settings.IgnitionChance,
+                _settings.IntervalJitter, Random.value);
         }
 
         private void OnEnable()
@@ -73,7 +85,7 @@ namespace WaterChaos.Interaction
 
         private void Update()
         {
-            if (_model.Tick(Time.deltaTime, _fire.Intensity, Random.value) && CanSpreadNow())
+            if (_model.Tick(Time.deltaTime, _fire.Intensity, Random.value, Random.value) && CanSpreadNow())
                 TrySpread();
         }
 
