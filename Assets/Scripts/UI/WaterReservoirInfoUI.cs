@@ -5,7 +5,8 @@ using WaterChaos.Water;
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Compact panel "WATER RESERVOIR / 750 L / 2000 L" for the reservoir under the crosshair.
+    /// Compact panel "RESERVOIR / 750 L / 2000 L" for the reservoir under the crosshair; the title takes the liquid's color
+    /// (the liquid is never named) and the value says "EMPTY" when nothing is left.
     /// Only reads the reservoir; builds its own overlay canvas on start, so it only needs the detector.
     /// </summary>
     public sealed class WaterReservoirInfoUI : MonoBehaviour
@@ -23,8 +24,15 @@ namespace WaterChaos.UI
         [Tooltip("Panel center relative to the screen center, in reference pixels (1920x1080).")]
         [SerializeField] private Vector2 _panelPosition = new Vector2(0f, 150f);
 
+        [Header("Liquid Colors")]
+        [SerializeField] private Color _waterColor = Color.white;
+        [SerializeField] private Color _gasolineColor = new Color(1f, 0.7f, 0.15f);
+        [SerializeField] private Color _emptyColor = new Color(0.95f, 0.3f, 0.2f);
+
         private GameObject _panel;
+        private Text _title;
         private Text _value;
+        private LiquidType _shownLiquid;
         private int _shownVolume = int.MinValue;
         private int _shownCapacity = int.MinValue;
 
@@ -42,9 +50,9 @@ namespace WaterChaos.UI
             Image panel = HudWidgets.CreateImage("Reservoir Info", canvas, _panelPosition, PanelSize, null, HudWidgets.PanelColor);
             _panel = panel.gameObject;
 
-            Text title = HudWidgets.CreateText("Title", panel.transform, new Vector2(0f, 18f), new Vector2(PanelSize.x, 28f), 18, TextAnchor.MiddleCenter);
-            title.text = WaterReservoirInfoText.Title;
-            title.fontStyle = FontStyle.Bold;
+            _title = HudWidgets.CreateText("Title", panel.transform, new Vector2(0f, 18f), new Vector2(PanelSize.x, 28f), 18, TextAnchor.MiddleCenter);
+            _title.text = WaterReservoirInfoText.Title;
+            _title.fontStyle = FontStyle.Bold;
 
             _value = HudWidgets.CreateText("Value", panel.transform, new Vector2(0f, -14f), new Vector2(PanelSize.x, 34f), 26, TextAnchor.MiddleCenter);
 
@@ -72,13 +80,17 @@ namespace WaterChaos.UI
 
             int volume = WaterReservoirInfoText.ToLiters(reservoir.Volume);
             int capacity = WaterReservoirInfoText.ToLiters(reservoir.Capacity);
-            if (volume == _shownVolume && capacity == _shownCapacity)
+            LiquidType liquid = reservoir.Liquid;
+            if (volume == _shownVolume && capacity == _shownCapacity && liquid == _shownLiquid)
                 return;
 
-            // Rebuild the string only when the rounded liters change.
+            // Rebuild the strings only when the rounded liters or the liquid change.
             _shownVolume = volume;
             _shownCapacity = capacity;
-            _value.text = WaterReservoirInfoText.FormatVolume(volume, capacity);
+            _shownLiquid = liquid;
+            _title.color = liquid == LiquidType.Gasoline ? _gasolineColor : _waterColor;
+            _value.text = WaterReservoirInfoText.FormatStatus(volume, capacity);
+            _value.color = volume <= 0 ? _emptyColor : Color.white;
         }
     }
 }

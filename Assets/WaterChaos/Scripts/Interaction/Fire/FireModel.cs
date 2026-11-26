@@ -4,9 +4,13 @@ namespace WaterChaos.Interaction
 {
     /// <summary>
     /// Pure gameplay model of a fire: intensity that water cools down until it goes out.
+    /// Fuel can push it above full (overburn), which fades back to full over time.
     /// </summary>
     public sealed class FireModel
     {
+        /// <summary>Normal burning intensity; fuel may raise it above this for a while.</summary>
+        public const float FullIntensity = 1f;
+
         private readonly float _coolingPerLiter;
         private readonly float _extinguishThreshold;
         private readonly float _reigniteDelay;
@@ -56,6 +60,34 @@ namespace WaterChaos.Interaction
                 Intensity = 0f;
                 _timeExtinguished = 0f;
             }
+        }
+
+        /// <summary>
+        /// Feeds a burning fire: raises its intensity, never above <paramref name="maxIntensity"/>.
+        /// An extinguished fire has nothing to feed, so it stays out.
+        /// </summary>
+        /// <param name="amount">Intensity to add; negative and NaN values are ignored.</param>
+        /// <param name="maxIntensity">Upper limit, at least <see cref="FullIntensity"/>.</param>
+        public void AddFuel(float amount, float maxIntensity)
+        {
+            if(!IsBurning || !(amount > 0f))
+                return;
+
+            float limit = Math.Max(FullIntensity, Sanitize(maxIntensity));
+            if(Intensity >= limit)
+                return;
+
+            Intensity = Math.Min(limit, Intensity + amount);
+        }
+
+        /// <summary>Lets an overburning fire calm down toward <see cref="FullIntensity"/>, never below it.</summary>
+        /// <param name="amount">Intensity to remove from the part above full; negative and NaN values are ignored.</param>
+        public void ReduceOverburn(float amount)
+        {
+            if(Intensity <= FullIntensity || !(amount > 0f))
+                return;
+
+            Intensity = Math.Max(FullIntensity, Intensity - amount);
         }
 
         /// <summary>

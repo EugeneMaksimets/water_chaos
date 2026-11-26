@@ -43,6 +43,9 @@ namespace WaterChaos.Pump
         /// <summary>A hose is attached to the outlet.</summary>
         public bool IsOutletConnected { get; private set; }
 
+        /// <summary>Liquid the intake draws; water without a source.</summary>
+        public LiquidType Liquid => Source != null ? Source.Liquid : LiquidType.Water;
+
         /// <summary>The source exists and still has water.</summary>
         public bool HasWater => Source != null && !Source.IsEmpty;
 
@@ -72,8 +75,8 @@ namespace WaterChaos.Pump
         /// Actual output: demand and pressure reduced by the water supply; zero unless the pump can run.
         /// </summary>
         public WaterFlowData Output => CanRun
-            ? new WaterFlowData(DemandFlowRate * SupplyRatio, CurrentPressure * SupplyRatio)
-            : new WaterFlowData(0f, 0f);
+            ? new WaterFlowData(DemandFlowRate * SupplyRatio, CurrentPressure * SupplyRatio, Liquid)
+            : new WaterFlowData(0f, 0f, Liquid);
 
         /// <summary>Turns the motor on; ignored while the pump cannot run (no water or no hose).</summary>
         public void Start()

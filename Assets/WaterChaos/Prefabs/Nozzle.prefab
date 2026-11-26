@@ -4863,6 +4863,9 @@ GameObject:
   - component: {fileID: 9194372183018465532}
   - component: {fileID: 2696170886430235844}
   - component: {fileID: 6560177650709509829}
+  - component: {fileID: 5705520628600233481}
+  - component: {fileID: 4271996635396775862}
+  - component: {fileID: 3420794843738164006}
   m_Layer: 4
   m_Name: NozzleScripts
   m_TagString: Untagged
@@ -5194,3 +5197,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Tools.NozzleController
   _stream: {fileID: 2696170886430235844}
   _hose: {fileID: 8886715139356573652}
+--- !u!114 &5705520628600233481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbaa11039bc445bcbf00c5ed0095937b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FuelStreamIgnition
+  _stream: {fileID: 2696170886430235844}
+  _settings: {fileID: 11400000, guid: d16241bf99847470ea2a721d689b9aa4, type: 2}
+  _ignitionInterval: 0.75
+--- !u!114 &4271996635396775862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53476d46de24d5dbdf4dca01348dbea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FlameStreamView
+  _stream: {fileID: 2696170886430235844}
+  _ignition: {fileID: 5705520628600233481}
+  _flameMaterial: {fileID: 2100000, guid: 62a20c4e572aa47398005a915562ba9d, type: 2}
+  _particlesPerMeter: 60
+  _size: {x: 0.2, y: 0.9}
+  _lifetime: 0.35
+  _forwardSpeed: 3
+  _riseSpeed: 1.5
+  _lightColor: {r: 1, g: 0.55, b: 0.2, a: 1}
+  _lightIntensity: 4
+  _lightRange: 6
+--- !u!114 &3420794843738164006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80802d05a2c042cdb02455246911dad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.LiquidStreamTint
+  _stream: {fileID: 2696170886430235844}
+  _renderers:
+  - {fileID: 6560177650709509829}
+  _colors:
+  - _liquid: 1
+    _color: {r: 1, g: 0.7, b: 0.15, a: 1}

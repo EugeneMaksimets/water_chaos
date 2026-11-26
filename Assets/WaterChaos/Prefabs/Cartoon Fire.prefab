@@ -4809,6 +4809,7 @@ GameObject:
   - component: {fileID: 8713928893148757385}
   - component: {fileID: 1230302799540215007}
   - component: {fileID: 4387699245176149911}
+  - component: {fileID: 942743266661332968}
   - component: {fileID: 8044254262934987310}
   - component: {fileID: 6681638402848150358}
   - component: {fileID: 572095665593796408}
@@ -7432,3 +7433,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireSpreader
   _settings: {fileID: 11400000, guid: d16241bf99847470ea2a721d689b9aa4, type: 2}
+--- !u!114 &942743266661332968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940506567032470736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b794798c40be40b89954c836bafb78a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireFuelHandler
+  _intensityPerLiter: 0.1
+  _maxIntensity: 2
+  _overburnFadeRate: 0.15

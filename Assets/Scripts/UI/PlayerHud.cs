@@ -40,6 +40,7 @@ namespace WaterChaos.UI
 
         [Header("Water Bar")]
         [SerializeField] private Color _waterColor = new Color(0.25f, 0.6f, 1f);
+        [SerializeField] private Color _gasolineColor = new Color(1f, 0.7f, 0.15f);
         [SerializeField] private Color _lowWaterColor = new Color(0.95f, 0.3f, 0.2f);
 
         [Tooltip("Fill ratio (0..1) below which the water bar turns to the low color.")]
@@ -50,6 +51,8 @@ namespace WaterChaos.UI
 
         private Image _pressureFill;
         private Image _waterFill;
+        private Text _waterLabel;
+        private string _shownWaterLabel;
 
         private PlayerSourceControl _sourceControl;
         private KeyPrompt _pressureHint;
@@ -112,8 +115,18 @@ namespace WaterChaos.UI
             _pressureFill.color = Color.HSVToRGB(Mathf.Lerp(0.33f, 0f, load), 0.75f, 0.95f);
 
             float water = GetWaterRatio(connected);
+            LiquidType liquid = connected != null ? connected.Source.Output.Liquid : LiquidType.Water;
             _waterFill.fillAmount = water;
-            _waterFill.color = water < _lowWaterRatio ? _lowWaterColor : _waterColor;
+            _waterFill.color = water < _lowWaterRatio ? _lowWaterColor
+                : liquid == LiquidType.Gasoline ? _gasolineColor : _waterColor;
+
+            // The liquid is shown by color only; the label just says when the tank is empty. Rebuilt only when it changes.
+            string label = WaterReservoirInfoText.BarLabel(connected != null && water <= 0f);
+            if (label != _shownWaterLabel)
+            {
+                _shownWaterLabel = label;
+                _waterLabel.text = label;
+            }
         }
 
         /// <summary>
@@ -160,15 +173,15 @@ namespace WaterChaos.UI
         {
             RectTransform root = CreateRect("Source Bars", canvas, BottomLeft, new Vector2(40f, 40f), new Vector2(BarWidth, 110f));
 
-            _waterFill = CreateBar("Water", root, 0f);
-            _pressureFill = CreateBar("Pressure", root, 60f);
+            _waterFill = CreateBar(WaterReservoirInfoText.BarTitle, root, 0f, out _waterLabel);
+            _pressureFill = CreateBar("Pressure", root, 60f, out _);
         }
 
-        private Image CreateBar(string title, Transform parent, float y)
+        private Image CreateBar(string title, Transform parent, float y, out Text label)
         {
             RectTransform bar = CreateRect(title, parent, BottomLeft, new Vector2(0f, y), new Vector2(BarWidth, 46f));
 
-            Text label = CreateText("Title", bar, TopLeft, Vector2.zero, new Vector2(BarWidth, 24f), 18, TextAnchor.LowerLeft);
+            label = CreateText("Title", bar, TopLeft, Vector2.zero, new Vector2(BarWidth, 24f), 18, TextAnchor.LowerLeft);
             label.text = title;
 
             Image background = CreateImage("Background", bar, BottomLeft, Vector2.zero, new Vector2(BarWidth, 18f), _solidSprite, PanelColor);

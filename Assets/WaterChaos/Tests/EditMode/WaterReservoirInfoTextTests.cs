@@ -11,6 +11,20 @@ namespace WaterChaos.Tests
             Assert.AreEqual("750 L / 2000 L", WaterReservoirInfoText.FormatVolume(750, 2000));
         }
 
+        [Test]
+        public void FormatStatus_EmptyReservoir_SaysEmpty()
+        {
+            Assert.AreEqual("EMPTY · 0 L / 2000 L", WaterReservoirInfoText.FormatStatus(0, 2000));
+            Assert.AreEqual("750 L / 2000 L", WaterReservoirInfoText.FormatStatus(750, 2000));
+        }
+
+        [Test]
+        public void BarLabel_NeverNamesTheLiquid()
+        {
+            Assert.AreEqual("Tank", WaterReservoirInfoText.BarLabel(false));
+            Assert.AreEqual("Tank (EMPTY)", WaterReservoirInfoText.BarLabel(true));
+        }
+
         [TestCase(749.6f, 750)]
         [TestCase(750.4f, 750)]
         [TestCase(0f, 0)]

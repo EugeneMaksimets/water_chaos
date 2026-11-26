@@ -77,6 +77,11 @@ namespace WaterChaos.Water
         public Vector3 HitPoint { get; private set; }
         /// <summary>Surface normal at <see cref="HitPoint"/>.</summary>
         public Vector3 HitNormal { get; private set; }
+        /// <summary>Collider the stream hit; null when <see cref="HasHit"/> is false.</summary>
+        public Collider HitCollider { get; private set; }
+
+        /// <summary>What the source gives now (flow, pressure, liquid); no flow without a source.</summary>
+        public WaterFlowData Flow => _source != null ? _source.Output : default;
 
         /// <summary>Current source pressure as a share of the tuning's reference pressure (0..1); 0 without a source.</summary>
         public float PressureRatio =>
@@ -122,6 +127,7 @@ namespace WaterChaos.Water
         private bool TryBuildStream(bool stepInfluence, out RaycastHit hit, out Vector3 direction)
         {
             HasHit = false;
+            HitCollider = null;
             VisiblePointCount = 0;
             hit = default;
             direction = default;
@@ -166,6 +172,7 @@ namespace WaterChaos.Water
             HasHit = true;
             HitPoint = hit.point;
             HitNormal = hit.normal;
+            HitCollider = hit.collider;
 
             return true;
         }
@@ -271,7 +278,8 @@ namespace WaterChaos.Water
                 hit.normal,
                 direction,
                 flow.FlowRate * Time.fixedDeltaTime,
-                _tuning.GetImpactForce(flow.FlowRate));
+                _tuning.GetImpactForce(flow.FlowRate),
+                flow.Liquid);
 
             hit.collider.GetComponents(_receivers);
             for(int i = 0; i < _receivers.Count; i++)

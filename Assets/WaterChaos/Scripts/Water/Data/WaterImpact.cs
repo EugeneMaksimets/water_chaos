@@ -28,13 +28,19 @@ namespace WaterChaos.Water
         /// Impact force newtons (N)
         /// </summary>
         public float Force { get; }
+        /// <summary>
+        /// Liquid that hit; receivers decide how they react to it
+        /// </summary>
+        public LiquidType Liquid { get; }
 
         public WaterImpact(Vector3 point, 
             Vector3 normal, 
             Vector3 direction,
             float volume,
-            float force)
+            float force,
+            LiquidType liquid = LiquidType.Water)
         {
+            Liquid = liquid;
             ContactPoint = point;
             Normal = normal;
             Direction = direction;

@@ -41667,9 +41667,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb68d3c7dddc4069a2157a23397b120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirComponent
+  _liquid: 1
   _capacity: 36800
   _lowLevelRatio: 0.2
-  _initialVolume: 0
+  _initialVolume: 8000
 --- !u!65 &1654272622
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -59,6 +59,9 @@ namespace WaterChaos.Pump
         public float TargetPressure => _model.TargetPressure;
         public float CurrentPressure => _model.CurrentPressure;
         public WaterFlowData Output => _model.Output;
+
+        /// <summary>Liquid the pump draws from its reservoir.</summary>
+        public LiquidType Liquid => _model.Liquid;
         public PumpState State => _model.State;
         public bool IsOutletConnected => _model.IsOutletConnected;
         public void AdjustPressure(int direction) => SetTargetPressure(TargetPressure + direction * _pressureStep);

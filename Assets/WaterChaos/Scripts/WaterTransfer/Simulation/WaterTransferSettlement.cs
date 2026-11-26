@@ -7,6 +7,7 @@ namespace WaterChaos.WaterTransfer
     /// Pure accounting of water the pump has already drawn from its source this step
     /// (the pump stays the only one that draws). Each reservoir keeps owning its volume:
     /// the destination takes what fits, the rest goes back to the source, nothing is created or lost.
+    /// The delivered liquid mixes into the destination (water into gasoline becomes gasoline).
     /// </summary>
     public static class WaterTransferSettlement
     {
@@ -21,7 +22,8 @@ namespace WaterChaos.WaterTransfer
             if (destination == null)
                 return new TransferResult(0f, 0f, drawn);
 
-            float delivered = destination.Add(drawn);
+            LiquidType liquid = source != null ? source.Liquid : LiquidType.Water;
+            float delivered = destination.Add(drawn, liquid);
             float rest = Math.Max(0f, drawn - delivered);
             float returned = source != null && source != destination ? source.Add(rest) : 0f;
 

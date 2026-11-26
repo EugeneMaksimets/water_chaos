@@ -104,6 +104,47 @@ namespace WaterChaos.Interaction
             return !IsFireNear(firePosition, settings.ExclusionRadius, settings.FireMask);
         }
 
+        /// <summary>
+        /// False when <paramref name="area"/> (a room) contains the position and protects itself (e.g. a working cooler).
+        /// Outdoors (null) or outside the area's volume, ignition is allowed.
+        /// </summary>
+        public static bool AllowsIgnition(IFireArea area, Vector3 firePosition)
+        {
+            return area == null || !area.Contains(firePosition) || area.AllowsSpread;
+        }
+
+        /// <summary>Area (room) a fire at <paramref name="firePosition"/> would belong to; null outdoors.</summary>
+        public static IFireArea FindArea(Vector3 firePosition, FireSpreadSettings settings)
+        {
+            int count = Physics.OverlapSphereNonAlloc(
+                firePosition, RoomProbeRadius, s_fireBuffer, settings.RoomMask, QueryTriggerInteraction.Collide);
+
+            for (int i = 0; i < count; i++)
+            {
+                IFireArea area = s_fireBuffer[i].GetComponentInParent<IFireArea>();
+                if (area != null && area.Contains(firePosition))
+                    return area;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Lights a new fire at once at <paramref name="firePosition"/> (e.g. a flamethrower hitting flammable ground),
+        /// under the same rules as spreading: under the fire limit, not in water, no fire nearby, not in a protected room.
+        /// </summary>
+        public static bool TryStartFireAt(Vector3 firePosition, FireSpreadSettings settings)
+        {
+            if (settings == null || settings.FirePrefab == null || !CanBurnAt(firePosition, settings))
+                return false;
+
+            if (!AllowsIgnition(FindArea(firePosition, settings), firePosition))
+                return false;
+
+            Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
+            return true;
+        }
+
         /// <summary>Holds a spot for a fire that is igniting, so no other fire takes it meanwhile.</summary>
         public static void Reserve(Vector3 firePosition)
         {

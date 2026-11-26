@@ -3,7 +3,9 @@ using System;
 namespace WaterChaos.Water
 {
     /// <summary>
-    /// Pure model of a water tank: finite volume that can be drawn until empty.
+    /// Pure model of a liquid tank: finite volume of one liquid (<see cref="Liquid"/>) that can be drawn until empty.
+    /// Added liquid mixes in (<see cref="LiquidTypeExtensions.MixWith"/>): once gasoline is in, everything is gasoline
+    /// until the tank is drained empty.
     /// </summary>
     public sealed class WaterReservoir
     {
@@ -12,6 +14,9 @@ namespace WaterChaos.Water
 
         /// <summary>Current volume in liters (L); never negative.</summary>
         public float Volume { get; private set; }
+
+        /// <summary>Liquid in the tank; an empty tank keeps its last liquid until another one is added.</summary>
+        public LiquidType Liquid { get; private set; }
 
         public bool IsEmpty => Volume <= 0f;
 
@@ -35,8 +40,10 @@ namespace WaterChaos.Water
 
         /// <param name="capacity">Maximum volume in liters (L); negative and NaN become 0.</param>
         /// <param name="initialVolume">Starting volume in liters (L); clamped to 0..capacity.</param>
-        public WaterReservoir(float capacity, float initialVolume, float lowLevelRatio = 0f)
+        /// <param name="liquid">Liquid the tank holds.</param>
+        public WaterReservoir(float capacity, float initialVolume, float lowLevelRatio = 0f, LiquidType liquid = LiquidType.Water)
         {
+            Liquid = liquid;
             Capacity = Sanitize(capacity);
             Volume = Math.Min(Sanitize(initialVolume), Capacity);
             LowLevelRatio = Math.Min(Sanitize(lowLevelRatio), 1f);
@@ -55,7 +62,24 @@ namespace WaterChaos.Water
         }
 
         /// <summary>
-        /// Puts up to the given volume into the reservoir (e.g. water pumped in from another one).
+        /// Puts up to the given volume of <paramref name="liquid"/> into the reservoir (e.g. pumped in from another one).
+        /// An empty tank takes the new liquid; otherwise the two mix (<see cref="LiquidTypeExtensions.MixWith"/>).
+        /// </summary>
+        /// <param name="amount">Offered volume in liters (L); negative and NaN are treated as 0.</param>
+        /// <returns>Volume actually accepted in liters (L), never more than <see cref="FreeCapacity"/>.</returns>
+        public float Add(float amount, LiquidType liquid)
+        {
+            LiquidType mixed = IsEmpty ? liquid : Liquid.MixWith(liquid);
+
+            float accepted = Add(amount);
+            if (accepted > 0f)
+                Liquid = mixed;
+
+            return accepted;
+        }
+
+        /// <summary>
+        /// Puts up to the given volume of the stored liquid into the reservoir (e.g. what the destination did not take).
         /// </summary>
         /// <param name="amount">Offered volume in liters (L); negative and NaN are treated as 0.</param>
         /// <returns>Volume actually accepted in liters (L), never more than <see cref="FreeCapacity"/>.</returns>

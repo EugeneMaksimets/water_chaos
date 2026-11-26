@@ -5,7 +5,8 @@ using WaterChaos.Water;
 namespace WaterChaos.Interaction
 {
     /// <summary>
-    /// Feeds water hitting this object into a FireModel.
+    /// Owns the fire's FireModel and puts it out with extinguishing liquids (water) hitting this object.
+    /// Other liquids are ignored here; fuel is handled by <see cref="FireFuelHandler"/>.
     /// </summary>
     public sealed class FireExtinguishHandler : MonoBehaviour, IWaterImpactReceiver
     {
@@ -58,8 +59,23 @@ namespace WaterChaos.Interaction
         // Called during FixedUpdate by WaterStream
         public void ReceiveImpact(in WaterImpact impact)
         {
+            if (!impact.Liquid.Extinguishes())
+                return;
+
             _model.ApplyWater(impact.Volume);
             NotifyIfChanged();
+        }
+
+        /// <summary>Feeds the burning fire (see <see cref="FireModel.AddFuel"/>); an extinguished fire stays out.</summary>
+        public void AddFuel(float amount, float maxIntensity)
+        {
+            _model.AddFuel(amount, maxIntensity);
+        }
+
+        /// <summary>Calms an overburning fire toward full intensity (see <see cref="FireModel.ReduceOverburn"/>).</summary>
+        public void ReduceOverburn(float amount)
+        {
+            _model.ReduceOverburn(amount);
         }
 
         /// <summary>Lights the extinguished fire again at full intensity.</summary>
