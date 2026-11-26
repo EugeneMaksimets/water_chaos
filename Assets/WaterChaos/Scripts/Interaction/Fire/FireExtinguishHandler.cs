@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Water;
 
@@ -28,9 +29,15 @@ namespace WaterChaos.Interaction
         [SerializeField, Min(0f)]
         private float _reigniteDelay = 5f;
 
+        // Every enabled fire, so a mission can count fires in an area without searching the scene.
+        private static readonly List<FireExtinguishHandler> s_all = new List<FireExtinguishHandler>();
+
         private FireModel _model;
         private Collider[] _colliders;
         private bool _wasBurning;
+
+        /// <summary>Every enabled fire in the scene, burning or extinguished.</summary>
+        public static IReadOnlyList<FireExtinguishHandler> All => s_all;
 
         /// <summary>
         /// Normalized fire strength: 1 = full, 0 = extinguished.
@@ -50,6 +57,23 @@ namespace WaterChaos.Interaction
             _model = new FireModel(_coolingPerLiter, _extinguishThreshold, _reigniteOutdoors ? _reigniteDelay : 0f);
             _wasBurning = _model.IsBurning;
             _colliders = GetComponentsInChildren<Collider>();
+        }
+
+        // Domain reload on entering Play Mode is off in this project: drop fires left from the last run.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            s_all.Clear();
+        }
+
+        private void OnEnable()
+        {
+            s_all.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            s_all.Remove(this);
         }
 
         private void FixedUpdate()
@@ -84,6 +108,13 @@ namespace WaterChaos.Interaction
         public void ReduceOverburn(float amount)
         {
             _model.ReduceOverburn(amount);
+        }
+
+        /// <summary>Puts the fire out at once (e.g. a mission time limit); its area may still re-light it later.</summary>
+        public void Extinguish()
+        {
+            _model.Extinguish();
+            NotifyIfChanged();
         }
 
         /// <summary>Lights the extinguished fire again at full intensity.</summary>

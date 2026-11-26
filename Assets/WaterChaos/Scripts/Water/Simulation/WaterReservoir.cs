@@ -121,6 +121,13 @@ namespace WaterChaos.Water
             return accepted;
         }
 
+        /// <summary>Removes all liquid at once (e.g. a story event drains the tank); the liquid type is kept, soap is gone.</summary>
+        public void Empty()
+        {
+            Volume = 0f;
+            IsSoapy = false;
+        }
+
         private static float Sanitize(float value)
         {
             return float.IsNaN(value) ? 0f : Math.Max(0f, value);

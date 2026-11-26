@@ -194,5 +194,28 @@ namespace WaterChaos.Tests
             Assert.AreEqual(0f, reservoir.Add(invalid));
             Assert.AreEqual(40f, reservoir.Volume);
         }
+
+        [Test]
+        public void Empty_RemovesAllLiquid_KeepsItsType()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 60f, 0.5f, LiquidType.Gasoline);
+
+            reservoir.Empty();
+
+            Assert.AreEqual(0f, reservoir.Volume);
+            Assert.IsTrue(reservoir.IsEmpty);
+            Assert.AreEqual(LiquidType.Gasoline, reservoir.Liquid);
+        }
+
+        [Test]
+        public void Empty_SoapyWater_IsNoLongerSoapy()
+        {
+            WaterReservoir reservoir = new WaterReservoir(100f, 60f);
+            reservoir.AddSoap();
+
+            reservoir.Empty();
+
+            Assert.IsFalse(reservoir.IsSoapy);
+        }
     }
 }

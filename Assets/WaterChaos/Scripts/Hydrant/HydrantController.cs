@@ -39,10 +39,13 @@ namespace WaterChaos.Hydrant
         private HydrantModel _model;
 
         public bool IsOpen => _model.IsOpen;
-        public bool IsActive => _model.IsOpen && _model.TargetPressure > 0f;
+        public bool IsActive => _model.IsOpen && _model.TargetPressure > 0f && _model.SupplyRatio > 0f;
         public float MaxPressure => _model.MaxPressure;
         public float TargetPressure => _model.TargetPressure;
         public float OpenRatio => _model.OpenRatio;
+
+        /// <summary>Share of the network supply that reaches the hydrant: 1 = normal, 0 = dry.</summary>
+        public float SupplyRatio => _model.SupplyRatio;
         public WaterFlowData Output => _model.Output;
         public void Stop() => _model.Close();
 
@@ -61,6 +64,9 @@ namespace WaterChaos.Hydrant
         {
             _model.Tick(Time.fixedDeltaTime);
         }
+
+        /// <summary>Sets the network supply (0..1); a story event lowers it to make the hydrant run dry.</summary>
+        public void SetSupplyRatio(float ratio) => _model.SetSupplyRatio(ratio);
 
         [ContextMenu("Toggle Valve")]
         public void Toggle() => _model.Toggle();

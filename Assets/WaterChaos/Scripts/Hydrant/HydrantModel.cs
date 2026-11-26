@@ -41,7 +41,15 @@ namespace WaterChaos.Hydrant
         /// </summary>
         public float OpenRatio { get; private set; }
 
-        public WaterFlowData Output => new WaterFlowData(TargetFlowRate * OpenRatio, TargetPressure * OpenRatio);
+        /// <summary>
+        /// Share of the network supply that reaches the hydrant: 1 = normal, 0 = the network is dry.
+        /// Scales the output on top of the regulator, so turning the regulator up cannot bring water back.
+        /// </summary>
+        public float SupplyRatio { get; private set; } = 1f;
+
+        public WaterFlowData Output => new WaterFlowData(
+            TargetFlowRate * OpenRatio * SupplyRatio,
+            TargetPressure * OpenRatio * SupplyRatio);
 
         /// <summary>Flow at the target pressure, in liters per second (L/s).</summary>
         private float TargetFlowRate => _maxPressure > 0f ? _maxFlowRate * TargetPressure / _maxPressure : 0f;
@@ -57,6 +65,15 @@ namespace WaterChaos.Hydrant
         public void SetTargetPressure(float pressure)
         {
             TargetPressure = Math.Min(Sanitize(pressure), _maxPressure);
+        }
+
+        /// <summary>
+        /// Sets the network supply, clamped to 0..1.
+        /// </summary>
+        /// <param name="ratio">1 = normal supply, 0 = none; NaN becomes 0.</param>
+        public void SetSupplyRatio(float ratio)
+        {
+            SupplyRatio = Math.Min(Sanitize(ratio), 1f);
         }
 
         /// <summary>

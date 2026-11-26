@@ -105,6 +105,13 @@ namespace WaterChaos.Interaction
                 Intensity = 1f;
         }
 
+        /// <summary>Puts the fire out at once, whatever its intensity; the reignite delay starts from now.</summary>
+        public void Extinguish()
+        {
+            Intensity = 0f;
+            _timeExtinguished = 0f;
+        }
+
         /// <summary>Lights an extinguished fire again at full intensity; a burning fire is left as is.</summary>
         public void Reignite()
         {

@@ -171,5 +171,27 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(0.8f, fire.Intensity, 0.0001f);
         }
+
+        [Test]
+        public void Extinguish_BurningFire_GoesOutAtOnce()
+        {
+            FireModel fire = CreateFire();
+
+            fire.Extinguish();
+
+            Assert.IsFalse(fire.IsBurning);
+            Assert.AreEqual(0f, fire.Intensity);
+        }
+
+        [Test]
+        public void Extinguish_RestartsReigniteDelay()
+        {
+            FireModel fire = new FireModel(CoolingPerLiter, Threshold, ReigniteDelay);
+
+            fire.Extinguish();
+            fire.Tick(ReigniteDelay - 1f);
+
+            Assert.IsFalse(fire.IsBurning);
+        }
     }
 }

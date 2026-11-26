@@ -130,5 +130,50 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(expected, hydrant.TargetPressure, Tolerance);
         }
+
+        [Test]
+        public void NewHydrant_HasFullSupply()
+        {
+            Assert.AreEqual(1f, CreateHydrant().SupplyRatio);
+        }
+
+        [Test]
+        public void SetSupplyRatio_Half_HalvesOutput()
+        {
+            HydrantModel hydrant = CreateHydrant();
+            hydrant.Open();
+            hydrant.Tick(1f);
+
+            hydrant.SetSupplyRatio(0.5f);
+
+            Assert.AreEqual(FlowRate * 0.5f, hydrant.Output.FlowRate, Tolerance);
+            Assert.AreEqual(Pressure * 0.5f, hydrant.Output.Pressure, Tolerance);
+        }
+
+        [Test]
+        public void SetSupplyRatio_Zero_NoOutputEvenAtFullRegulator()
+        {
+            HydrantModel hydrant = CreateHydrant();
+            hydrant.Open();
+            hydrant.Tick(1f);
+
+            hydrant.SetSupplyRatio(0f);
+            hydrant.SetTargetPressure(Pressure);
+
+            Assert.AreEqual(0f, hydrant.Output.FlowRate);
+            Assert.AreEqual(0f, hydrant.Output.Pressure);
+        }
+
+        [TestCase(-1f, 0f)]
+        [TestCase(2f, 1f)]
+        [TestCase(float.NaN, 0f)]
+        public void SetSupplyRatio_IsClampedToZeroOne(float value, float expected)
+        {
+            HydrantModel hydrant = CreateHydrant();
+
+            hydrant.SetSupplyRatio(value);
+
+            Assert.AreEqual(expected, hydrant.SupplyRatio);
+        }
     }
 }

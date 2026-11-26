@@ -18,6 +18,12 @@ namespace WaterChaos.UI
         public static readonly Color ProblemColor = new Color(1f, 0.55f, 0.45f);
         public static readonly Vector2 Center = new Vector2(0.5f, 0.5f);
 
+        // Cartoon card colors, shared with the room temperature panel.
+        public static readonly Color CardInnerColor = new Color(0.1f, 0.09f, 0.14f, 0.9f);
+        public static readonly Color CardShadowColor = new Color(0f, 0f, 0f, 0.35f);
+        public static readonly Color AccentColor = new Color(1f, 0.72f, 0.15f);
+        public static readonly Color DoneColor = new Color(0.45f, 0.9f, 0.4f);
+
         private static Font s_font;
 
         public static Font Font => s_font != null ? s_font : (s_font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
@@ -184,6 +190,78 @@ namespace WaterChaos.UI
             texture.SetPixels32(pixels);
             texture.Apply();
             return Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f));
+        }
+
+        /// <summary>
+        /// White rounded square, 9-sliced so it stretches to any panel size
+        /// (the cartoon card look of the room temperature panel).
+        /// </summary>
+        public static Sprite CreateRoundedSprite(int size, int radius)
+        {
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
+            Color32[] pixels = new Color32[size * size];
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float px = x + 0.5f;
+                    float py = y + 0.5f;
+                    float dx = Mathf.Max(radius - px, px - (size - radius), 0f);
+                    float dy = Mathf.Max(radius - py, py - (size - radius), 0f);
+                    float alpha = Mathf.Clamp01(radius - Mathf.Sqrt(dx * dx + dy * dy) + 0.5f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f, 0,
+                SpriteMeshType.FullRect, new Vector4(radius, radius, radius, radius));
+        }
+
+        /// <summary>White check mark (tick) sprite.</summary>
+        public static Sprite CreateCheckSprite(int size)
+        {
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
+            Color32[] pixels = new Color32[size * size];
+
+            Vector2 a = new Vector2(0.2f, 0.52f);
+            Vector2 b = new Vector2(0.42f, 0.3f);
+            Vector2 c = new Vector2(0.8f, 0.72f);
+            const float thickness = 0.085f;
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    Vector2 p = new Vector2((x + 0.5f) / size, (y + 0.5f) / size);
+                    float distance = Mathf.Min(DistanceToSegment(p, a, b), DistanceToSegment(p, b, c));
+                    float alpha = Mathf.Clamp01((thickness - distance) * size + 0.5f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+
+        /// <summary>Thick dark outline around text or a shape: the cartoon look of the game.</summary>
+        public static void AddOutline(Graphic graphic)
+        {
+            Outline outline = graphic.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 0.85f);
+            outline.effectDistance = new Vector2(2f, -2f);
+        }
+
+        private static float DistanceToSegment(Vector2 point, Vector2 start, Vector2 end)
+        {
+            Vector2 segment = end - start;
+            float t = Mathf.Clamp01(Vector2.Dot(point - start, segment) / segment.sqrMagnitude);
+            return Vector2.Distance(point, start + segment * t);
         }
 
         /// <summary>White anti-aliased disc (innerRatio = 0) or ring sprite.</summary>
