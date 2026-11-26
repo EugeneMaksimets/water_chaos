@@ -68,6 +68,7 @@ namespace WaterChaos.Tests
 
         [TestCase(LiquidType.Water)]
         [TestCase(LiquidType.Gasoline)]
+        [TestCase(LiquidType.Toxic)]
         [TestCase(FutureLiquid)]
         public void Split_PassesTheLiquidThroughUnchanged(LiquidType liquid)
         {
@@ -88,6 +89,7 @@ namespace WaterChaos.Tests
 
         [TestCase(LiquidType.Water)]
         [TestCase(LiquidType.Gasoline)]
+        [TestCase(LiquidType.Toxic)]
         [TestCase(FutureLiquid)]
         public void EveryConnectedOutlet_GetsTheSourceLiquid(LiquidType liquid)
         {
@@ -305,6 +307,7 @@ namespace WaterChaos.Tests
 
         [TestCase(LiquidType.Water)]
         [TestCase(LiquidType.Gasoline)]
+        [TestCase(LiquidType.Toxic)]
         public void ReservoirLiquid_ReachesEveryNozzleStream(LiquidType liquid)
         {
             PumpModel pump = new PumpModel(100_000f, 9f, 1_000_000f);
@@ -350,7 +353,75 @@ namespace WaterChaos.Tests
             Assert.AreEqual(LiquidType.Gasoline, outlets[1].Output.Liquid);
         }
 
+        [Test]
+        public void HoseFromToxicPump_KeepsToxicThroughSocketSplitterAndNozzles()
+        {
+            PumpModel pump = CreateRunningPump(new WaterReservoir(1000f, 1000f, 0f, LiquidType.Toxic));
+            SplitterOutlet[] outlets = CreateSplitter(out HoseSplitter splitter);
+            HoseEndSocket socket = CreateSocket(splitter);
+            Attach(outlets[0], outlets[1], outlets[2]);
+
+            Assert.IsTrue(socket.TryAttach(CreateObject("Hose")));
+            socket.Feed(new PumpSource(pump));
+
+            Assert.AreEqual(LiquidType.Toxic, splitter.Input.Liquid, "the hose delivers what the pump sends");
+            foreach (SplitterOutlet outlet in outlets)
+            {
+                WaterStream stream = CreateStream();
+                stream.SetSource(outlet);
+                Assert.AreEqual(LiquidType.Toxic, stream.Flow.Liquid);
+            }
+        }
+
+        [Test]
+        public void NozzleHoseOnToxicPump_SpraysToxic()
+        {
+            PumpModel pump = CreateRunningPump(new WaterReservoir(1000f, 1000f, 0f, LiquidType.Toxic));
+            WaterStream stream = CreateStream();
+
+            stream.SetSource(new PumpSource(pump));
+
+            Assert.AreEqual(LiquidType.Toxic, stream.Flow.Liquid);
+            Assert.Greater(stream.Flow.FlowRate, 0f);
+        }
+
+        [Test]
+        public void SwitchingTheSourceLiquid_UpdatesEveryNozzle()
+        {
+            WaterReservoir reservoir = new WaterReservoir(1000f, 500f);
+            PumpModel pump = CreateRunningPump(reservoir);
+            SplitterOutlet[] outlets = CreateSplitter(out HoseSplitter splitter);
+            splitter.SetSource(new PumpSource(pump));
+            Attach(outlets[0], outlets[1]);
+            Assert.AreEqual(LiquidType.Water, outlets[0].Output.Liquid);
+
+            // Water → toxic: drained empty, then filled with toxic liquid.
+            reservoir.Draw(reservoir.Volume);
+            reservoir.Add(500f, LiquidType.Toxic);
+            pump.Tick(0.1f);
+            Assert.AreEqual(LiquidType.Toxic, outlets[0].Output.Liquid);
+            Assert.AreEqual(LiquidType.Toxic, outlets[1].Output.Liquid);
+
+            // Toxic → water again.
+            reservoir.Draw(reservoir.Volume);
+            reservoir.Add(500f, LiquidType.Water);
+            pump.Tick(0.1f);
+            Assert.AreEqual(LiquidType.Water, outlets[0].Output.Liquid);
+            Assert.AreEqual(LiquidType.Water, outlets[1].Output.Liquid);
+        }
+
         // ───────────── Helpers ─────────────
+
+        private static PumpModel CreateRunningPump(WaterReservoir reservoir)
+        {
+            PumpModel pump = new PumpModel(100_000f, 9f, 1_000_000f);
+            pump.SetSource(reservoir);
+            pump.SetOutletConnected(true);
+            pump.SetTargetPressure(100_000f);
+            pump.Start();
+            pump.Tick(0.1f);
+            return pump;
+        }
 
         private SplitterOutlet[] CreateSplitter(out HoseSplitter splitter)
         {

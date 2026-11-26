@@ -39,7 +39,11 @@ namespace WaterChaos.Water
         [SerializeField] private LiquidColor[] _colors =
         {
             new LiquidColor(LiquidType.Gasoline, new Color(1f, 0.7f, 0.15f, 1f)),
+            new LiquidColor(LiquidType.Toxic, ToxicStreamColor),
         };
+
+        /// <summary>Bright, slightly over-saturated green so the toxic stream reads as glowing.</summary>
+        public static readonly Color ToxicStreamColor = new Color(0.5f, 1f, 0.12f, 1f);
 
         private MaterialPropertyBlock _block;
         private LiquidType _shown;

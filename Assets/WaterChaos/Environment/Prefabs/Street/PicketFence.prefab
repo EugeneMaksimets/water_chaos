@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 1535443855280964109}
   - component: {fileID: 6982356759277842454}
   - component: {fileID: 1806392002584738481}
+  - component: {fileID: 8632191148856486228}
+  - component: {fileID: 5350633966198020380}
   m_Layer: 0
   m_Name: PicketFence
   m_TagString: Untagged
@@ -112,3 +114,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 1, z: 0.14}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &8632191148856486228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7799658579680370566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 801c14ea3700a4fc7af8a94280edd933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.CorrodibleObject
+  _profile: {fileID: 11400000, guid: 9f4645d49d4bf400db773e7884c4ed5e, type: 2}
+  _colliders: []
+  _renderers: []
+  _destroyEffect: {fileID: 8146559810055391511, guid: 27701c216c9c44725800e14b2412359d, type: 3}
+--- !u!114 &5350633966198020380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7799658579680370566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c421beeb2464837ab4465b245d00b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.CorrosionView
+  _corrodedColor: {r: 0.32, g: 0.36, b: 0.12, a: 1}
+  _visualIntensity: 0.8
+  _warningProgress: 0.75
+  _warningColor: {r: 0.55, g: 1, b: 0.1, a: 1}
+  _warningFrequency: 2.5
+  _fumesPrefab: {fileID: 2751062189068295270, guid: 96ef92237979145949446cf2b5fd76ef, type: 3}

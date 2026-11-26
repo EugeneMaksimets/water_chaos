@@ -5,7 +5,8 @@ using WaterChaos.Water;
 namespace WaterChaos.Interaction
 {
     /// <summary>
-    /// Owns the fire's FireModel and puts it out with extinguishing liquids (water) hitting this object.
+    /// Owns the fire's FireModel and puts it out with extinguishing liquids hitting this object,
+    /// each as strong as its <see cref="LiquidTypeExtensions.ExtinguishingPower"/> (toxic liquid cools far less than water).
     /// Other liquids are ignored here; fuel is handled by <see cref="FireFuelHandler"/>.
     /// </summary>
     public sealed class FireExtinguishHandler : MonoBehaviour, IWaterImpactReceiver
@@ -64,10 +65,12 @@ namespace WaterChaos.Interaction
         // Called during FixedUpdate by WaterStream
         public void ReceiveImpact(in WaterImpact impact)
         {
-            if (!impact.Liquid.Extinguishes())
+            float power = impact.Liquid.ExtinguishingPower();
+            if (!(power > 0f))
                 return;
 
-            _model.ApplyWater(impact.Volume);
+            // A weak extinguisher (toxic liquid) cools like a smaller amount of water.
+            _model.ApplyWater(impact.Volume * power);
             NotifyIfChanged();
         }
 

@@ -53,6 +53,8 @@ namespace WaterChaos.EditorTools.MiniVillage
             VillageProps.BuildAll();
             VillageBuildings.BuildWindowsAndDoors();
             Dictionary<string, HouseInfo> houses = BuildBuildingPrefabs();
+            // Fences and interior partitions corrode under toxic liquid; outer walls are load-bearing and do not.
+            ToxicLiquidSetup.ApplyToVillagePrefabs();
             GameObject canopy = VillageBuildings.BuildCanopy();
             GameObject priceSign = VillageBuildings.BuildPriceSign();
             GameObject fireTruck = VillageFireTruck.Build();

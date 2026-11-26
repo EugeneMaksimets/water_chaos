@@ -51,12 +51,12 @@ namespace WaterChaos.Tests
         }
 
         /// <summary>Hose placed, pump switched on at full pressure; delivery starts on the first step.</summary>
-        private static Rig CreateRig(float sourceVolume, WaterReservoir destination)
+        private static Rig CreateRig(float sourceVolume, WaterReservoir destination, LiquidType sourceLiquid = LiquidType.Water)
         {
             Rig rig = new Rig
             {
                 Pump = new PumpModel(MaxPressure, MaxFlowRate, InstantChangeRate),
-                Source = new WaterReservoir(10_000f, sourceVolume),
+                Source = new WaterReservoir(10_000f, sourceVolume, 0f, sourceLiquid),
                 Destination = destination,
                 Delivering = true
             };
@@ -66,6 +66,46 @@ namespace WaterChaos.Tests
             rig.Pump.SetTargetPressure(MaxPressure);
             rig.Pump.Start();
             return rig;
+        }
+
+        // ───────────── Liquids ─────────────
+
+        [Test]
+        public void ToxicPumpedIntoWaterReservoir_TurnsItToxic()
+        {
+            Rig rig = CreateRig(500f, new WaterReservoir(1000f, 300f), LiquidType.Toxic);
+
+            rig.Tick();
+
+            Assert.AreEqual(LiquidType.Toxic, rig.Destination.Liquid, "the first step already spoils the water");
+            rig.Run(5f);
+            Assert.AreEqual(LiquidType.Toxic, rig.Destination.Liquid);
+            Assert.AreEqual(LiquidType.Toxic, rig.Source.Liquid, "the source keeps its own liquid");
+            Assert.AreEqual(800f, rig.Source.Volume + rig.Destination.Volume, Tolerance);
+        }
+
+        [TestCase(LiquidType.Toxic, LiquidType.Gasoline)]
+        [TestCase(LiquidType.Gasoline, LiquidType.Toxic)]
+        public void GasolineAndToxicMeeting_TurnTheWholeTankIntoWater(LiquidType pumped, LiquidType stored)
+        {
+            Rig rig = CreateRig(500f, new WaterReservoir(1000f, 300f, 0f, stored), pumped);
+
+            rig.Tick();
+
+            Assert.AreEqual(LiquidType.Water, rig.Destination.Liquid);
+            Assert.AreEqual(800f, rig.Source.Volume + rig.Destination.Volume, Tolerance);
+        }
+
+        [TestCase(LiquidType.Toxic, LiquidType.Gasoline)]
+        [TestCase(LiquidType.Gasoline, LiquidType.Toxic)]
+        public void PumpingOnAfterNeutralizing_SpoilsTheWaterWithThePumpedLiquid(LiquidType pumped, LiquidType stored)
+        {
+            Rig rig = CreateRig(500f, new WaterReservoir(1000f, 300f, 0f, stored), pumped);
+            rig.Tick();
+
+            rig.Tick();
+
+            Assert.AreEqual(pumped, rig.Destination.Liquid);
         }
 
         [Test]

@@ -9,7 +9,8 @@ namespace WaterChaos.Water
     public sealed class WaterReservoirComponent : MonoBehaviour
     {
         [Header("Liquid")]
-        [Tooltip("What the reservoir holds at start. Gasoline pumped in turns all of it into gasoline until it is drained empty.")]
+        [Tooltip("What the reservoir holds at start (Water, Gasoline, Toxic). Gasoline pumped in turns all of it into gasoline, " +
+                 "toxic liquid pumped into water turns it toxic; gasoline and toxic liquid together neutralize into water.")]
         [SerializeField]
         private LiquidType _liquid = LiquidType.Water;
 

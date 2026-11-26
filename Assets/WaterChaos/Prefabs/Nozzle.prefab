@@ -4866,6 +4866,7 @@ GameObject:
   - component: {fileID: 5705520628600233481}
   - component: {fileID: 4271996635396775862}
   - component: {fileID: 3420794843738164006}
+  - component: {fileID: 4342724675012377470}
   m_Layer: 4
   m_Name: NozzleScripts
   m_TagString: Untagged
@@ -4888,6 +4889,7 @@ Transform:
   m_Children:
   - {fileID: 1933614714370183383}
   - {fileID: 7692653632413434986}
+  - {fileID: 1350513807249392423}
   m_Father: {fileID: 1666482504460625419}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3436077016623464959
@@ -5009,6 +5011,79 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5705520628600233481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbaa11039bc445bcbf00c5ed0095937b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FuelStreamIgnition
+  _stream: {fileID: 2696170886430235844}
+  _settings: {fileID: 11400000, guid: d16241bf99847470ea2a721d689b9aa4, type: 2}
+  _flameLength: 3
+  _ignitionInterval: 0.3
+  _respectRoomCooling: 0
+  _maxDropToFloor: 3
+--- !u!114 &4271996635396775862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53476d46de24d5dbdf4dca01348dbea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FlameStreamView
+  _stream: {fileID: 2696170886430235844}
+  _ignition: {fileID: 5705520628600233481}
+  _firePrefab: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  _flameCount: 4
+  _scale: {x: 0.3, y: 1}
+  _liquidViews:
+  - {fileID: 9194372183018465532}
+  - {fileID: 3436077016623464959}
+--- !u!114 &3420794843738164006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80802d05a2c042cdb02455246911dad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.LiquidStreamTint
+  _stream: {fileID: 2696170886430235844}
+  _renderers:
+  - {fileID: 6560177650709509829}
+  _colors:
+  - _liquid: 1
+    _color: {r: 1, g: 0.7, b: 0.15, a: 1}
+  - _liquid: 2
+    _color: {r: 0.5, g: 1, b: 0.12, a: 1}
+--- !u!114 &4342724675012377470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bc47feb1055c4e0f898c2714123fb9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.LiquidImpactEffect
+  _stream: {fileID: 2696170886430235844}
+  _liquid: 2
+  _effect: {fileID: 4295068408385928406}
 --- !u!1001 &1200825574151029216
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5195,60 +5270,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c3f1f294ba6241fab44295a93d2a517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Tools.NozzleController
-  _stream: {fileID: 2696170886430235844}
+  _receiver: {fileID: 2696170886430235844}
   _hose: {fileID: 8886715139356573652}
---- !u!114 &5705520628600233481
-MonoBehaviour:
+  _displayName: Nozzle
+--- !u!1001 &1229219492351727042
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1567026969470104618}
+    m_Modifications:
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133022403507240025, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_Name
+      value: ToxicImpactFumes
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+--- !u!4 &1350513807249392423 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 1229219492351727042}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7896437642608557097}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbaa11039bc445bcbf00c5ed0095937b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FuelStreamIgnition
-  _stream: {fileID: 2696170886430235844}
-  _settings: {fileID: 11400000, guid: d16241bf99847470ea2a721d689b9aa4, type: 2}
-  _ignitionInterval: 0.3
-  _respectRoomCooling: 0
-  _maxDropToFloor: 3
---- !u!114 &4271996635396775862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!198 &4295068408385928406 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3068135982361749780, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 1229219492351727042}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7896437642608557097}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d53476d46de24d5dbdf4dca01348dbea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FlameStreamView
-  _stream: {fileID: 2696170886430235844}
-  _ignition: {fileID: 5705520628600233481}
-  _firePrefab: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-  _flameCount: 4
-  _scale: {x: 0.3, y: 1}
-  _liquidViews:
-  - {fileID: 9194372183018465532}
-  - {fileID: 3436077016623464959}
---- !u!114 &3420794843738164006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7896437642608557097}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80802d05a2c042cdb02455246911dad5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.LiquidStreamTint
-  _stream: {fileID: 2696170886430235844}
-  _renderers:
-  - {fileID: 6560177650709509829}
-  _colors:
-  - _liquid: 1
-    _color: {r: 1, g: 0.7, b: 0.15, a: 1}

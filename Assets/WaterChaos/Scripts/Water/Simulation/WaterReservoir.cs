@@ -4,8 +4,8 @@ namespace WaterChaos.Water
 {
     /// <summary>
     /// Pure model of a liquid tank: finite volume of one liquid (<see cref="Liquid"/>) that can be drawn until empty.
-    /// Added liquid mixes in (<see cref="LiquidTypeExtensions.MixWith"/>): once gasoline is in, everything is gasoline
-    /// until the tank is drained empty.
+    /// Added liquid mixes in (<see cref="LiquidTypeExtensions.MixWith"/>): gasoline or toxic liquid spoils water,
+    /// and gasoline meeting toxic liquid turns the whole tank into water.
     /// </summary>
     public sealed class WaterReservoir
     {

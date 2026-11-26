@@ -1595,6 +1595,7 @@ GameObject:
   - component: {fileID: 63195090}
   - component: {fileID: 63195089}
   - component: {fileID: 63195091}
+  - component: {fileID: 63195092}
   m_Layer: 0
   m_Name: Pool_Rectangular
   m_TagString: Untagged
@@ -1650,6 +1651,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirTarget
   _reservoir: {fileID: 1944037577}
+--- !u!114 &63195092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63195088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1490b552dd9e4175b3b0a9d8cc911af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.ReservoirLiquidTint
+  _reservoir: {fileID: 1944037577}
+  _renderers:
+  - {fileID: 2006939207}
+  _tints:
+  - _liquid: 2
+    _tint: {r: 0.55, g: 1, b: 0.25, a: 1}
 --- !u!1001 &63373626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6019,6 +6038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.HoseMessageView
   _hoseConnector: {fileID: 1633715726}
+  _transferHose: {fileID: 0}
   _message: {fileID: 2117384520}
 --- !u!1001 &278047776
 PrefabInstance:
@@ -15871,6 +15891,7 @@ GameObject:
   - component: {fileID: 695974347}
   - component: {fileID: 695974348}
   - component: {fileID: 695974349}
+  - component: {fileID: 695974350}
   m_Layer: 0
   m_Name: Pond
   m_TagString: Untagged
@@ -15925,6 +15946,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirTarget
   _reservoir: {fileID: 401745872}
+--- !u!114 &695974350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695974346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1490b552dd9e4175b3b0a9d8cc911af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.ReservoirLiquidTint
+  _reservoir: {fileID: 401745872}
+  _renderers:
+  - {fileID: 439676043}
+  _tints:
+  - _liquid: 2
+    _tint: {r: 0.55, g: 1, b: 0.25, a: 1}
 --- !u!1 &697009226
 GameObject:
   m_ObjectHideFlags: 0
@@ -23497,6 +23536,7 @@ GameObject:
   - component: {fileID: 918868982}
   - component: {fileID: 918868984}
   - component: {fileID: 918868983}
+  - component: {fileID: 918868985}
   m_Layer: 0
   m_Name: UndergroundTank
   m_TagString: Untagged
@@ -23551,6 +23591,24 @@ MonoBehaviour:
   _bottom: 0
   _fullHeight: 2.3
   _minHeight: 0.02
+--- !u!114 &918868985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918868981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1490b552dd9e4175b3b0a9d8cc911af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.ReservoirLiquidTint
+  _reservoir: {fileID: 1654272621}
+  _renderers:
+  - {fileID: 1989542982}
+  _tints:
+  - _liquid: 2
+    _tint: {r: 0.55, g: 1, b: 0.25, a: 1}
 --- !u!1001 &920970923
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34904,6 +34962,7 @@ GameObject:
   - component: {fileID: 1330259128}
   - component: {fileID: 1330259127}
   - component: {fileID: 1330259129}
+  - component: {fileID: 1330259130}
   m_Layer: 0
   m_Name: Pool_Octagonal
   m_TagString: Untagged
@@ -34959,6 +35018,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirTarget
   _reservoir: {fileID: 1055329593}
+--- !u!114 &1330259130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330259126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1490b552dd9e4175b3b0a9d8cc911af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.ReservoirLiquidTint
+  _reservoir: {fileID: 1055329593}
+  _renderers:
+  - {fileID: 2109196326}
+  _tints:
+  - _liquid: 2
+    _tint: {r: 0.55, g: 1, b: 0.25, a: 1}
 --- !u!1001 &1333542723
 PrefabInstance:
   m_ObjectHideFlags: 0
