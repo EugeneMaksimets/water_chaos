@@ -115,7 +115,7 @@ namespace WaterChaos.UI
             }
 
             // Out of reach, another target or nothing left to do (e.g. the pump was taken away): close without acting.
-            if (_interaction.Focus != _openFocus || _interaction.Actions.Count == 0)
+            if (_interaction.Focus != _openFocus || _interaction.MenuActions.Count == 0)
             {
                 Close();
                 return;
@@ -142,13 +142,16 @@ namespace WaterChaos.UI
                 return;
             }
 
-            int primary = PlayerInteraction.IndexOf(actions, InteractionButton.Primary);
+            int primary = PlayerInteraction.PrimaryIndex(actions);
             int interact = PlayerInteraction.IndexOf(actions, InteractionButton.Interact);
 
             // A learned action (e.g. "Water On/Off" after first use) still works on the primary button, without its prompt.
             bool showPrimary = primary >= 0 && actions[primary].ShowPrompt;
             bool showInteract = interact >= 0 && actions[interact].ShowPrompt;
-            bool showMenu = showInteract || (interact < 0 && actions.Count > 1);
+            // The menu has something the primary button does not already do.
+            int menuCount = _interaction.MenuActions.Count;
+            bool primaryInMenu = primary >= 0 && actions[primary].InMenu;
+            bool showMenu = showInteract || (interact < 0 && menuCount > (primaryInMenu ? 1 : 0));
 
             if (showPrimary)
                 _prompt.Show(GetText(actions[primary], _primaryText), showMenu ? -PromptPairX : 0f, 1f);
@@ -181,7 +184,7 @@ namespace WaterChaos.UI
             if (IsOpen || !_interaction.isActiveAndEnabled)
                 return;
 
-            int index = PlayerInteraction.IndexOf(_interaction.Actions, InteractionButton.Primary);
+            int index = PlayerInteraction.PrimaryIndex(_interaction.Actions);
             if (index >= 0)
                 _interaction.Actions[index].Execute();
         }
@@ -195,13 +198,13 @@ namespace WaterChaos.UI
                 return;
             }
 
-            if (!_interaction.isActiveAndEnabled || _interaction.Actions.Count == 0)
+            if (!_interaction.isActiveAndEnabled)
                 return;
 
             int index = PlayerInteraction.IndexOf(_interaction.Actions, InteractionButton.Interact);
             if (index >= 0)
                 _interaction.Actions[index].Execute();
-            else
+            else if (_interaction.MenuActions.Count > 0)
                 Open();
         }
 
@@ -261,13 +264,13 @@ namespace WaterChaos.UI
 
         private bool SameAsShown()
         {
-            int count = Mathf.Min(_interaction.Actions.Count, MaxOptions);
+            int count = Mathf.Min(_interaction.MenuActions.Count, MaxOptions);
             if (count != _count)
                 return false;
 
             for (int i = 0; i < _count; i++)
             {
-                InteractionAction action = _interaction.Actions[i];
+                InteractionAction action = _interaction.MenuActions[i];
                 if (action.Label != _shown[i].Label || action.Target != _shown[i].Target)
                     return false;
             }
@@ -278,7 +281,7 @@ namespace WaterChaos.UI
         /// <summary>Places the current actions on the half circle, left to right; unused slots are hidden.</summary>
         private void Layout()
         {
-            _count = Mathf.Min(_interaction.Actions.Count, MaxOptions);
+            _count = Mathf.Min(_interaction.MenuActions.Count, MaxOptions);
             _title.text = _interaction.Title;
 
             float sector = RadialMenuLayout.SectorAngle(_count);
@@ -295,7 +298,7 @@ namespace WaterChaos.UI
                     continue;
                 }
 
-                _shown[i] = _interaction.Actions[i];
+                _shown[i] = _interaction.MenuActions[i];
                 _labels[i].text = _shown[i].Label;
                 _labels[i].rectTransform.anchoredPosition = RadialMenuLayout.CenterDirection(i, _count) * labelRadius;
 

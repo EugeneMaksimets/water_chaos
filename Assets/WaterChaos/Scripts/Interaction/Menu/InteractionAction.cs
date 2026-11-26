@@ -23,8 +23,11 @@ namespace WaterChaos.Interaction
         /// </summary>
         public bool ShowPrompt { get; }
 
-        /// <summary>Button that performs this action directly while the menu is closed; the menu can always perform it.</summary>
+        /// <summary>Button that performs this action directly while the menu is closed; the menu can perform it too unless <see cref="InMenu"/> is false.</summary>
         public InteractionButton Button { get; }
+
+        /// <summary>Listed in the radial menu. False for button-only actions (e.g. "Water On/Off" on the primary button).</summary>
+        public bool InMenu { get; }
 
         /// <param name="label">Menu text; must not be empty.</param>
         /// <param name="target">Object the action is about, or null.</param>
@@ -39,8 +42,9 @@ namespace WaterChaos.Interaction
         /// <param name="execute">Performs the action; cache the delegate so collecting actions does not allocate.</param>
         /// <param name="showPrompt">False once the player has learned the action, see <see cref="ShowPrompt"/>.</param>
         /// <param name="button">Button that performs the action directly, see <see cref="Button"/>.</param>
+        /// <param name="inMenu">False keeps the action out of the radial menu, see <see cref="InMenu"/>.</param>
         public InteractionAction(string label, Component target, Action execute, bool showPrompt,
-            InteractionButton button = InteractionButton.Primary)
+            InteractionButton button = InteractionButton.Primary, bool inMenu = true)
         {
             if (string.IsNullOrEmpty(label))
                 throw new ArgumentException("An interaction action needs a label.", nameof(label));
@@ -50,6 +54,7 @@ namespace WaterChaos.Interaction
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             ShowPrompt = showPrompt;
             Button = button;
+            InMenu = inMenu;
         }
 
         public void Execute()

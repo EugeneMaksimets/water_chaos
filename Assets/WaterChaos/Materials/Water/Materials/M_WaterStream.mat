@@ -25,7 +25,7 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Alpha: 0.217
+    - _Alpha: 0.489
     - _Faceted: 0
     - _RimPower: 2
     - _RimThreshold: 0.85

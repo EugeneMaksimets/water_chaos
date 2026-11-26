@@ -245,7 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.WaterTransfer.TransferHose
   _end: {fileID: 6845538898513850907}
   _coil: {fileID: 8017532193760419713}
-  _maxLength: 25
+  _maxLength: 30
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 111

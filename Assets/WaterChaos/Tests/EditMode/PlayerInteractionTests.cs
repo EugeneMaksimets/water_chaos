@@ -48,6 +48,73 @@ namespace WaterChaos.Tests
             Assert.AreEqual("Turn On", actions[1].Label);
         }
 
+        [Test]
+        public void Action_ByDefault_IsInMenu()
+        {
+            Assert.IsTrue(new InteractionAction("Open", null, Nothing).InMenu);
+        }
+
+        [Test]
+        public void SelectMenuActions_SkipsButtonOnlyActions()
+        {
+            List<InteractionAction> all = new List<InteractionAction>
+            {
+                new InteractionAction("Water On/Off", null, Nothing, true, InteractionButton.Primary, false),
+                new InteractionAction("Open", null, Nothing),
+            };
+            List<InteractionAction> menu = new List<InteractionAction>();
+
+            PlayerInteraction.SelectMenuActions(all, menu);
+
+            Assert.AreEqual(1, menu.Count);
+            Assert.AreEqual("Open", menu[0].Label);
+        }
+
+        [Test]
+        public void PrimaryIndex_PrefersMenuActionOverButtonOnly()
+        {
+            List<InteractionAction> actions = new List<InteractionAction>
+            {
+                new InteractionAction("Water On/Off", null, Nothing, true, InteractionButton.Primary, false),
+                new InteractionAction("Open", null, Nothing),
+            };
+
+            Assert.AreEqual(1, PlayerInteraction.PrimaryIndex(actions));
+        }
+
+        [Test]
+        public void PrimaryIndex_FallsBackToButtonOnly()
+        {
+            List<InteractionAction> actions = new List<InteractionAction>
+            {
+                new InteractionAction("Pick Up", null, Nothing, true, InteractionButton.Interact),
+                new InteractionAction("Water On/Off", null, Nothing, true, InteractionButton.Primary, false),
+            };
+
+            Assert.AreEqual(1, PlayerInteraction.PrimaryIndex(actions));
+        }
+
+        [Test]
+        public void PrimaryIndex_NoPrimaryAction_IsMinusOne()
+        {
+            List<InteractionAction> actions = new List<InteractionAction>
+            {
+                new InteractionAction("Pick Up", null, Nothing, true, InteractionButton.Interact),
+            };
+
+            Assert.AreEqual(-1, PlayerInteraction.PrimaryIndex(actions));
+        }
+
+        [Test]
+        public void SelectMenuActions_ClearsPreviousResult()
+        {
+            List<InteractionAction> menu = new List<InteractionAction> { new InteractionAction("Old", null, Nothing) };
+
+            PlayerInteraction.SelectMenuActions(new List<InteractionAction>(), menu);
+
+            Assert.AreEqual(0, menu.Count);
+        }
+
         [TestCase("Pump (1)", "Pump")]
         [TestCase("Reservoir B (12)", "Reservoir B")]
         [TestCase("Pump", "Pump")]

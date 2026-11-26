@@ -9,7 +9,7 @@ namespace WaterChaos.Player
 {
     /// <summary>
     /// Controls whatever source the hose is attached to; does nothing when detached.
-    /// Turning it on or off is offered as an interaction action (primary button or the menu),
+    /// Turning it on or off is a primary-button action only (left mouse button); it is not listed in the radial menu,
     /// the mouse wheel steps the pressure.
     /// Hints: the primary prompt for "Water On/Off" shows until the first toggle,
     /// then <see cref="ShowPressureHint"/> until the first pressure change.
@@ -59,7 +59,8 @@ namespace WaterChaos.Player
         public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
         {
             if (GetConnectedControl() != null)
-                actions.Add(new InteractionAction(ToggleText, null, _toggle, _hints.ShowToggleHint && !PumpNeedsWater));
+                actions.Add(new InteractionAction(ToggleText, null, _toggle, _hints.ShowToggleHint && !PumpNeedsWater,
+                    InteractionButton.Primary, false));
         }
 
         private void Toggle()

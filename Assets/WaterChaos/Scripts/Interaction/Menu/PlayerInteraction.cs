@@ -33,11 +33,15 @@ namespace WaterChaos.Interaction
         private readonly List<IInteractionProvider> _playerProviders = new List<IInteractionProvider>();
         private readonly List<InteractionAction> _collected = new List<InteractionAction>();
         private readonly List<InteractionAction> _actions = new List<InteractionAction>();
+        private readonly List<InteractionAction> _menuActions = new List<InteractionAction>();
         private readonly RaycastHit[] _hits = new RaycastHit[MaxHits];
         private InteractionHighlight _highlighter;
 
         /// <summary>Valid actions this frame, without duplicate labels. Do not modify.</summary>
         public IReadOnlyList<InteractionAction> Actions => _actions;
+
+        /// <summary>Actions listed in the radial menu this frame (<see cref="InteractionAction.InMenu"/>). Do not modify.</summary>
+        public IReadOnlyList<InteractionAction> MenuActions => _menuActions;
 
         /// <summary>Object the actions are about (see <see cref="FocusOf"/>); null when there is none (e.g. only hands actions).</summary>
         public Transform Focus { get; private set; }
@@ -61,6 +65,7 @@ namespace WaterChaos.Interaction
         private void OnDisable()
         {
             _actions.Clear();
+            _menuActions.Clear();
             Focus = null;
             _highlighter?.Clear();
             Title = DefaultTitle;
@@ -82,6 +87,7 @@ namespace WaterChaos.Interaction
             if (world != null && !_playerProviders.Contains(world))
                 Collect(world);
 
+            SelectMenuActions(_actions, _menuActions);
             Focus = FindFocus(_actions);
             Title = Focus != null ? GetName(Focus) : _actions.Count == 1 ? _actions[0].Label : DefaultTitle;
             _highlighter.Show(FirstTarget(_actions), Focus);
@@ -106,6 +112,39 @@ namespace WaterChaos.Interaction
 
             actions.Add(action);
             return true;
+        }
+
+        /// <summary>
+        /// Index of the action the primary button performs: the first primary action listed in the menu
+        /// (e.g. "Open" on the fridge under the crosshair), else the first button-only one ("Water On/Off"); -1 if none.
+        /// </summary>
+        public static int PrimaryIndex(IReadOnlyList<InteractionAction> actions)
+        {
+            int buttonOnly = -1;
+            for (int i = 0; i < actions.Count; i++)
+            {
+                if (actions[i].Button != InteractionButton.Primary)
+                    continue;
+
+                if (actions[i].InMenu)
+                    return i;
+
+                if (buttonOnly < 0)
+                    buttonOnly = i;
+            }
+
+            return buttonOnly;
+        }
+
+        /// <summary>Fills <paramref name="menu"/> with the actions of <paramref name="all"/> that are listed in the radial menu.</summary>
+        public static void SelectMenuActions(IReadOnlyList<InteractionAction> all, List<InteractionAction> menu)
+        {
+            menu.Clear();
+            for (int i = 0; i < all.Count; i++)
+            {
+                if (all[i].InMenu)
+                    menu.Add(all[i]);
+            }
         }
 
         /// <summary>Index of the first action performed by <paramref name="button"/>; -1 if there is none.</summary>
