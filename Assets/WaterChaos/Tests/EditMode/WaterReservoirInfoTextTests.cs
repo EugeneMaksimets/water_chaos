@@ -9,7 +9,7 @@ namespace WaterChaos.Tests
         [Test]
         public void FormatVolume_ShowsCurrentAndMaxInLiters()
         {
-            Assert.AreEqual("750 L / 2000 L", WaterReservoirInfoText.FormatVolume(750, 2000));
+            Assert.AreEqual("750 л / 2000 л", WaterReservoirInfoText.FormatVolume(750, 2000));
         }
 
         [Test]
@@ -31,8 +31,8 @@ namespace WaterChaos.Tests
         [Test]
         public void BarLabel_NeverNamesTheLiquid()
         {
-            Assert.AreEqual("Tank", WaterReservoirInfoText.BarLabel(false));
-            Assert.AreEqual("Tank (EMPTY)", WaterReservoirInfoText.BarLabel(true));
+            Assert.AreEqual("Бак", WaterReservoirInfoText.BarLabel(false));
+            Assert.AreEqual("Бак (ПОРОЖНІЙ)", WaterReservoirInfoText.BarLabel(true));
         }
 
         [TestCase(749.6f, 750)]
@@ -51,7 +51,7 @@ namespace WaterChaos.Tests
 
             string text = Format(reservoir);
 
-            Assert.AreEqual("750 L / 2000 L", text);
+            Assert.AreEqual("750 л / 2000 л", text);
             Assert.AreEqual(750f, reservoir.Volume);
             Assert.AreEqual(2000f, reservoir.Capacity);
         }

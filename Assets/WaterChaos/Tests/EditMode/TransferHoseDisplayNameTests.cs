@@ -5,9 +5,9 @@ namespace WaterChaos.Tests
 {
     public class TransferHoseDisplayNameTests
     {
-        [TestCase(25f, "Hose 25m")]
-        [TestCase(10f, "Hose 10m")]
-        [TestCase(12.5f, "Hose 12.5m")]
+        [TestCase(25f, "Шланг 25 м")]
+        [TestCase(10f, "Шланг 10 м")]
+        [TestCase(12.5f, "Шланг 12.5 м")]
         public void DisplayName_IsHoseAndLengthInMeters(float meters, string expected)
         {
             Assert.AreEqual(expected, TransferHose.FormatDisplayName(meters));

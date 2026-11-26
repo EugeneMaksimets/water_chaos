@@ -7,7 +7,7 @@ namespace WaterChaos.UI
     /// <summary>Shows "Hose length reached!" while a hose (the nozzle hose or a carried transfer hose) holds the player back.</summary>
     public sealed class HoseMessageView : MonoBehaviour
     {
-        private const string LimitText = "Hose length reached!";
+        private const string LimitText = "Шланг натягнуто до кінця!";
 
         [Header("References")]
         [SerializeField] private PlayerHoseConnector _hoseConnector;

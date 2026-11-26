@@ -18,8 +18,8 @@ namespace WaterChaos.UI
     public sealed class PlayerHud : MonoBehaviour
     {
         private const float BarWidth = 320f;
-        private const string PressureHintText = "Scroll: Pressure";
-        private const string NeedsWaterText = "Put the pump in the water";
+        private const string PressureHintText = "Колесо миші: тиск";
+        private const string NeedsWaterText = "Опусти насос у воду";
 
         /// <summary>Below the interaction prompts, in reference pixels (1920x1080).</summary>
         private static readonly Vector2 PressureHintPosition = new Vector2(0f, -200f);
@@ -182,7 +182,7 @@ namespace WaterChaos.UI
             RectTransform root = CreateRect("Source Bars", canvas, BottomLeft, new Vector2(40f, 40f), new Vector2(BarWidth, 110f));
 
             _waterFill = CreateBar(WaterReservoirInfoText.BarTitle, root, 0f, out _waterLabel);
-            _pressureFill = CreateBar("Pressure", root, 60f, out _);
+            _pressureFill = CreateBar("Тиск", root, 60f, out _);
         }
 
         private Image CreateBar(string title, Transform parent, float y, out Text label)

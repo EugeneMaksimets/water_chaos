@@ -13,8 +13,8 @@ namespace WaterChaos.Props
     /// </summary>
     public class AirConditioner : MonoBehaviour, IInteractionProvider
     {
-        private const string TurnOnText = "Turn On";
-        private const string TurnOffText = "Turn Off";
+        private const string TurnOnText = "Увімкнути";
+        private const string TurnOffText = "Вимкнути";
 
         [Header("References")]
         [Tooltip("Louver flap; its pivot sits on the hinge (local X axis).")]

@@ -6,7 +6,7 @@ using WaterChaos.WaterTransfer;
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Transfer hose guidance in the PlayerHud style: "Return to the Pump and Start It" after a hose is placed,
+    /// Transfer hose guidance in the PlayerHud style: "Повернись до насоса й увімкни його" after a hose is placed,
     /// and a status line that only shows problems (no flow or liters), including a failed placement.
     /// Actions themselves (pump menu, pull, place) are in the interaction menu.
     /// </summary>
@@ -16,8 +16,8 @@ namespace WaterChaos.UI
         private const float StatusY = -300f;
         private const float PlaceFailedShowTime = 2f;
 
-        private const string ReturnText = "Return to the Pump and Start It";
-        private const string PlaceFailedText = "No ground here - cannot place the hose";
+        private const string ReturnText = "Повернись до насоса й увімкни його";
+        private const string PlaceFailedText = "Тут немає землі — шланг не покласти";
 
         [Header("References")]
         [SerializeField] private PlayerTransferHoseInteractor _interactor;
@@ -120,11 +120,11 @@ namespace WaterChaos.UI
         {
             switch (status)
             {
-                case TransferStatus.OutletBusy: return "Pump output is used by the nozzle hose";
-                case TransferStatus.SourceEmpty: return "No water: the source reservoir is empty";
-                case TransferStatus.NoWater: return "No water source: put the pump intake into water";
-                case TransferStatus.DestinationFull: return "Destination reservoir full";
-                case TransferStatus.Interrupted: return "Pump running - flow interrupted";
+                case TransferStatus.OutletBusy: return "Вихід насоса зайнятий шлангом ствола";
+                case TransferStatus.SourceEmpty: return "Немає води: резервуар-джерело порожній";
+                case TransferStatus.NoWater: return "Немає джерела води: опусти насос у воду";
+                case TransferStatus.DestinationFull: return "Резервуар, куди качаєш, повний";
+                case TransferStatus.Interrupted: return "Насос працює — потік перервано";
                 default: return null;
             }
         }

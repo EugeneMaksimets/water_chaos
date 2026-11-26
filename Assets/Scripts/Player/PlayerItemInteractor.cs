@@ -9,7 +9,7 @@ namespace WaterChaos.Player
     /// <summary>Offers "Pick Up" on the interact key (E) for the item under the crosshair; picking moves it into the inventory.</summary>
     public sealed class PlayerItemInteractor : MonoBehaviour, IInteractionProvider
     {
-        private const string PickUpText = "Pick Up";
+        private const string PickUpText = "Підібрати";
 
         [Header("References")]
         [SerializeField] private PlayerInventory _inventory;

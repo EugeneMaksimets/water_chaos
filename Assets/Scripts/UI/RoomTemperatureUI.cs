@@ -27,7 +27,7 @@ namespace WaterChaos.UI
         private static readonly Color OutlineColor = new Color(0f, 0f, 0f, 0.85f);
         private static readonly Color TubeColor = new Color(1f, 1f, 1f, 0.9f);
         private static readonly Vector2 HintSize = new Vector2(420f, 70f);
-        private const string HintText = "At 100°C the fire will start spreading to other surfaces!";
+        private const string HintText = "При 100°C вогонь почне перекидатися на інші поверхні!";
         // Seconds (s) the hint takes to fade in and out.
         private const float HintFade = 0.3f;
 
@@ -202,13 +202,13 @@ namespace WaterChaos.UI
             if (room.ActiveFireCount != _shownFires)
             {
                 _shownFires = room.ActiveFireCount;
-                _fires.text = "Fires: " + _shownFires;
+                _fires.text = "Вогонь: " + _shownFires;
             }
 
             if (room.ActiveCoolerCount != _shownCoolers)
             {
                 _shownCoolers = room.ActiveCoolerCount;
-                _coolers.text = "Cooling: " + _shownCoolers;
+                _coolers.text = "Холод: " + _shownCoolers;
             }
 
             float range = Mathf.Max(_thermometerRange.y - _thermometerRange.x, 1f);
@@ -296,11 +296,11 @@ namespace WaterChaos.UI
         {
             switch (state)
             {
-                case State.High: return "HEATING UP!";
-                case State.Critical: return "CRITICAL HEAT!";
-                case State.Cooling: return "COOLING ACTIVE";
-                case State.Freezing: return "FREEZING";
-                default: return "NORMAL";
+                case State.High: return "НАГРІВАННЯ!";
+                case State.Critical: return "КРИТИЧНА СПЕКА!";
+                case State.Cooling: return "ОХОЛОДЖЕННЯ";
+                case State.Freezing: return "ЗАМЕРЗАННЯ";
+                default: return "НОРМА";
             }
         }
 
@@ -334,7 +334,7 @@ namespace WaterChaos.UI
             BuildThermometer(_panel, rounded, disc);
 
             Text title = Label("Title", new Vector2(30f, 84f), new Vector2(280f, 26f), 19, TextAnchor.MiddleCenter);
-            title.text = "ROOM TEMPERATURE";
+            title.text = "ТЕМПЕРАТУРА";
             title.fontStyle = FontStyle.Bold;
 
             _roomName = Label("Room", new Vector2(30f, 62f), new Vector2(280f, 22f), 15, TextAnchor.MiddleCenter);

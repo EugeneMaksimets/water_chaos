@@ -16,7 +16,7 @@ namespace WaterChaos.Player
     /// </summary>
     public class PlayerHoseConnector : MonoBehaviour, IInteractionProvider
     {
-        private const string DefaultItemName = "Nozzle";
+        private const string DefaultItemName = "ствол";
 
         [Header("References")]
         [SerializeField] private Transform _camera;
@@ -28,8 +28,8 @@ namespace WaterChaos.Player
 
         private readonly List<WaterConnectionPoint> _itemPoints = new List<WaterConnectionPoint>();
         private IWaterFlowReceiver _stream;
-        private string _connectText = "Connect " + DefaultItemName;
-        private string _disconnectText = "Disconnect " + DefaultItemName;
+        private string _connectText = "Під'єднати " + DefaultItemName;
+        private string _disconnectText = "Від'єднати " + DefaultItemName;
         private HoseController _hose;
         private WaterConnectionPoint _connected;
         private WaterConnectionPoint _target;
@@ -89,8 +89,8 @@ namespace WaterChaos.Player
             _stream = stream;
             _hose = hose;
             string label = string.IsNullOrEmpty(itemName) ? DefaultItemName : itemName;
-            _connectText = "Connect " + label;
-            _disconnectText = "Disconnect " + label;
+            _connectText = "Під'єднати " + label;
+            _disconnectText = "Від'єднати " + label;
             if (_hose != null)
                 _hose.LimitReachedChanged += OnLimitReachedChanged;
 

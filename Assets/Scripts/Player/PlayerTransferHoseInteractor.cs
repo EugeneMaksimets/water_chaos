@@ -24,13 +24,13 @@ namespace WaterChaos.Player
     {
         private const int HitBufferSize = 16;
 
-        private const string TurnOnText = "Turn On";
-        private const string TurnOffText = "Turn Off";
-        private const string ConnectText = "Connect Hose";
-        private const string PickUpText = "Pick Up Hose";
-        private const string PullText = "Pull Hose";
-        private const string PlaceText = "Place Hose";
-        private const string PlugText = "Connect Hose";
+        private const string TurnOnText = "Увімкнути";
+        private const string TurnOffText = "Вимкнути";
+        private const string ConnectText = "Під'єднати шланг";
+        private const string PickUpText = "Підібрати шланг";
+        private const string PullText = "Взяти кінець шланга";
+        private const string PlaceText = "Покласти шланг";
+        private const string PlugText = "Під'єднати шланг";
 
         [Header("References")]
         [SerializeField] private PlayerInventory _inventory;

@@ -23,7 +23,7 @@ namespace WaterChaos.FireTruck
         private Quaternion _closedRotation;
         private Action _toggle;
 
-        public string DisplayName => "Compartment";
+        public string DisplayName => "Відсік";
 
         private void Awake()
         {
@@ -40,7 +40,7 @@ namespace WaterChaos.FireTruck
 
         public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
         {
-            actions.Add(new InteractionAction(_model.IsOpen ? "Close" : "Open", this, _toggle));
+            actions.Add(new InteractionAction(_model.IsOpen ? "Зачинити" : "Відчинити", this, _toggle));
         }
     }
 }

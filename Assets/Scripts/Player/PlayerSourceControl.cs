@@ -18,7 +18,7 @@ namespace WaterChaos.Player
     /// </summary>
     public class PlayerSourceControl : MonoBehaviour, IInteractionProvider
     {
-        private const string ToggleText = "Water On/Off";
+        private const string ToggleText = "Вода: увімк./вимк.";
 
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;

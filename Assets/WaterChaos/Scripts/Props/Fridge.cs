@@ -13,8 +13,8 @@ namespace WaterChaos.Props
     /// </summary>
     public class Fridge : MonoBehaviour, IInteractionProvider
     {
-        private const string OpenText = "Open";
-        private const string CloseText = "Close";
+        private const string OpenText = "Відчинити";
+        private const string CloseText = "Зачинити";
 
         [Header("References")]
         [Tooltip("Door object; its pivot sits on the hinge.")]

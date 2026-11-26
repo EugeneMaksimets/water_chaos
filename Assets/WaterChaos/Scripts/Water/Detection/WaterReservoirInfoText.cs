@@ -3,7 +3,7 @@ using UnityEngine;
 namespace WaterChaos.Water
 {
     /// <summary>
-    /// Text and the one style of the reservoir info panel ("RESERVOIR" / "750 L / 2000 L") and the HUD tank bar title.
+    /// Text and the one style of the reservoir info panel ("РЕЗЕРВУАР" / "750 л / 2000 л") and the HUD tank bar title.
     /// Every reservoir looks the same: yellow text of one size, red once it holds 0 liters. Never names the liquid.
     /// </summary>
     public static class WaterReservoirInfoText
@@ -21,11 +21,11 @@ namespace WaterChaos.Water
             return volume <= 0 ? EmptyColor : TextColor;
         }
 
-        public const string Title = "RESERVOIR";
-        public const string BarTitle = "Tank";
-        public const string EmptyText = "EMPTY";
+        public const string Title = "РЕЗЕРВУАР";
+        public const string BarTitle = "Бак";
+        public const string EmptyText = "ПОРОЖНІЙ";
 
-        /// <summary>HUD bar title: "Tank", or "Tank (EMPTY)".</summary>
+        /// <summary>HUD bar title: "Бак", or "Бак (ПОРОЖНІЙ)".</summary>
         public static string BarLabel(bool empty)
         {
             return empty ? BarTitle + " (" + EmptyText + ")" : BarTitle;
@@ -41,7 +41,7 @@ namespace WaterChaos.Water
         /// <param name="capacity">Maximum volume in whole liters (L).</param>
         public static string FormatVolume(int volume, int capacity)
         {
-            return volume + " L / " + capacity + " L";
+            return volume + " л / " + capacity + " л";
         }
     }
 }

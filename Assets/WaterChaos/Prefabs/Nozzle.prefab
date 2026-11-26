@@ -5300,7 +5300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Tools.NozzleController
   _receiver: {fileID: 2696170886430235844}
   _hose: {fileID: 8886715139356573652}
-  _displayName: Nozzle
+  _displayName: "\u0441\u0442\u0432\u043E\u043B"
 --- !u!1001 &1229219492351727042
 PrefabInstance:
   m_ObjectHideFlags: 0

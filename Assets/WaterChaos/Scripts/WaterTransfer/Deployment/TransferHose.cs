@@ -149,7 +149,7 @@ namespace WaterChaos.WaterTransfer
         /// <summary>"Hose" and the length in meters (m), e.g. "Hose 12.5m".</summary>
         public static string FormatDisplayName(float meters)
         {
-            return "Hose " + meters.ToString("0.#", CultureInfo.InvariantCulture) + "m";
+            return "Шланг " + meters.ToString("0.#", CultureInfo.InvariantCulture) + " м";
         }
 
         public bool TryConnect(TransferConnectionPoint point, Transform carrier, Transform playerRoot)

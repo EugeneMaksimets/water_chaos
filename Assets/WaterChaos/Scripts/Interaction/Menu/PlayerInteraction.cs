@@ -13,7 +13,7 @@ namespace WaterChaos.Interaction
     public sealed class PlayerInteraction : MonoBehaviour
     {
         private const int MaxHits = 16;
-        private const string DefaultTitle = "Interact";
+        private const string DefaultTitle = "Дія";
 
         [Header("References")]
         [Tooltip("The look ray for world objects starts here and goes along its forward (the player camera).")]
@@ -177,11 +177,14 @@ namespace WaterChaos.Interaction
             return -1;
         }
 
-        /// <summary>The object's <see cref="IDisplayName"/> (also on a parent, e.g. a hose end), else its cleaned scene name.</summary>
+        /// <summary>
+        /// The object's <see cref="IDisplayName"/> (also on a parent, e.g. a hose end),
+        /// else its cleaned scene name in Ukrainian (<see cref="ObjectMenuNames"/>).
+        /// </summary>
         private static string GetName(Transform focus)
         {
             IDisplayName named = focus.GetComponentInParent<IDisplayName>();
-            return named != null ? named.DisplayName : CleanName(focus.name);
+            return named != null ? named.DisplayName : ObjectMenuNames.Translate(CleanName(focus.name));
         }
 
         /// <summary>Scene name without Unity's duplicate suffix: "Pump (1)" becomes "Pump".</summary>

@@ -23,7 +23,7 @@ namespace WaterChaos.UI
         private const int MaxOptions = 6;
         private const float PromptY = -90f;
         private const float PromptPairX = 110f;
-        private const string MenuText = "Actions";
+        private const string MenuText = "Дії";
 
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;

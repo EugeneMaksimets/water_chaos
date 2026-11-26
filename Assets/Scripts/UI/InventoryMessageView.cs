@@ -7,7 +7,7 @@ namespace WaterChaos.UI
     /// <summary>Inventory texts: the short "backpack is full" notice and the drop hint (keys from the bindings).</summary>
     public sealed class InventoryMessageView : MonoBehaviour
     {
-        private const string FullText = "Backpack is full!";
+        private const string FullText = "Рюкзак заповнений!";
         private string _dropText;
 
         [Header("References")]
@@ -35,7 +35,7 @@ namespace WaterChaos.UI
                 return;
             }
 
-            _dropText = $"{PlayerControls.GetDisplayName(PlayerControl.Drop)} to drop";
+            _dropText = $"{PlayerControls.GetDisplayName(PlayerControl.Drop)} — покласти";
 
             _notice.gameObject.SetActive(false);
             _hint.gameObject.SetActive(false);
