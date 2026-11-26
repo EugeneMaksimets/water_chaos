@@ -118,6 +118,23 @@ namespace WaterChaos.EditorTools.MiniVillage
             Add("CarBlue", new Color(0.24f, 0.44f, 0.78f), null, 1f, 0.6f);
             Add("CarYellow", new Color(0.96f, 0.77f, 0.22f), null, 1f, 0.6f);
 
+            // Office district: brick city blocks, offices and the toxic factory.
+            Add("BrickRed", new Color(0.66f, 0.34f, 0.25f), "Brick");
+            Add("BrickBrown", new Color(0.50f, 0.31f, 0.25f), "Brick");
+            Add("BrickGray", new Color(0.46f, 0.48f, 0.53f), "Brick");
+            Add("Stucco", new Color(0.84f, 0.76f, 0.62f), "Concrete", 0.5f);
+            Add("OfficeWall", new Color(0.90f, 0.89f, 0.84f));
+            Add("OfficeCarpet", new Color(0.34f, 0.40f, 0.48f), "Noise");
+            Add("OfficeCarpetGreen", new Color(0.33f, 0.45f, 0.38f), "Noise");
+            Add("Linoleum", new Color(0.70f, 0.68f, 0.62f), "Tiles");
+            Add("Steel", new Color(0.52f, 0.55f, 0.58f), null, 1f, 0.55f, 0.5f);
+            Add("SteelDark", new Color(0.30f, 0.32f, 0.35f), null, 1f, 0.5f, 0.4f);
+            Add("Corrugated", new Color(0.50f, 0.58f, 0.55f), "Siding");
+            Add("HazardYellow", new Color(0.98f, 0.78f, 0.12f), null, 1f, 0.4f);
+            Add("ToxicDrum", new Color(0.30f, 0.55f, 0.20f), null, 1f, 0.45f);
+            Add("Whiteboard", new Color(0.97f, 0.97f, 0.96f), null, 1f, 0.7f);
+            AddEmissive("ToxicGlow", new Color(0.5f, 1f, 0.2f), new Color(0.35f, 0.9f, 0.1f) * 1.5f);
+
             // Light, glass.
             AddEmissive("Lamp", new Color(1f, 0.87f, 0.6f), new Color(1f, 0.82f, 0.5f) * 2.2f);
             AddEmissive("LampCool", new Color(0.92f, 0.95f, 1f), new Color(0.9f, 0.95f, 1f) * 1.6f);

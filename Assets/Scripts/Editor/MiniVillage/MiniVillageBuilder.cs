@@ -52,6 +52,8 @@ namespace WaterChaos.EditorTools.MiniVillage
             VillageAssets.Prepare();
             VillageProps.BuildAll();
             VillageBuildings.BuildWindowsAndDoors();
+            // Every door can be chopped down with the axe: cracks, planks, BreakableDoor.
+            DoorBreakSetup.SetupAll();
             Dictionary<string, HouseInfo> houses = BuildBuildingPrefabs();
             // Fences and interior partitions corrode under toxic liquid; outer walls are load-bearing and do not.
             ToxicLiquidSetup.ApplyToVillagePrefabs();

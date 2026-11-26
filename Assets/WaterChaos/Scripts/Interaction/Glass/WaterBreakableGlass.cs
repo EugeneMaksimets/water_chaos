@@ -5,13 +5,14 @@ using WaterChaos.Water;
 namespace WaterChaos.Interaction
 {
     /// <summary>
-    /// Glass pane that strong water cracks and then shatters (rules in <see cref="GlassPaneModel"/>).
+    /// Glass pane that strong water cracks and then shatters (rules in <see cref="GlassPaneModel"/>);
+    /// a tool blow (axe) shatters it at once.
     /// Lives on the pane's collider, because the stream only notifies the collider it hits.
     /// The fragments are prepared inactive children: on breaking they are released with physics,
     /// then shrink and switch off after their lifetime, so nothing is created or destroyed during play.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public sealed class WaterBreakableGlass : MonoBehaviour, IWaterImpactReceiver
+    public sealed class WaterBreakableGlass : MonoBehaviour, IWaterImpactReceiver, IToolHitReceiver
     {
         [Header("Strength")]
         [Tooltip("Weakest water force that harms the glass, in newtons (N).")]
@@ -79,10 +80,18 @@ namespace WaterChaos.Interaction
                 return;
             }
 
-            Shatter(impact);
+            Shatter(impact.Direction);
         }
 
-        private void Shatter(in WaterImpact impact)
+        public void ReceiveToolHit(in ToolHit hit)
+        {
+            if (_model == null || !(hit.Damage > 0f) || !_model.Break())
+                return;
+
+            Shatter(hit.Direction);
+        }
+
+        private void Shatter(Vector3 direction)
         {
             // Broken glass neither shows nor stops the water any more.
             _collider.enabled = false;
@@ -96,7 +105,7 @@ namespace WaterChaos.Interaction
                     part.SetActive(false);
             }
 
-            Vector3 push = impact.Direction.sqrMagnitude > 0f ? impact.Direction.normalized : -transform.forward;
+            Vector3 push = direction.sqrMagnitude > 0f ? direction.normalized : -transform.forward;
 
             foreach (Rigidbody fragment in _fragments)
             {

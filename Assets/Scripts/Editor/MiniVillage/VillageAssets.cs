@@ -195,7 +195,8 @@ namespace WaterChaos.EditorTools.MiniVillage
             float minForce, float crackImpulse, float breakImpulse)
         {
             const float frame = 0.09f;
-            const float depth = 0.3f;
+            // 1 cm proud of a 0.3 m wall on each side: a frame exactly as deep as the wall shares its faces and flickers.
+            const float depth = 0.32f;
             var frameModel = new LowPolyMesh();
             float hw = width * 0.5f;
             float hh = height * 0.5f;

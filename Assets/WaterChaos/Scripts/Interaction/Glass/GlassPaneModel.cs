@@ -52,6 +52,19 @@ namespace WaterChaos.Interaction
             return true;
         }
 
+        /// <summary>
+        /// Breaks the pane at once, whatever its damage (a blow with a tool). Returns true if it was not broken yet.
+        /// </summary>
+        public bool Break()
+        {
+            if (State == GlassPaneState.Broken)
+                return false;
+
+            Damage = Math.Max(Damage, _breakImpulse);
+            State = GlassPaneState.Broken;
+            return true;
+        }
+
         private static float Sanitize(float value)
         {
             return float.IsNaN(value) ? 0f : Math.Max(0f, value);
