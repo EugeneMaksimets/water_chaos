@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEngine;
 using WaterChaos.Water;
 
 namespace WaterChaos.Tests
@@ -12,10 +13,19 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void FormatStatus_EmptyReservoir_SaysEmpty()
+        public void PanelColor_IsYellow_RedWhenEmpty()
         {
-            Assert.AreEqual("EMPTY · 0 L / 2000 L", WaterReservoirInfoText.FormatStatus(0, 2000));
-            Assert.AreEqual("750 L / 2000 L", WaterReservoirInfoText.FormatStatus(750, 2000));
+            Assert.AreEqual(WaterReservoirInfoText.TextColor, WaterReservoirInfoText.GetColor(750));
+            Assert.AreEqual(WaterReservoirInfoText.EmptyColor, WaterReservoirInfoText.GetColor(0));
+
+            Color yellow = WaterReservoirInfoText.TextColor;
+            Assert.AreEqual(1f, yellow.r, 1e-4f);
+            Assert.Greater(yellow.g, 0.8f);
+            Assert.Less(yellow.b, 0.3f);
+
+            Color red = WaterReservoirInfoText.EmptyColor;
+            Assert.Greater(red.r, 0.8f);
+            Assert.Less(red.g, 0.4f);
         }
 
         [Test]

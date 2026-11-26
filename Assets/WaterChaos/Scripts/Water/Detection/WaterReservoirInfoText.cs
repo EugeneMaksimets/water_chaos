@@ -3,23 +3,27 @@ using UnityEngine;
 namespace WaterChaos.Water
 {
     /// <summary>
-    /// Text for the reservoir info panel and the HUD tank bar, e.g. "750 L / 2000 L".
-    /// Never names the liquid: the player tells it by color.
+    /// Text and the one style of the reservoir info panel ("RESERVOIR" / "750 L / 2000 L") and the HUD tank bar title.
+    /// Every reservoir looks the same: yellow text of one size, red once it holds 0 liters. Never names the liquid.
     /// </summary>
     public static class WaterReservoirInfoText
     {
+        /// <summary>Font size of every line of the panel, in reference pixels (1920x1080).</summary>
+        public const int FontSize = 22;
+
+        public static readonly Color TextColor = new Color(1f, 0.85f, 0.1f, 1f);
+        public static readonly Color EmptyColor = new Color(0.95f, 0.25f, 0.2f, 1f);
+
+        /// <summary>Panel text color: red when the reservoir holds 0 liters, yellow otherwise.</summary>
+        /// <param name="volume">Current volume in whole liters (L).</param>
+        public static Color GetColor(int volume)
+        {
+            return volume <= 0 ? EmptyColor : TextColor;
+        }
+
         public const string Title = "RESERVOIR";
         public const string BarTitle = "Tank";
         public const string EmptyText = "EMPTY";
-
-        /// <summary>The volume, with "EMPTY" in front when nothing is left.</summary>
-        /// <param name="volume">Current volume in whole liters (L).</param>
-        /// <param name="capacity">Maximum volume in whole liters (L).</param>
-        public static string FormatStatus(int volume, int capacity)
-        {
-            string text = FormatVolume(volume, capacity);
-            return volume <= 0 ? EmptyText + " · " + text : text;
-        }
 
         /// <summary>HUD bar title: "Tank", or "Tank (EMPTY)".</summary>
         public static string BarLabel(bool empty)
