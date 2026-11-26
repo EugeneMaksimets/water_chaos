@@ -118,7 +118,7 @@ namespace WaterChaos.WaterTransfer
         /// <summary>Pump output while the hose takes it; no flow otherwise.</summary>
         private void PumpFlow(out WaterFlowData flow)
         {
-            flow = _transfer.IsDelivering && _transfer.Pump != null ? _transfer.Pump.Output : default;
+            flow = _transfer.IsDelivering && _transfer.Source != null ? _transfer.Source.Output : default;
         }
 
         private void ApplyLook()

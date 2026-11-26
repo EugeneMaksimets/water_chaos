@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Interaction;
 using WaterChaos.Pump;
+using WaterChaos.Splitter;
 using WaterChaos.Water;
 
 namespace WaterChaos.Player
@@ -25,7 +26,7 @@ namespace WaterChaos.Player
 
         private readonly SourceControlHints _hints = new SourceControlHints();
         private Action _toggle;
-        private WaterConnectionPoint _deploymentOwner;
+        private IWaterFlowSource _deploymentOwner;
         private PumpDeployment _deployment;
 
         /// <summary>A source is connected and the player has toggled it, but never changed the pressure.</summary>
@@ -83,16 +84,15 @@ namespace WaterChaos.Player
             _hints.NotifyPressureChanged();
         }
 
-        /// <summary>Deployment of the connected pump; null for other sources. Looked up once per connection.</summary>
+        /// <summary>Deployment of the connected pump (also behind a splitter); null for other sources. Looked up once per source.</summary>
         private PumpDeployment GetConnectedDeployment()
         {
             WaterConnectionPoint connected = _hose.Connected;
-            if (connected != _deploymentOwner)
+            IWaterFlowSource origin = connected != null ? SplitterOutlet.ResolveOrigin(connected.Source) : null;
+            if (!ReferenceEquals(origin, _deploymentOwner))
             {
-                _deploymentOwner = connected;
-                _deployment = connected != null && connected.Source is PumpController pump
-                    ? pump.GetComponent<PumpDeployment>()
-                    : null;
+                _deploymentOwner = origin;
+                _deployment = origin is PumpController pump ? pump.GetComponent<PumpDeployment>() : null;
             }
 
             return _deployment;

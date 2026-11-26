@@ -23,7 +23,7 @@ namespace WaterChaos.UI
         private const int MaxOptions = 6;
         private const float PromptY = -90f;
         private const float PromptPairX = 110f;
-        private const string MenuText = "More";
+        private const string MenuText = "Actions";
 
         [Header("References")]
         [SerializeField] private PlayerInputHandler _input;
@@ -142,6 +142,15 @@ namespace WaterChaos.UI
                 return;
             }
 
+            // Several choices: one centered "E — menu" prompt, so prompts never overlap; all choices are in the wheel.
+            if (PlayerInteraction.UsesMenu(_interaction.MenuActions))
+            {
+                _prompt.Hide();
+                string title = _interaction.Focus != null ? _interactText.Get(MenuText, _interaction.Title) : MenuText;
+                _menuPrompt.Show(title, 0f, 1f);
+                return;
+            }
+
             int primary = PlayerInteraction.PrimaryIndex(actions);
             int interact = PlayerInteraction.IndexOf(actions, InteractionButton.Interact);
 
@@ -184,12 +193,12 @@ namespace WaterChaos.UI
             if (IsOpen || !_interaction.isActiveAndEnabled)
                 return;
 
-            int index = PlayerInteraction.PrimaryIndex(_interaction.Actions);
+            int index = PlayerInteraction.PrimaryIndex(_interaction.Actions, PlayerInteraction.UsesMenu(_interaction.MenuActions));
             if (index >= 0)
                 _interaction.Actions[index].Execute();
         }
 
-        /// <summary>E closes the open menu; otherwise performs the E action (Pick Up) if there is one, else opens the menu.</summary>
+        /// <summary>E closes the open menu; with several choices opens it; with one, performs the E action (Pick Up) if there is one, else opens the menu.</summary>
         private void OnInteractPressed()
         {
             if (IsOpen)
@@ -200,6 +209,13 @@ namespace WaterChaos.UI
 
             if (!_interaction.isActiveAndEnabled)
                 return;
+
+            // Several choices: the wheel, with all of them; one choice: E does it directly (Pick Up) or opens the menu.
+            if (PlayerInteraction.UsesMenu(_interaction.MenuActions))
+            {
+                Open();
+                return;
+            }
 
             int index = PlayerInteraction.IndexOf(_interaction.Actions, InteractionButton.Interact);
             if (index >= 0)

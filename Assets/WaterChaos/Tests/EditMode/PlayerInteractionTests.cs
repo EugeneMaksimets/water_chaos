@@ -106,6 +106,46 @@ namespace WaterChaos.Tests
         }
 
         [Test]
+        public void UsesMenu_OnlyWithMoreThanOneMenuAction()
+        {
+            List<InteractionAction> one = new List<InteractionAction> { new InteractionAction("Pick Up", null, Nothing) };
+            List<InteractionAction> two = new List<InteractionAction>
+            {
+                new InteractionAction("Connect Hose", null, Nothing),
+                new InteractionAction("Pick Up", null, Nothing, true, InteractionButton.Interact),
+            };
+
+            Assert.IsFalse(PlayerInteraction.UsesMenu(new List<InteractionAction>()));
+            Assert.IsFalse(PlayerInteraction.UsesMenu(one));
+            Assert.IsTrue(PlayerInteraction.UsesMenu(two));
+        }
+
+        [Test]
+        public void PrimaryIndex_WhenTheMenuIsUsed_OnlyButtonOnlyActions()
+        {
+            List<InteractionAction> actions = new List<InteractionAction>
+            {
+                new InteractionAction("Place Hose", null, Nothing),
+                new InteractionAction("Water On/Off", null, Nothing, true, InteractionButton.Primary, false),
+            };
+
+            Assert.AreEqual(1, PlayerInteraction.PrimaryIndex(actions, true));
+            Assert.AreEqual(0, PlayerInteraction.PrimaryIndex(actions, false));
+        }
+
+        [Test]
+        public void PrimaryIndex_WhenTheMenuIsUsedAndNoButtonOnlyAction_IsMinusOne()
+        {
+            List<InteractionAction> actions = new List<InteractionAction>
+            {
+                new InteractionAction("Place Hose", null, Nothing),
+                new InteractionAction("Connect Hose", null, Nothing),
+            };
+
+            Assert.AreEqual(-1, PlayerInteraction.PrimaryIndex(actions, true));
+        }
+
+        [Test]
         public void SelectMenuActions_ClearsPreviousResult()
         {
             List<InteractionAction> menu = new List<InteractionAction> { new InteractionAction("Old", null, Nothing) };

@@ -120,13 +120,22 @@ namespace WaterChaos.Interaction
         /// </summary>
         public static int PrimaryIndex(IReadOnlyList<InteractionAction> actions)
         {
+            return PrimaryIndex(actions, false);
+        }
+
+        /// <summary>
+        /// Index of the action the primary button performs. While the radial menu is used (<see cref="UsesMenu"/>)
+        /// every menu action is picked there, so the button only performs button-only actions ("Water On/Off").
+        /// </summary>
+        public static int PrimaryIndex(IReadOnlyList<InteractionAction> actions, bool usesMenu)
+        {
             int buttonOnly = -1;
             for (int i = 0; i < actions.Count; i++)
             {
                 if (actions[i].Button != InteractionButton.Primary)
                     continue;
 
-                if (actions[i].InMenu)
+                if (actions[i].InMenu && !usesMenu)
                     return i;
 
                 if (buttonOnly < 0)
@@ -134,6 +143,15 @@ namespace WaterChaos.Interaction
             }
 
             return buttonOnly;
+        }
+
+        /// <summary>
+        /// More than one thing can be done here: E opens the radial menu with all of them (also Pick Up)
+        /// instead of doing one directly, and a single "menu" prompt replaces the separate button prompts.
+        /// </summary>
+        public static bool UsesMenu(IReadOnlyList<InteractionAction> menuActions)
+        {
+            return menuActions.Count > 1;
         }
 
         /// <summary>Fills <paramref name="menu"/> with the actions of <paramref name="all"/> that are listed in the radial menu.</summary>

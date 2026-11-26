@@ -109,7 +109,7 @@ namespace WaterChaos.EditorTools
                     nozzle = root.AddComponent<NozzleController>();
 
                 SerializedObject nozzleData = new SerializedObject(nozzle);
-                nozzleData.FindProperty("_stream").objectReferenceValue = stream;
+                nozzleData.FindProperty("_receiver").objectReferenceValue = stream;
                 nozzleData.FindProperty("_hose").objectReferenceValue = root.GetComponentInChildren<HoseController>(true);
                 nozzleData.ApplyModifiedPropertiesWithoutUndo();
 

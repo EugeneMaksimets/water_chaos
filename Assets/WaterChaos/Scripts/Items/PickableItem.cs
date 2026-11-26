@@ -36,6 +36,7 @@ namespace WaterChaos.Items
         private bool[] _wasEnabled;
         private Vector3 _worldScale;
         private bool _isHeld;
+        private RigidbodyInterpolation _worldInterpolation;
 
         public Sprite Icon => _icon;
 
@@ -131,7 +132,19 @@ namespace WaterChaos.Items
         private void SetWorldPartsEnabled(bool value)
         {
             if (!value)
+            {
                 _body.isKinematic = true;
+
+                // An interpolated body keeps moving the object to its own (old) physics pose,
+                // so in the hands it would lag behind the player; it simply follows the holder instead.
+                _worldInterpolation = _body.interpolation;
+                _body.interpolation = RigidbodyInterpolation.None;
+            }
+            else
+            {
+                _body.interpolation = _worldInterpolation;
+            }
+
             _body.detectCollisions = value;
 
             foreach (Collider itemCollider in _colliders)

@@ -29,6 +29,15 @@ namespace WaterChaos.Water
         /// <summary>Raised when the point is disabled while a hose is attached; the hose is already detached then.</summary>
         public event Action<WaterConnectionPoint> AttachmentLost;
 
+        /// <summary>
+        /// True if a hose currently connected to <paramref name="current"/> (null = to nothing) may connect here:
+        /// the point is free, or it is that very connection. One hose per point.
+        /// </summary>
+        public bool IsFreeFor(WaterConnectionPoint current)
+        {
+            return !IsAttached || current == this;
+        }
+
         /// <summary>Called by whoever attaches the hose.</summary>
         public void Attach() => IsAttached = true;
 

@@ -3,12 +3,14 @@ using UnityEngine;
 using WaterChaos.Hose;
 using WaterChaos.Interaction;
 using WaterChaos.Items;
+using WaterChaos.Water;
 
 namespace WaterChaos.WaterTransfer
 {
     /// <summary>
-    /// Transfer hose item in the world: attaches its start to a pump transfer outlet,
-    /// lets the player carry its free end, lays that end on the ground and keeps the path around obstacles.
+    /// Transfer hose item in the world: attaches its start to a transfer outlet (pump or hydrant),
+    /// lets the player carry its free end, lays that end on the ground or plugs it into a <see cref="HoseEndSocket"/>
+    /// (e.g. a splitter inlet, which it then follows), and keeps the path around obstacles.
     /// Independent of the nozzle hose; reuses only the pure path classes (<see cref="HoseModel"/>, <see cref="HosePathSolver"/>).
     /// </summary>
     [RequireComponent(typeof(PickableItem))]
@@ -68,6 +70,7 @@ namespace WaterChaos.WaterTransfer
         private PickableItem _item;
         private Rigidbody _body;
         private Transform _carrier;
+        private Transform _playerRoot;
 
         /// <summary>Menu name, e.g. "Hose 25m".</summary>
         public string DisplayName => FormatDisplayName(_maxLength);
@@ -80,8 +83,11 @@ namespace WaterChaos.WaterTransfer
         /// <summary>Current path and length; points from the pump connector to the free end.</summary>
         public HoseModel Path => _path;
 
-        /// <summary>Pump outlet the hose start is attached to; null while stored.</summary>
+        /// <summary>Transfer outlet the hose start is attached to; null while stored.</summary>
         public TransferConnectionPoint ConnectedPoint { get; private set; }
+
+        /// <summary>Socket the free end is plugged into (e.g. a splitter inlet); null if none.</summary>
+        public HoseEndSocket ConnectedSocket { get; private set; }
 
         private void Awake()
         {
@@ -122,6 +128,15 @@ namespace WaterChaos.WaterTransfer
             if (_model.State == TransferHoseState.Carried && _carrier != null)
                 _end.SetPositionAndRotation(_carrier.position, _carrier.rotation);
 
+            if (ConnectedSocket != null)
+            {
+                // The socket left the world (its splitter was picked up): the end stays where it was.
+                if (ConnectedSocket.Plug != this || !ConnectedSocket.isActiveAndEnabled)
+                    ReleaseSocket();
+                else
+                    _end.SetPositionAndRotation(ConnectedSocket.Anchor.position, ConnectedSocket.Anchor.rotation);
+            }
+
             _path.SetAnchor(ConnectedPoint.Anchor.position);
             _solver.Step(_path, _end.position);
         }
@@ -147,10 +162,11 @@ namespace WaterChaos.WaterTransfer
 
             ConnectedPoint = point;
             _carrier = carrier;
+            _playerRoot = playerRoot;
             _end.SetPositionAndRotation(carrier.position, carrier.rotation);
 
-            // The pump never blocks its own hose.
-            _query.SetIgnored(point.Pump.transform, playerRoot);
+            // The source never blocks its own hose.
+            _query.SetIgnored(point.SourceTransform, playerRoot);
             _path.Reset(point.Anchor.position, _end.position);
 
             return _model.TryConnect();
@@ -178,12 +194,32 @@ namespace WaterChaos.WaterTransfer
             return _model.TryPlace();
         }
 
-        /// <summary>The player takes the placed end again; it follows <paramref name="carrier"/>.</summary>
+        /// <summary>
+        /// Plugs the carried end into <paramref name="socket"/> (e.g. a splitter inlet): the end then sits in it and follows it.
+        /// False if the end is not carried or the socket is taken.
+        /// </summary>
+        public bool TryConnectEnd(HoseEndSocket socket)
+        {
+            if (!_model.CanPlace || socket == null || !socket.TryAttach(this))
+                return false;
+
+            ConnectedSocket = socket;
+            _carrier = null;
+            _end.SetPositionAndRotation(socket.Anchor.position, socket.Anchor.rotation);
+
+            // The object with the socket never blocks the hose plugged into it.
+            Rigidbody socketBody = socket.GetComponentInParent<Rigidbody>();
+            _query.SetIgnored(ConnectedPoint.SourceTransform, _playerRoot, socketBody != null ? socketBody.transform : socket.transform);
+            return _model.TryPlace();
+        }
+
+        /// <summary>The player takes the placed end again (out of its socket, if plugged); it follows <paramref name="carrier"/>.</summary>
         public bool TryPickUpEnd(Transform carrier)
         {
             if (carrier == null || !_model.TryPickUpEnd())
                 return false;
 
+            ReleaseSocket();
             _carrier = carrier;
             return true;
         }
@@ -224,6 +260,7 @@ namespace WaterChaos.WaterTransfer
 
         private void Disconnect()
         {
+            ReleaseSocket();
             if (ConnectedPoint != null)
                 ConnectedPoint.Detach(this);
 
@@ -231,6 +268,17 @@ namespace WaterChaos.WaterTransfer
             _carrier = null;
             SetLaidOut(false);
             _model.TryDisconnect();
+        }
+
+        private void ReleaseSocket()
+        {
+            if (ConnectedSocket == null)
+                return;
+
+            ConnectedSocket.Detach(this);
+            ConnectedSocket = null;
+            if (ConnectedPoint != null)
+                _query.SetIgnored(ConnectedPoint.SourceTransform, _playerRoot);
         }
 
         /// <summary>Laid out: a fixed line with a free end. Not laid out: a coil item with normal physics.</summary>

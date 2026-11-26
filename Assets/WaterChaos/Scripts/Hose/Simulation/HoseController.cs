@@ -90,9 +90,11 @@ namespace WaterChaos.Hose
             _anchor = point.HoseAnchor;
             Source = point.Source;
 
-            // The source the point belongs to (pump, hydrant) never blocks its own hose.
+            // The object the point belongs to (pump, hydrant, the whole splitter) never blocks its own hose.
             Component source = point.Source as Component;
-            _query.SetIgnored(source != null ? source.transform : _anchor, _playerRoot, _owner);
+            Rigidbody sourceBody = source != null ? source.GetComponentInParent<Rigidbody>() : null;
+            Transform ignored = sourceBody != null ? sourceBody.transform : source != null ? source.transform : _anchor;
+            _query.SetIgnored(ignored, _playerRoot, _owner);
 
             _model.Reset(_anchor.position, _endPoint.position);
             SetLimitReached(false);

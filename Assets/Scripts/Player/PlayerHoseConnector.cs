@@ -8,14 +8,15 @@ using WaterChaos.Water;
 namespace WaterChaos.Player
 {
     /// <summary>
-    /// Offers "Connect Nozzle" in the interaction menu for a connection point under the crosshair
+    /// Offers "Connect Nozzle" in the interaction menu for a free connection point under the crosshair
     /// ("Disconnect Nozzle" on the attached one; connecting to another point switches to it).
-    /// Works only while a nozzle is in the hands (see <see cref="AttachNozzle"/>); disabled otherwise.
+    /// One hose per point: a point another hose holds is not offered.
+    /// Works only while a hose end is in the hands (see <see cref="AttachNozzle"/>): a nozzle, or a splitter input
+    /// ("Connect Splitter"); disabled otherwise.
     /// </summary>
     public class PlayerHoseConnector : MonoBehaviour, IInteractionProvider
     {
-        private const string ConnectText = "Connect Nozzle";
-        private const string DisconnectText = "Disconnect Nozzle";
+        private const string DefaultItemName = "Nozzle";
 
         [Header("References")]
         [SerializeField] private Transform _camera;
@@ -25,7 +26,10 @@ namespace WaterChaos.Player
         [SerializeField, Min(0f)] private float _maxDistance = 3f;
         [SerializeField] private LayerMask _interactMask = ~0;
 
-        private WaterStream _stream;
+        private readonly List<WaterConnectionPoint> _itemPoints = new List<WaterConnectionPoint>();
+        private IWaterFlowReceiver _stream;
+        private string _connectText = "Connect " + DefaultItemName;
+        private string _disconnectText = "Disconnect " + DefaultItemName;
         private HoseController _hose;
         private WaterConnectionPoint _connected;
         private WaterConnectionPoint _target;
@@ -69,12 +73,14 @@ namespace WaterChaos.Player
         public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)
         {
             if (_target != null)
-                actions.Add(new InteractionAction(TargetIsConnected ? DisconnectText : ConnectText, _target, _interactTarget));
+                actions.Add(new InteractionAction(TargetIsConnected ? _disconnectText : _connectText, _target, _interactTarget));
         }
 
-        /// <summary>A nozzle came into the hands: interact now connects its stream and optional hose.</summary>
-        /// <param name="kept">Point the nozzle stayed connected to while it lay in the world (see <see cref="ReleaseNozzle"/>); null if none.</param>
-        public void AttachNozzle(WaterStream stream, HoseController hose, WaterConnectionPoint kept = null)
+        /// <summary>A hose end came into the hands: interact now connects what it feeds (a nozzle stream, a splitter) and its optional hose.</summary>
+        /// <param name="kept">Point the item stayed connected to while it lay in the world (see <see cref="ReleaseNozzle"/>); null if none.</param>
+        /// <param name="itemName">Name in the menu, e.g. "Nozzle" → "Connect Nozzle".</param>
+        public void AttachNozzle(IWaterFlowReceiver stream, HoseController hose, WaterConnectionPoint kept = null,
+            string itemName = DefaultItemName)
         {
             DetachNozzle();
             if (stream == null)
@@ -82,6 +88,9 @@ namespace WaterChaos.Player
 
             _stream = stream;
             _hose = hose;
+            string label = string.IsNullOrEmpty(itemName) ? DefaultItemName : itemName;
+            _connectText = "Connect " + label;
+            _disconnectText = "Disconnect " + label;
             if (_hose != null)
                 _hose.LimitReachedChanged += OnLimitReachedChanged;
 
@@ -166,7 +175,48 @@ namespace WaterChaos.Player
                 return null;
 
             WaterConnectionPoint point = hit.collider.GetComponentInParent<WaterConnectionPoint>();
-            return point != null && point.Source != null ? point : null;
+            if (point == null)
+                point = FindOnItem(hit);
+
+            return IsUsable(point) ? point : null;
+        }
+
+        private bool IsUsable(WaterConnectionPoint point)
+        {
+            return point != null && point.Source != null && point.isActiveAndEnabled && point.IsFreeFor(_connected);
+        }
+
+        /// <summary>
+        /// Aiming at the body of an item with several outlets (a splitter): the outlet this nozzle is already on,
+        /// else the free outlet nearest to where the player aims.
+        /// </summary>
+        private WaterConnectionPoint FindOnItem(RaycastHit hit)
+        {
+            Rigidbody item = hit.collider.attachedRigidbody;
+            if (item == null)
+                return null;
+
+            item.GetComponentsInChildren(true, _itemPoints);
+            WaterConnectionPoint best = null;
+            float bestDistance = float.MaxValue;
+            foreach (WaterConnectionPoint candidate in _itemPoints)
+            {
+                if (candidate == _connected)
+                {
+                    best = candidate;
+                    break;
+                }
+
+                float distance = (candidate.HoseAnchor.position - hit.point).sqrMagnitude;
+                if (IsUsable(candidate) && distance < bestDistance)
+                {
+                    best = candidate;
+                    bestDistance = distance;
+                }
+            }
+
+            _itemPoints.Clear();
+            return best;
         }
 
         private void Interact(WaterConnectionPoint point)

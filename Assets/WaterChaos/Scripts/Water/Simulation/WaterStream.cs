@@ -9,7 +9,7 @@ namespace WaterChaos.Water
     /// Simulates the water stream: builds the arc from the nozzle, finds what it hits
     /// and delivers a WaterImpact to every receiver on that object each physics step.
     /// </summary>
-    public sealed class WaterStream : MonoBehaviour
+    public sealed class WaterStream : MonoBehaviour, IWaterFlowReceiver
     {
         // Reuse a fixed buffer to avoid allocating memory during physics queries.
         // Hits beyond this capacity cannot be collected by the current cast.

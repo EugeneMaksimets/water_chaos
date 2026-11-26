@@ -5,10 +5,10 @@ using WaterChaos.Water;
 namespace WaterChaos.WaterTransfer
 {
     /// <summary>
-    /// Runs the transfer while the hose is attached, every physics step after the pump has ticked:
-    /// finds the reservoir at the hose end, settles the water the pump drew this step
-    /// (into that reservoir, or out into the environment), and tells the pump whether to deliver next step.
-    /// The pump is the only one that draws water; reservoirs own their volume.
+    /// Runs the transfer while the hose is attached, every physics step after the source has ticked:
+    /// with the end plugged into a socket (a splitter), feeds the source to it; otherwise finds the reservoir at the
+    /// hose end and settles the water the source gave this step (into that reservoir, or out into the environment).
+    /// Tells the source whether to deliver next step. The pump is the only one that draws water; reservoirs own their volume.
     /// </summary>
     [DefaultExecutionOrder(100)]
     public sealed class WaterTransferController : MonoBehaviour
@@ -31,6 +31,7 @@ namespace WaterChaos.WaterTransfer
         private readonly Collider[] _overlaps = new Collider[BufferSize];
 
         private TransferConnectionPoint _point;
+        private HoseEndSocket _fedSocket;
         private bool _delivering;
 
         /// <summary>Water body the hose end lies in; null if none.</summary>
@@ -38,14 +39,17 @@ namespace WaterChaos.WaterTransfer
 
         public WaterReservoir Destination => DestinationBody != null ? DestinationBody.Reservoir : null;
 
-        /// <summary>Pump the hose is attached to; null while stored.</summary>
+        /// <summary>Pump the hose is attached to; null while stored or on a hydrant.</summary>
         public PumpController Pump => _point != null ? _point.Pump : null;
+
+        /// <summary>Source the hose is attached to (pump, hydrant); null while stored.</summary>
+        public IWaterFlowSource Source => _point != null ? _point.Source : null;
 
         /// <summary>The hose takes the pump output this step.</summary>
         public bool IsDelivering => _delivering;
 
         /// <summary>Water moving through the hose, in liters per second (L/s); 0 when it does not deliver.</summary>
-        public float FlowRate => _delivering && _point != null ? _point.Pump.Output.FlowRate : 0f;
+        public float FlowRate => _delivering && _point != null ? _point.Source.Output.FlowRate : 0f;
 
         /// <summary>Where last step's water ended up.</summary>
         public TransferResult LastResult { get; private set; }
@@ -66,7 +70,7 @@ namespace WaterChaos.WaterTransfer
                     point.HasWater,
                     destination != null,
                     destination != null && destination.IsFull,
-                    point.Pump.isTurnOn,
+                    point.IsTurnedOn,
                     FlowRate);
             }
         }
@@ -96,28 +100,46 @@ namespace WaterChaos.WaterTransfer
                     return;
             }
 
-            PumpController pump = point.Pump;
-            DestinationBody = _hose.State == TransferHoseState.Placed ? FindBody(_hose.End.position) : null;
+            HoseEndSocket socket = _hose.ConnectedSocket;
+            if (socket != _fedSocket)
+            {
+                FeedSocket(null);
+                _fedSocket = socket;
+            }
+
+            DestinationBody = _hose.State == TransferHoseState.Placed && socket == null ? FindBody(_hose.End.position) : null;
             WaterReservoir destination = Destination;
             bool outletBusy = point.IsRegularOutletBusy;
 
-            // The pump ticked earlier this step and reports exactly what it drew and from where.
+            // The source ticked earlier this step and reports exactly what it gave and from where.
             // Not measured from the source volume: another transfer may fill the same reservoir in the same step.
-            if (_delivering && !outletBusy)
-                LastResult = WaterTransferSettlement.Settle(pump.DrawnSourceThisStep, destination, pump.DrawnThisStep);
+            // Plugged into a socket, the water goes on to what is connected there (the splitter's nozzles).
+            if (_delivering && !outletBusy && socket == null)
+                LastResult = WaterTransferSettlement.Settle(point.DrawnSourceThisStep, destination, point.DrawnThisStep);
             else
                 LastResult = default;
 
             _delivering = TransferRules.CanDeliver(_hose.State, outletBusy, destination != null && destination.IsFull);
             point.SetDelivering(_delivering);
 
-            if (_discharge != null)
-                _discharge.SetSource(_delivering && destination == null ? pump : null);
+            FeedSocket(_delivering ? point.Source : null);
 
+            if (_discharge != null)
+                _discharge.SetSource(_delivering && destination == null && socket == null ? point.Source : null);
+
+        }
+
+        /// <summary>Hands the socket the hose is plugged into what the hose carries now (only while it is still plugged in).</summary>
+        private void FeedSocket(IWaterFlowSource source)
+        {
+            if (_fedSocket != null && _fedSocket.Plug == _hose)
+                _fedSocket.Feed(source);
         }
 
         private void Clear()
         {
+            FeedSocket(null);
+            _fedSocket = null;
             _delivering = false;
             _point = null;
             DestinationBody = null;

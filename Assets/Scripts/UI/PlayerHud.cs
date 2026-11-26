@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using WaterChaos.FireTruck;
 using WaterChaos.Player;
 using WaterChaos.Pump;
+using WaterChaos.Splitter;
 using WaterChaos.Water;
 
 namespace WaterChaos.UI
@@ -140,10 +141,15 @@ namespace WaterChaos.UI
             if (connected == null)
                 return 0f;
 
-            if (connected.Source is PumpController pump)
+            // Through a splitter: the tank of the real source behind it.
+            IWaterFlowSource origin = SplitterOutlet.ResolveOrigin(connected.Source);
+            if (origin == null)
+                return 0f;
+
+            if (origin is PumpController pump)
                 return pump.Reservoir != null ? pump.Reservoir.FillRatio : 0f;
 
-            if (connected.Source is FireTruckController truck)
+            if (origin is FireTruckController truck)
                 return truck.Reservoir != null ? truck.Reservoir.FillRatio : 0f;
 
             return 1f;

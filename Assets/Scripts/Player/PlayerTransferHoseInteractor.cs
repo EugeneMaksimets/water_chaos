@@ -11,8 +11,9 @@ namespace WaterChaos.Player
 {
     /// <summary>
     /// Player side of the transfer hose, separate from the nozzle hose.
-    /// Offers its actions in the interaction menu: the valid pump actions (<see cref="PumpMenuRules"/>) for the pump
-    /// under the crosshair, "Pull Hose" on a placed end and "Place Hose" while an end is carried.
+    /// Offers its actions in the interaction menu: the valid source actions (<see cref="PumpMenuRules"/>) for the pump
+    /// or hydrant under the crosshair, "Pull Hose" on a placed end, "Place Hose" while an end is carried and
+    /// "Connect Hose" while the carried end points at a free socket (a splitter inlet).
     /// While an end is carried, the player is held within the hose length.
     /// The pump has one outlet: the nozzle hose connecting to it takes the transfer hose off and drops it beside the player.
     /// Taking another item into the hands while carrying the end drops the hose as a coil where the end was.
@@ -29,6 +30,7 @@ namespace WaterChaos.Player
         private const string PickUpText = "Pick Up Hose";
         private const string PullText = "Pull Hose";
         private const string PlaceText = "Place Hose";
+        private const string PlugText = "Connect Hose";
 
         [Header("References")]
         [SerializeField] private PlayerInventory _inventory;
@@ -65,6 +67,7 @@ namespace WaterChaos.Player
         private Action[] _pumpActions;
         private Action _pullHose;
         private Action _placeHose;
+        private Action _plugHose;
 
         /// <summary>The carried end was laid down successfully.</summary>
         public event Action HosePlaced;
@@ -74,6 +77,9 @@ namespace WaterChaos.Player
 
         /// <summary>Pump transfer outlet under the crosshair; null if none.</summary>
         public TransferConnectionPoint TargetPoint { get; private set; }
+
+        /// <summary>Free socket (e.g. a splitter inlet) under the crosshair while an end is carried; null if none.</summary>
+        public HoseEndSocket TargetSocket { get; private set; }
 
         /// <summary>Transfer hose whose placed end is under the crosshair; null if none.</summary>
         public TransferHose TargetEnd { get; private set; }
@@ -122,6 +128,7 @@ namespace WaterChaos.Player
             };
             _pullHose = PullHose;
             _placeHose = PlaceCarried;
+            _plugHose = PlugCarried;
 
             if (_inventory == null || _camera == null)
             {
@@ -156,6 +163,9 @@ namespace WaterChaos.Player
             if (TargetEnd != null && _carried == null)
                 actions.Add(new InteractionAction(PullText, TargetEnd, _pullHose));
 
+            if (_carried != null && TargetSocket != null)
+                actions.Add(new InteractionAction(PlugText, TargetSocket, _plugHose));
+
             if (_carried != null)
                 actions.Add(new InteractionAction(PlaceText, null, _placeHose));
         }
@@ -180,7 +190,7 @@ namespace WaterChaos.Player
             {
                 case PumpMenuAction.TurnOn:
                     TargetPoint.TurnOn();
-                    return TargetPoint.Pump.isTurnOn;
+                    return TargetPoint.IsTurnedOn;
                 case PumpMenuAction.TurnOff:
                     TargetPoint.TurnOff();
                     return true;
@@ -245,7 +255,7 @@ namespace WaterChaos.Player
                 return;
 
             TransferConnectionPoint point = _awaitingStart.ConnectedPoint;
-            if (_awaitingStart.State != TransferHoseState.Placed || point == null || point.Pump.isTurnOn)
+            if (_awaitingStart.State != TransferHoseState.Placed || point == null || point.IsTurnedOn)
                 _awaitingStart = null;
         }
 
@@ -266,12 +276,28 @@ namespace WaterChaos.Player
             if (hose.TryPlace(_camera.forward))
             {
                 SetCarried(null);
-                _awaitingStart = hose.ConnectedPoint != null && !hose.ConnectedPoint.Pump.isTurnOn ? hose : null;
+                // Only a pump needs to be started for the transfer; a hydrant just flows when opened.
+                TransferConnectionPoint point = hose.ConnectedPoint;
+                _awaitingStart = point != null && point.Pump != null && !point.IsTurnedOn ? hose : null;
                 HosePlaced?.Invoke();
             }
             else
             {
                 PlaceFailed?.Invoke();
+            }
+        }
+
+        /// <summary>Menu action: plugs the carried end into the socket under the crosshair (a splitter inlet).</summary>
+        private void PlugCarried()
+        {
+            if (_carried == null || TargetSocket == null)
+                return;
+
+            TransferHose hose = _carried;
+            if (hose.TryConnectEnd(TargetSocket))
+            {
+                SetCarried(null);
+                HosePlaced?.Invoke();
             }
         }
 
@@ -354,7 +380,7 @@ namespace WaterChaos.Player
                 _carried != null,
                 point.IsAttached,
                 hose != null ? hose.State : TransferHoseState.Stored,
-                point.Pump.isTurnOn,
+                point.IsTurnedOn,
                 point.IsRegularOutletBusy,
                 point.HasWater,
                 destinationFull);
@@ -382,33 +408,64 @@ namespace WaterChaos.Player
 
                 TransferConnectionPoint point = hit.collider.GetComponentInParent<TransferConnectionPoint>();
                 TransferHose end = hit.collider.GetComponentInParent<TransferHose>();
+                HoseEndSocket socket = FindSocket(hit.collider);
 
                 if (point != null && point.isActiveAndEnabled)
                 {
                     best = hit.distance;
                     TargetPoint = point;
                     TargetEnd = null;
+                    TargetSocket = null;
+                }
+                else if (socket != null && _carried != null && socket.isActiveAndEnabled && !socket.IsAttached)
+                {
+                    best = hit.distance;
+                    TargetPoint = null;
+                    TargetEnd = null;
+                    TargetSocket = socket;
+                }
+                else if (socket != null && socket.Plug is TransferHose plugged && plugged.State == TransferHoseState.Placed)
+                {
+                    // Aiming at a socket with a hose in it: that hose end can be pulled out.
+                    best = hit.distance;
+                    TargetPoint = null;
+                    TargetEnd = plugged;
+                    TargetSocket = null;
                 }
                 else if (end != null && end.State == TransferHoseState.Placed && hit.collider.transform.IsChildOf(end.End))
                 {
                     best = hit.distance;
                     TargetPoint = null;
                     TargetEnd = end;
+                    TargetSocket = null;
                 }
                 else if (!hit.collider.isTrigger)
                 {
                     best = hit.distance;
                     TargetPoint = null;
                     TargetEnd = null;
+                    TargetSocket = null;
                 }
             }
 
+        }
+
+        /// <summary>The socket of the aimed part, or of the item it belongs to (aiming anywhere at a splitter finds its inlet).</summary>
+        private static HoseEndSocket FindSocket(Collider collider)
+        {
+            HoseEndSocket socket = collider.GetComponentInParent<HoseEndSocket>();
+            if (socket != null)
+                return socket;
+
+            Rigidbody item = collider.attachedRigidbody;
+            return item != null ? item.GetComponentInChildren<HoseEndSocket>() : null;
         }
 
         private void ClearTarget()
         {
             TargetPoint = null;
             TargetEnd = null;
+            TargetSocket = null;
         }
 
         private static string GetLabel(PumpMenuAction action)

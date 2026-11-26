@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using WaterChaos.Hose;
 using WaterChaos.Items;
 using WaterChaos.Player;
@@ -7,18 +8,26 @@ using WaterChaos.Water;
 namespace WaterChaos.Tools
 {
     /// <summary>
-    /// Nozzle in the hands: hands its stream and hose to the player's hose connector,
-    /// so interact connects it to a source; "Water On/Off" (primary button or menu) and the mouse wheel control it.
+    /// A hose-end item in the hands (a nozzle, or the input of a hose splitter): hands what its hose feeds
+    /// (the nozzle stream, the splitter) and the hose to the player's hose connector, so interact connects it to a source;
+    /// "Water On/Off" (primary button) and the mouse wheel control that source.
     /// Storing it in the inventory takes the hose off; putting it down in the world keeps the hose attached
     /// (the source stops), and picking it up again restores the connection. No water flows after either.
     /// </summary>
     public sealed class NozzleController : MonoBehaviour, IEquippable
     {
         [Header("References")]
-        [SerializeField] private WaterStream _stream;
+        [Tooltip("What the hose feeds: the nozzle's WaterStream, or a HoseSplitter (any IWaterFlowReceiver).")]
+        [SerializeField, FormerlySerializedAs("_stream")] private MonoBehaviour _receiver;
 
-        [Tooltip("Optional: the physical hose from the connected source to this nozzle.")]
+        [Tooltip("Optional: the physical hose from the connected source to this item.")]
         [SerializeField] private HoseController _hose;
+
+        [Header("Menu")]
+        [Tooltip("Name in the menu: \"Connect <name>\" / \"Disconnect <name>\".")]
+        [SerializeField] private string _displayName = "Nozzle";
+
+        private IWaterFlowReceiver _stream;
 
         private PlayerHoseConnector _connector;
         private PickableItem _item;
@@ -32,8 +41,9 @@ namespace WaterChaos.Tools
             _item = GetComponentInParent<PickableItem>();
             _onKeptLost = OnKeptConnectionLost;
 
+            _stream = _receiver as IWaterFlowReceiver;
             if (_stream == null)
-                Debug.LogError($"{name}: NozzleController needs a Stream reference.", this);
+                Debug.LogError($"{name}: NozzleController needs a Receiver that implements IWaterFlowReceiver.", this);
         }
 
         private void OnDestroy()
@@ -56,7 +66,7 @@ namespace WaterChaos.Tools
 
             WaterConnectionPoint kept = _keptConnection;
             SetKeptConnection(null);
-            _connector.AttachNozzle(_stream, _hose, kept);
+            _connector.AttachNozzle(_stream, _hose, kept, _displayName);
         }
 
         public void Unequip()
