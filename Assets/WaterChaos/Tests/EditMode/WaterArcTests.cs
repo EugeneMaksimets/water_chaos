@@ -115,6 +115,39 @@ namespace WaterChaos.Tests
             AssertApproximately(new Vector3(0f, -8f, 20f), points[4]);
         }
 
+        [Test]
+        public void CutToLength_InsideSegment_MovesLastKeptPointToLength()
+        {
+            var points = new[] { Vector3.zero, new Vector3(0f, 0f, 2f), new Vector3(0f, 0f, 4f), new Vector3(0f, 0f, 6f) };
+
+            int kept = WaterArc.CutToLength(points, 3f);
+
+            Assert.That(kept, Is.EqualTo(3));
+            AssertApproximately(new Vector3(0f, 0f, 3f), points[2]);
+        }
+
+        [Test]
+        public void CutToLength_ArcShorterThanLength_KeepsAllPoints()
+        {
+            var points = new[] { Vector3.zero, new Vector3(0f, 0f, 1f), new Vector3(0f, 0f, 2f) };
+
+            int kept = WaterArc.CutToLength(points, 3f);
+
+            Assert.That(kept, Is.EqualTo(3));
+            AssertApproximately(new Vector3(0f, 0f, 2f), points[2]);
+        }
+
+        [Test]
+        public void CutToLength_FirstSegmentLongerThanLength_KeepsTwoPoints()
+        {
+            var points = new[] { Vector3.zero, new Vector3(0f, 0f, 10f), new Vector3(0f, 0f, 20f) };
+
+            int kept = WaterArc.CutToLength(points, 3f);
+
+            Assert.That(kept, Is.EqualTo(2));
+            AssertApproximately(new Vector3(0f, 0f, 3f), points[1]);
+        }
+
         private static void AssertApproximately(Vector3 expected, Vector3 actual)
         {
             Assert.That(

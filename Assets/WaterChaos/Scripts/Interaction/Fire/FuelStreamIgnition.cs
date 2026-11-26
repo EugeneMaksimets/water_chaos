@@ -7,6 +7,7 @@ namespace WaterChaos.Interaction
     /// <summary>
     /// Turns a stream of flammable liquid into a flamethrower (gameplay only, no visuals):
     /// it lights as soon as it reaches a burning fire, whatever the room temperature, and raises <see cref="LitChanged"/>.
+    /// While lit the stream is cut to <c>Flame Length</c>, so only the nearest thing in front of the nozzle burns.
     /// While lit it sets what it hits alight, once per interval per target: flammable objects (also re-lighting
     /// their extinguished fire at once), flammable ground, and inside a room any surface (a fire hitting a wall
     /// starts on the floor below). The normal fire rules apply (fire limit, exclusion radius, water);
@@ -22,6 +23,10 @@ namespace WaterChaos.Interaction
 
         [Tooltip("Shared fire tuning: the fire prefab and the rules where a new fire may appear.")]
         [SerializeField] private FireSpreadSettings _settings;
+
+        [Header("Flame")]
+        [Tooltip("While lit the stream reaches only this far, in meters (m), and sets alight the nearest thing within it.")]
+        [SerializeField, Min(0.1f)] private float _flameLength = 3f;
 
         [Header("Ignition")]
         [Tooltip("Seconds (s) between attempts of the lit stream to set the same target alight; a new target is tried at once.")]
@@ -181,6 +186,8 @@ namespace WaterChaos.Interaction
 
         private void OnModelLitChanged(bool lit)
         {
+            // A flame is short; unlit liquid flies as far as water.
+            _stream.MaxLength = lit ? _flameLength : 0f;
             LitChanged?.Invoke(lit);
         }
     }

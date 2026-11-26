@@ -20,7 +20,7 @@ MonoBehaviour:
   _ignitionDelay: 2
   _surfaceSamples: 8
   _spawnHeight: 0.5
-  _exclusionRadius: 1.5
+  _exclusionRadius: 1
   _maxActiveFires: 25
   _targetMask:
     serializedVersion: 2

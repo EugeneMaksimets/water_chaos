@@ -65,5 +65,31 @@ namespace WaterChaos.Water
                 points[i] = origin + aim * (range * t) + bend * (t * t);
             }
         }
+
+        /// <summary>
+        /// Shortens the arc to <paramref name="maxLength"/> meters (m) measured along it:
+        /// the last kept point is moved onto that length. Returns how many points are kept (at least 2).
+        /// </summary>
+        public static int CutToLength(Vector3[] points, float maxLength)
+        {
+            if (points == null || points.Length < 2)
+                return points == null ? 0 : points.Length;
+
+            float length = 0f;
+            for (int i = 0; i < points.Length - 1; i++)
+            {
+                float segment = Vector3.Distance(points[i], points[i + 1]);
+                if (length + segment >= maxLength)
+                {
+                    float t = segment > 0f ? Mathf.Clamp01((maxLength - length) / segment) : 0f;
+                    points[i + 1] = Vector3.Lerp(points[i], points[i + 1], t);
+                    return i + 2;
+                }
+
+                length += segment;
+            }
+
+            return points.Length;
+        }
     }
 }

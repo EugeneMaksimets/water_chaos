@@ -32,8 +32,13 @@ namespace WaterChaos.Interaction
         private readonly List<Vector3> _ownReserved = new List<Vector3>();
         private FireExtinguishHandler _fire;
         private FireSpreadModel _model;
+        // This fire is included in ActiveCount.
+        private bool _counted;
 
-        /// <summary>Fires with an enabled spreader in the scene, burning or waiting to reignite.</summary>
+        /// <summary>
+        /// Burning fires with an enabled spreader in the scene. Extinguished fires stay in the scene
+        /// but do not count, so they never block new fires.
+        /// </summary>
         public static int ActiveCount { get; private set; }
 
         private struct Candidate
@@ -70,12 +75,13 @@ namespace WaterChaos.Interaction
 
         private void OnEnable()
         {
-            ActiveCount++;
+            // A new fire starts burning; Update corrects this once the fire's own state is known.
+            SetCounted(true);
         }
 
         private void OnDisable()
         {
-            ActiveCount--;
+            SetCounted(false);
 
             // Disabling stops the igniting coroutines; free their spots.
             foreach (Vector3 position in _ownReserved)
@@ -85,6 +91,8 @@ namespace WaterChaos.Interaction
 
         private void Update()
         {
+            SetCounted(_fire.IsBurning);
+
             if (_model.Tick(Time.deltaTime, _fire.Intensity, Random.value, Random.value) && CanSpreadNow())
                 TrySpread();
         }
@@ -146,6 +154,15 @@ namespace WaterChaos.Interaction
             return true;
         }
 
+        private void SetCounted(bool value)
+        {
+            if (_counted == value)
+                return;
+
+            _counted = value;
+            ActiveCount += value ? 1 : -1;
+        }
+
         /// <summary>Holds a spot for a fire that is igniting, so no other fire takes it meanwhile.</summary>
         public static void Reserve(Vector3 firePosition)
         {
@@ -196,6 +213,15 @@ namespace WaterChaos.Interaction
                 return area.Contains(firePosition);
 
             return !Physics.CheckSphere(firePosition, RoomProbeRadius, _settings.RoomMask, QueryTriggerInteraction.Collide);
+        }
+
+        /// <summary>Outdoors only flammable ground catches fire; inside a room any floor-like surface does.</summary>
+        private bool CanSpreadOnto(RaycastHit hit)
+        {
+            if (hit.collider.GetComponentInParent<FlammableSurface>() != null)
+                return true;
+
+            return _fire.Area != null && FuelStreamIgnition.IsFloorLike(hit.normal);
         }
 
         private void TrySpread()
@@ -251,7 +277,7 @@ namespace WaterChaos.Interaction
                         _settings.TargetMask, QueryTriggerInteraction.Ignore))
                     continue;
 
-                if (hit.collider.GetComponentInParent<FlammableSurface>() == null)
+                if (!CanSpreadOnto(hit))
                     continue;
 
                 Vector3 firePosition = _settings.GetFirePosition(hit.point);

@@ -67,6 +67,7 @@ namespace WaterChaos.Water
         // The stream depends on the source contract rather than a specific pump implementation.
         private IWaterFlowSource _source;
         private Vector3[] _points;
+        private float _maxLength;
 
         /// <summary>Arc points for visuals. Read only the first <see cref="VisiblePointCount"/>. Do not modify. </summary>
         public Vector3[] Points => _points;
@@ -79,6 +80,16 @@ namespace WaterChaos.Water
         public Vector3 HitNormal { get; private set; }
         /// <summary>Collider the stream hit; null when <see cref="HasHit"/> is false.</summary>
         public Collider HitCollider { get; private set; }
+
+        /// <summary>
+        /// Longest the stream may reach along its arc, in meters (m); 0 = no limit (full water range).
+        /// Hits and impacts beyond it are ignored (e.g. a short flamethrower flame).
+        /// </summary>
+        public float MaxLength
+        {
+            get => _maxLength;
+            set => _maxLength = Mathf.Max(0f, value);
+        }
 
         /// <summary>Source the stream is fed from; null when disconnected.</summary>
         public IWaterFlowSource Source => _source;
@@ -159,7 +170,7 @@ namespace WaterChaos.Water
             if(_influenceBend != Vector3.zero)
                 WaterArc.BuildPoints(_nozzle.position, _nozzle.forward, range, gravityBend + _influenceBend, _points, _fallExtent);
             
-            VisiblePointCount = _points.Length;
+            VisiblePointCount = _maxLength > 0f ? WaterArc.CutToLength(_points, _maxLength) : _points.Length;
 
             // The first segment containing a collision gives us the nearest hit along the stream.
             if(!TryFindHit(out hit, out int segment))
