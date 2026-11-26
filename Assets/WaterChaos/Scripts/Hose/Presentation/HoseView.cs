@@ -5,7 +5,8 @@ using WaterChaos.Water;
 namespace WaterChaos.Hose
 {
     /// <summary>
-    /// Draws the hose path with a LineRenderer and shows the water inside it.
+    /// Draws the hose path with a LineRenderer, lying on the ground like every hose (<see cref="HoseGroundDrape"/>),
+    /// and shows the water inside it.
     /// Only reads the hose and its water source; owns no gameplay rules and moves no water.
     /// </summary>
     [RequireComponent(typeof(LineRenderer))]
@@ -36,6 +37,16 @@ namespace WaterChaos.Hose
         [Tooltip("Extra vertices at bends and ends, so bends look rounded instead of sharp.")]
         [SerializeField, Range(0, 16)] private int _roundness = 6;
 
+        [Header("Ground")]
+        [Tooltip("Layers the hose rests on. Leave out Water and Player.")]
+        [SerializeField] private LayerMask _groundMask = 1;
+
+        [Tooltip("Distance between ground samples, in meters (m).")]
+        [SerializeField, Range(0.1f, 2f)] private float _sampleSpacing = 0.4f;
+
+        [Tooltip("How far below the straight path the hose may sag to reach the ground, in meters (m).")]
+        [SerializeField, Min(0f)] private float _maxSag = 2.5f;
+
         [Header("Water Inside")]
         [Tooltip("Show water moving inside the hose while the source gives flow.")]
         [SerializeField] private bool _showWater = true;
@@ -52,6 +63,7 @@ namespace WaterChaos.Hose
         [Tooltip("Time for the water effect to fade in or out, in seconds (s).")]
         [SerializeField, Min(0.01f)] private float _fadeTime = 0.4f;
 
+        private readonly HoseGroundDrape _drape = new HoseGroundDrape();
         private LineRenderer _line;
         private MaterialPropertyBlock _block;
         private float _flowOffset;
@@ -94,12 +106,10 @@ namespace WaterChaos.Hose
                 return;
             }
 
-            int count = model.PointCount;
+            int count = _drape.Build(model, _groundMask, _sampleSpacing, _maxSag, _width * 0.5f);
             if (_line.positionCount != count)
                 _line.positionCount = count;
-
-            for (int i = 0; i < count; i++)
-                _line.SetPosition(i, model.GetPoint(i));
+            _line.SetPositions(_drape.Points);
 
             UpdateWater(Time.deltaTime);
         }

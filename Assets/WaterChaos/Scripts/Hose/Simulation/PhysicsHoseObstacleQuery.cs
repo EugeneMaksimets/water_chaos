@@ -4,7 +4,7 @@ namespace WaterChaos.Hose
 {
     /// <summary>
     /// Obstacle checks with Unity physics. Ignores triggers and the colliders of the
-    /// two things the hose is attached to (the source and the player).
+    /// things the hose is attached to (the source, the player, and the item that carries the hose end).
     /// </summary>
     public sealed class PhysicsHoseObstacleQuery : IHoseObstacleQuery
     {
@@ -15,6 +15,7 @@ namespace WaterChaos.Hose
 
         private Transform _ignoredA;
         private Transform _ignoredB;
+        private Transform _ignoredC;
 
         public PhysicsHoseObstacleQuery(LayerMask mask)
         {
@@ -22,10 +23,11 @@ namespace WaterChaos.Hose
         }
 
         /// <summary>Colliders on these objects or their children never block the hose; null = none.</summary>
-        public void SetIgnored(Transform first, Transform second)
+        public void SetIgnored(Transform first, Transform second, Transform third = null)
         {
             _ignoredA = first;
             _ignoredB = second;
+            _ignoredC = third;
         }
 
         public bool Linecast(Vector3 from, Vector3 to, out Vector3 point, out Vector3 normal)
@@ -82,7 +84,8 @@ namespace WaterChaos.Hose
         private bool IsIgnored(Transform target)
         {
             return (_ignoredA != null && target.IsChildOf(_ignoredA))
-                || (_ignoredB != null && target.IsChildOf(_ignoredB));
+                || (_ignoredB != null && target.IsChildOf(_ignoredB))
+                || (_ignoredC != null && target.IsChildOf(_ignoredC));
         }
     }
 }

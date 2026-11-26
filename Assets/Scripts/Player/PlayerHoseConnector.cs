@@ -71,7 +71,8 @@ namespace WaterChaos.Player
         }
 
         /// <summary>A nozzle came into the hands: interact now connects its stream and optional hose.</summary>
-        public void AttachNozzle(WaterStream stream, HoseController hose)
+        /// <param name="kept">Point the nozzle stayed connected to while it lay in the world (see <see cref="ReleaseNozzle"/>); null if none.</param>
+        public void AttachNozzle(WaterStream stream, HoseController hose, WaterConnectionPoint kept = null)
         {
             DetachNozzle();
             if (stream == null)
@@ -83,6 +84,31 @@ namespace WaterChaos.Player
                 _hose.LimitReachedChanged += OnLimitReachedChanged;
 
             enabled = true;
+
+            if (kept == null)
+                return;
+
+            // The stream and hose are still attached to the kept point; only the player's side is restored.
+            _connected = kept;
+
+            // The source left the world while the nozzle lay there (the hose may already have let go): it comes off fully now.
+            if (!kept.isActiveAndEnabled || (_hose != null && !_hose.IsConnected))
+                Disconnect();
+        }
+
+        /// <summary>
+        /// The nozzle was put down in the world: the source stops, but the hose stays attached to it.
+        /// Returns the point to hand back to <see cref="AttachNozzle"/> when the nozzle is picked up again.
+        /// </summary>
+        public WaterConnectionPoint ReleaseNozzle()
+        {
+            WaterConnectionPoint kept = _connected;
+            if (kept != null && kept.Control != null)
+                kept.Control.Stop();
+
+            _connected = null;
+            DetachNozzle();
+            return kept;
         }
 
         /// <summary>The nozzle left the hands: the hose comes off, the source stops and interact does nothing.</summary>

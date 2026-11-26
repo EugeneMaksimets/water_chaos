@@ -16,10 +16,6 @@ namespace WaterChaos.WaterTransfer
     {
         private const float SwellHeadroom = 0.2f;
         private const float OffsetWrap = 1000f;
-        private const int MaxDrawnPoints = 256;
-
-        // Ground rays start this far above the hose line, so they never start inside the ground, in meters (m).
-        private const float GroundRayLift = 0.1f;
 
         private static readonly int WidthId = Shader.PropertyToID("_HoseWidth");
         private static readonly int HeadroomId = Shader.PropertyToID("_HoseHeadroom");
@@ -57,7 +53,7 @@ namespace WaterChaos.WaterTransfer
         [Tooltip("Time for the water effect to fade in or out, in seconds (s).")]
         [SerializeField, Min(0.01f)] private float _fadeTime = 0.4f;
 
-        private readonly Vector3[] _drawn = new Vector3[MaxDrawnPoints];
+        private readonly HoseGroundDrape _drape = new HoseGroundDrape();
         private LineRenderer _line;
         private MaterialPropertyBlock _block;
         private float _flowOffset;
@@ -93,48 +89,12 @@ namespace WaterChaos.WaterTransfer
                 return;
             }
 
-            int count = BuildGroundPath(path);
+            int count = _drape.Build(path, _groundMask, _sampleSpacing, _maxSag, _width * 0.5f);
             if (_line.positionCount != count)
                 _line.positionCount = count;
-            _line.SetPositions(_drawn);
+            _line.SetPositions(_drape.Points);
 
             UpdateWater(Time.deltaTime);
-        }
-
-        /// <summary>
-        /// Path points with ground samples between them; each sample drops to the ground below
-        /// (never rises above the straight line). Path points themselves stay where the simulation put them.
-        /// </summary>
-        private int BuildGroundPath(HoseModel path)
-        {
-            int pathCount = Mathf.Min(path.PointCount, MaxDrawnPoints);
-            float spacing = Mathf.Max(_sampleSpacing, path.Length / Mathf.Max(1, MaxDrawnPoints - pathCount));
-            float halfWidth = _width * 0.5f;
-            int count = 0;
-
-            for (int i = 0; i < pathCount - 1; i++)
-            {
-                Vector3 from = path.GetPoint(i);
-                Vector3 to = path.GetPoint(i + 1);
-                _drawn[count++] = from;
-
-                int budget = MaxDrawnPoints - count - (pathCount - 1 - i);
-                int steps = Mathf.Min(Mathf.CeilToInt(Vector3.Distance(from, to) / spacing), budget);
-                for (int step = 1; step < steps; step++)
-                    _drawn[count++] = DropToGround(Vector3.Lerp(from, to, (float)step / steps), halfWidth);
-            }
-
-            _drawn[count++] = path.GetPoint(pathCount - 1);
-            return count;
-        }
-
-        private Vector3 DropToGround(Vector3 point, float halfWidth)
-        {
-            Vector3 origin = point + Vector3.up * GroundRayLift;
-            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, _maxSag + GroundRayLift, _groundMask, QueryTriggerInteraction.Ignore))
-                point.y = Mathf.Min(point.y, hit.point.y + halfWidth);
-
-            return point;
         }
 
         private void UpdateWater(float deltaTime)

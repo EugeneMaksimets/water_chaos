@@ -42,6 +42,9 @@ namespace WaterChaos.Hose
         private HosePathSolver _solver;
         private PhysicsHoseObstacleQuery _query;
         private Transform _anchor;
+
+        // The item the hose end belongs to (e.g. the nozzle): when it lies in the world, its own colliders never block the hose.
+        private Transform _owner;
         private bool _blockedThisFrame;
 
         /// <summary>Raised when the hose starts or stops holding the player back.</summary>
@@ -67,6 +70,9 @@ namespace WaterChaos.Hose
                 return;
             }
 
+            Rigidbody ownerBody = _endPoint.GetComponentInParent<Rigidbody>();
+            _owner = ownerBody != null ? ownerBody.transform : null;
+
             _model = new HoseModel(_maxLength);
             _query = new PhysicsHoseObstacleQuery(_obstacleMask);
             _solver = new HosePathSolver(_query, _surfaceOffset, _maxWrapPoints);
@@ -86,7 +92,7 @@ namespace WaterChaos.Hose
 
             // The source the point belongs to (pump, hydrant) never blocks its own hose.
             Component source = point.Source as Component;
-            _query.SetIgnored(source != null ? source.transform : _anchor, _playerRoot);
+            _query.SetIgnored(source != null ? source.transform : _anchor, _playerRoot, _owner);
 
             _model.Reset(_anchor.position, _endPoint.position);
             SetLimitReached(false);
@@ -120,6 +126,13 @@ namespace WaterChaos.Hose
         {
             if (!IsConnected)
                 return;
+
+            // The source left the world (e.g. the pump was picked up): the hose cannot stay attached to nothing.
+            if (!_anchor.gameObject.activeInHierarchy)
+            {
+                Disconnect();
+                return;
+            }
 
             _model.SetAnchor(_anchor.position);
             _solver.Step(_model, _endPoint.position);

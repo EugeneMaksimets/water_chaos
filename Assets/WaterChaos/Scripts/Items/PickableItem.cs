@@ -38,6 +38,9 @@ namespace WaterChaos.Items
         private bool _isHeld;
 
         public Sprite Icon => _icon;
+
+        /// <summary>In the player's hands or stored with them; false once released into the world.</summary>
+        public bool IsHeld => _isHeld;
         public float Mass => _body.mass;
 
         /// <summary>Measured once in the world (colliders and renderers, world scale); see <see cref="ItemFootprint"/>.</summary>
