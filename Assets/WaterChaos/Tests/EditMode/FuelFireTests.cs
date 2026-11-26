@@ -223,6 +223,32 @@ namespace WaterChaos.Tests
             Assert.IsTrue(FireSpreader.AllowsIgnition(new FakeArea(false, false), Vector3.zero));
         }
 
+        [Test]
+        public void Flamethrower_InCooledRoom_IgnitesByDefault()
+        {
+            FakeArea cooledRoom = new FakeArea(false, true);
+
+            Assert.IsTrue(FuelStreamIgnition.AllowsIgnitionIn(cooledRoom, Vector3.zero, false));
+        }
+
+        [Test]
+        public void Flamethrower_InCooledRoom_CanBeSetToRespectCooling()
+        {
+            FakeArea cooledRoom = new FakeArea(false, true);
+
+            Assert.IsFalse(FuelStreamIgnition.AllowsIgnitionIn(cooledRoom, Vector3.zero, true));
+            Assert.IsTrue(FuelStreamIgnition.AllowsIgnitionIn(null, Vector3.zero, true));
+        }
+
+        [Test]
+        public void IsFloorLike_OnlyUpwardSurfaces()
+        {
+            Assert.IsTrue(FuelStreamIgnition.IsFloorLike(Vector3.up));
+            Assert.IsTrue(FuelStreamIgnition.IsFloorLike(new Vector3(0.3f, 1f, 0f)));
+            Assert.IsFalse(FuelStreamIgnition.IsFloorLike(Vector3.right));
+            Assert.IsFalse(FuelStreamIgnition.IsFloorLike(Vector3.down));
+        }
+
         private sealed class FakeArea : IFireArea
         {
             private readonly bool _contains;

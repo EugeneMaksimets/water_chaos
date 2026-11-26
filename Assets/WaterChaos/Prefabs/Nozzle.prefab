@@ -5212,6 +5212,8 @@ MonoBehaviour:
   _stream: {fileID: 2696170886430235844}
   _settings: {fileID: 11400000, guid: d16241bf99847470ea2a721d689b9aa4, type: 2}
   _ignitionInterval: 0.75
+  _respectRoomCooling: 0
+  _maxDropToFloor: 3
 --- !u!114 &4271996635396775862
 MonoBehaviour:
   m_ObjectHideFlags: 0

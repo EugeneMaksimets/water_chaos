@@ -131,14 +131,15 @@ namespace WaterChaos.Interaction
 
         /// <summary>
         /// Lights a new fire at once at <paramref name="firePosition"/> (e.g. a flamethrower hitting flammable ground),
-        /// under the same rules as spreading: under the fire limit, not in water, no fire nearby, not in a protected room.
+        /// under the same rules as spreading: under the fire limit, not in water, no fire nearby,
+        /// and (if <paramref name="respectRoomProtection"/>) not in a room protected by its coolers.
         /// </summary>
-        public static bool TryStartFireAt(Vector3 firePosition, FireSpreadSettings settings)
+        public static bool TryStartFireAt(Vector3 firePosition, FireSpreadSettings settings, bool respectRoomProtection = true)
         {
             if (settings == null || settings.FirePrefab == null || !CanBurnAt(firePosition, settings))
                 return false;
 
-            if (!AllowsIgnition(FindArea(firePosition, settings), firePosition))
+            if (respectRoomProtection && !AllowsIgnition(FindArea(firePosition, settings), firePosition))
                 return false;
 
             Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
