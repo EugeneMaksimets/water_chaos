@@ -293,7 +293,8 @@ namespace WaterChaos.Water
                 direction,
                 flow.FlowRate * Time.fixedDeltaTime,
                 _tuning.GetImpactForce(flow.FlowRate),
-                flow.Liquid);
+                flow.Liquid,
+                flow.IsSoapy);
 
             hit.collider.GetComponents(_receivers);
             for(int i = 0; i < _receivers.Count; i++)

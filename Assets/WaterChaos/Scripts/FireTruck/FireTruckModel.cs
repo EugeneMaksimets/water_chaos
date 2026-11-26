@@ -48,12 +48,14 @@ namespace WaterChaos.FireTruck
             float requested = wanted.FlowRate * deltaTime;
             if (_tank == null || requested <= 0f)
             {
-                Output = new WaterFlowData(0f, 0f, _tank != null ? _tank.Liquid : LiquidType.Water);
+                Output = _tank != null
+                    ? new WaterFlowData(0f, 0f, _tank.Liquid, _tank.IsSoapy)
+                    : new WaterFlowData(0f, 0f);
                 return;
             }
 
             float share = Math.Min(_tank.Draw(requested) / requested, 1f);
-            Output = new WaterFlowData(wanted.FlowRate * share, wanted.Pressure * share, _tank.Liquid);
+            Output = new WaterFlowData(wanted.FlowRate * share, wanted.Pressure * share, _tank.Liquid, _tank.IsSoapy);
         }
     }
 }

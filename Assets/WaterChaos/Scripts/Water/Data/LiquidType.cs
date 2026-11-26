@@ -40,6 +40,15 @@ namespace WaterChaos.Water
             }
         }
 
+        /// <summary>
+        /// Soap dissolves in it and makes it soapy (<see cref="WaterFlowData.IsSoapy"/>): only water.
+        /// Soap is a modifier of water, never a liquid of its own.
+        /// </summary>
+        public static bool CanBeSoapy(this LiquidType liquid)
+        {
+            return liquid == LiquidType.Water;
+        }
+
         /// <summary>Burns: feeds fire it touches and can be lit into a stream of flame.</summary>
         public static bool IsFlammable(this LiquidType liquid)
         {

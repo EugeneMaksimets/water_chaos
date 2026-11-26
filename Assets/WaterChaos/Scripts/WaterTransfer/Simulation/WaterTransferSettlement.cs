@@ -23,7 +23,8 @@ namespace WaterChaos.WaterTransfer
                 return new TransferResult(0f, 0f, drawn);
 
             LiquidType liquid = source != null ? source.Liquid : LiquidType.Water;
-            float delivered = destination.Add(drawn, liquid);
+            bool soapy = source != null && source.IsSoapy;
+            float delivered = destination.Add(drawn, liquid, soapy);
             float rest = Math.Max(0f, drawn - delivered);
             float returned = source != null && source != destination ? source.Add(rest) : 0f;
 

@@ -32,15 +32,21 @@ namespace WaterChaos.Water
         /// Liquid that hit; receivers decide how they react to it
         /// </summary>
         public LiquidType Liquid { get; }
+        /// <summary>
+        /// Soapy water hit (see <see cref="WaterFlowData.IsSoapy"/>); always false for other liquids
+        /// </summary>
+        public bool IsSoapy { get; }
 
         public WaterImpact(Vector3 point, 
             Vector3 normal, 
             Vector3 direction,
             float volume,
             float force,
-            LiquidType liquid = LiquidType.Water)
+            LiquidType liquid = LiquidType.Water,
+            bool isSoapy = false)
         {
             Liquid = liquid;
+            IsSoapy = isSoapy && liquid.CanBeSoapy();
             ContactPoint = point;
             Normal = normal;
             Direction = direction;

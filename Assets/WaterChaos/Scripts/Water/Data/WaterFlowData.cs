@@ -20,10 +20,16 @@ namespace WaterChaos.Water
         /// What flows; water unless the source says otherwise
         /// </summary>
         public LiquidType Liquid {get;}
+        /// <summary>
+        /// Water with dissolved soap: bubbles and lifts teammates, otherwise exactly like water.
+        /// Always false for other liquids (<see cref="LiquidTypeExtensions.CanBeSoapy"/>).
+        /// </summary>
+        public bool IsSoapy {get;}
 
-        public WaterFlowData(float flowRate, float pressure, LiquidType liquid = LiquidType.Water)
+        public WaterFlowData(float flowRate, float pressure, LiquidType liquid = LiquidType.Water, bool isSoapy = false)
         {
             Liquid = liquid;
+            IsSoapy = isSoapy && liquid.CanBeSoapy();
             // Negative values have no physical meaning here; normalize once at construction
             FlowRate = float.IsNaN(flowRate) ? 0f : Math.Max(0f, flowRate);
             Pressure = float.IsNaN(pressure) ? 0f : Math.Max(0f, pressure);

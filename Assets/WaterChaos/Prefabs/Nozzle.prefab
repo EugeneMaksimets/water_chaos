@@ -4867,6 +4867,7 @@ GameObject:
   - component: {fileID: 4271996635396775862}
   - component: {fileID: 3420794843738164006}
   - component: {fileID: 4342724675012377470}
+  - component: {fileID: 7973315078272920888}
   m_Layer: 4
   m_Name: NozzleScripts
   m_TagString: Untagged
@@ -4890,6 +4891,8 @@ Transform:
   - {fileID: 1933614714370183383}
   - {fileID: 7692653632413434986}
   - {fileID: 1350513807249392423}
+  - {fileID: 9065598523951275102}
+  - {fileID: 7386402897858328019}
   m_Father: {fileID: 1666482504460625419}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3436077016623464959
@@ -5084,6 +5087,31 @@ MonoBehaviour:
   _stream: {fileID: 2696170886430235844}
   _liquid: 2
   _effect: {fileID: 4295068408385928406}
+--- !u!114 &7973315078272920888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896437642608557097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7173854b1420d4251a3612596cd3f832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.SoapBubbleStreamView
+  _stream: {fileID: 2696170886430235844}
+  _intensity: 1
+  _streamBubbles: {fileID: 776085701324850602}
+  _spawnRate: 45
+  _sizeRange: {x: 0.03, y: 0.1}
+  _lifetimeRange: {x: 0.6, y: 1.3}
+  _spread: 0.08
+  _carrySpeed: 1.5
+  _drift: 0.35
+  _impactBubbles: {fileID: 8008272006691654345}
+  _impactRate: 25
+  _maxFoamMultiplier: 3
+  _foamBuildUpTime: 3
 --- !u!1001 &1200825574151029216
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5339,4 +5367,138 @@ Transform:
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 3068135982361749780, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
   m_PrefabInstance: {fileID: 1229219492351727042}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3079807263951785179
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1567026969470104618}
+    m_Modifications:
+    - target: {fileID: 1790010887214514717, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_Name
+      value: SoapImpactBubbles
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+--- !u!4 &7386402897858328019 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+  m_PrefabInstance: {fileID: 3079807263951785179}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &8008272006691654345 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5016645592467375634, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+  m_PrefabInstance: {fileID: 3079807263951785179}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5121424820424778425
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1567026969470104618}
+    m_Modifications:
+    - target: {fileID: 3200246811034023188, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_Name
+      value: SoapStreamBubbles
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+--- !u!198 &776085701324850602 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5609164513400317715, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+  m_PrefabInstance: {fileID: 5121424820424778425}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9065598523951275102 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4241701928396029671, guid: 369a2d746f9f14f7c9dae520bc58ce9d, type: 3}
+  m_PrefabInstance: {fileID: 5121424820424778425}
   m_PrefabAsset: {fileID: 0}
