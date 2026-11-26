@@ -1,65 +1,65 @@
 using UnityEngine;
+using WaterChaos.Hose;
 using WaterChaos.Water;
 
 namespace WaterChaos.Splitter
 {
     /// <summary>
-    /// A hose laid before the game starts: from the start it is plugged into a <see cref="HoseEndSocket"/>
-    /// (e.g. the splitter inlet) and feeds it from a fixed source (e.g. the hydrant).
-    /// <see cref="Disconnect"/> takes it off, so the player can plug their own hose into that socket.
+    /// A hose laid before the game starts: attached to a source's connection point (e.g. the hydrant outlet)
+    /// and plugged into a <see cref="HoseEndSocket"/> (e.g. the splitter inlet), so the splitter is fed from that source.
+    /// The point counts as taken, so the player cannot attach a nozzle there meanwhile.
+    /// An optional <see cref="HoseController"/> draws the hose between the two (its End Point is the socket).
+    /// <see cref="Disconnect"/> takes it all off, so the player can plug their own hose into the socket.
     /// </summary>
     public sealed class FixedHoseFeed : MonoBehaviour
     {
         [Header("References")]
-        [Tooltip("Source the hose comes from; must implement IWaterFlowSource (e.g. HydrantController).")]
-        [SerializeField] private MonoBehaviour _source;
+        [Tooltip("Connection point of the source the hose starts at (e.g. the hydrant's WaterConnectionPoint).")]
+        [SerializeField] private WaterConnectionPoint _from;
 
         [Tooltip("Socket the hose end is plugged into (e.g. the HoseSplitter inlet).")]
         [SerializeField] private HoseEndSocket _socket;
 
-        [Tooltip("Optional: the hose look; hidden when the feed is taken off.")]
-        [SerializeField] private GameObject _visual;
+        [Tooltip("Optional: the visible hose; its End Point should be the socket.")]
+        [SerializeField] private HoseController _hose;
 
         /// <summary>The hose is still plugged into the socket.</summary>
         public bool IsConnected => _socket != null && _socket.Plug == this;
 
-        // Start: the socket's receiver (the splitter) is ready by then.
+        // Start: connection points find their source in Awake, the splitter is ready by then.
         private void Start()
         {
-            IWaterFlowSource source = _source as IWaterFlowSource;
-            if (source == null || _socket == null)
+            if (_from == null || _from.Source == null || _socket == null)
             {
-                Debug.LogError($"{name}: FixedHoseFeed needs a Source (IWaterFlowSource) and a Socket.", this);
+                Debug.LogError($"{name}: FixedHoseFeed needs From (a WaterConnectionPoint with a source) and a Socket.", this);
                 enabled = false;
                 return;
             }
 
-            if (!_socket.TryAttach(this))
+            if (!_from.IsFreeFor(null) || !_socket.TryAttach(this))
             {
-                Debug.LogWarning($"{name}: socket {_socket.name} is taken or out of the world; the feed is not connected.", this);
+                Debug.LogWarning($"{name}: {_from.name} or {_socket.name} is already taken; the feed is not connected.", this);
                 return;
             }
 
-            _socket.Feed(source);
+            _from.Attach();
+            _socket.Feed(_from.Source);
+            if (_hose != null)
+                _hose.Connect(_from);
         }
 
-        /// <summary>Takes the hose off the socket; it feeds nothing any more and the socket is free.</summary>
+        /// <summary>Takes the hose off both ends; the socket gets nothing and is free, the source point is free.</summary>
         public void Disconnect()
         {
             if (!IsConnected)
                 return;
 
             _socket.Detach(this);
-            if (_visual != null)
-                _visual.SetActive(false);
-        }
-
-        private void OnValidate()
-        {
-            if (_source != null && !(_source is IWaterFlowSource))
+            _from.Detach();
+            if (_hose != null)
             {
-                Debug.LogError($"{name}: {_source.GetType().Name} is not an IWaterFlowSource.", this);
-                _source = null;
+                _hose.Disconnect();
+                _hose.gameObject.SetActive(false);
             }
         }
     }

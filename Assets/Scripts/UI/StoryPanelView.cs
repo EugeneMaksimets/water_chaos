@@ -177,19 +177,20 @@ namespace WaterChaos.UI
             _body.fontStyle = FontStyle.Normal;
             _body.lineSpacing = 1.1f;
 
-            _footer = HudWidgets.CreateRect("Footer", _card, Vector2.zero, new Vector2(260f, 44f));
+            _footer = HudWidgets.CreateRect("Footer", _card, Vector2.zero, new Vector2(300f, 48f));
             _footer.anchorMin = _footer.anchorMax = new Vector2(0.5f, 0f);
             Sprite disc = HudWidgets.CreateCircleSprite(128, 0f);
             Sprite ring = HudWidgets.CreateCircleSprite(128, 0.84f);
-            Vector2 keySize = new Vector2(44f, 44f);
-            Vector2 keyPosition = new Vector2(-70f, 0f);
+            // Key on the left, caption to its right with a gap: they never overlap.
+            Vector2 keySize = new Vector2(48f, 48f);
+            Vector2 keyPosition = new Vector2(-80f, 0f);
             HudWidgets.CreateImage("Key Background", _footer, keyPosition, keySize, disc, HudWidgets.PanelColor);
             HudWidgets.CreateImage("Key Ring", _footer, keyPosition, keySize, ring, Color.white);
             Text key = HudWidgets.CreateText("Key", _footer, keyPosition, keySize, 15, TextAnchor.MiddleCenter);
             key.text = "Esc";
             key.fontStyle = FontStyle.Bold;
 
-            Text caption = HudWidgets.CreateText("Caption", _footer, new Vector2(30f, 0f), new Vector2(180f, 30f), 20, TextAnchor.MiddleLeft);
+            Text caption = HudWidgets.CreateText("Caption", _footer, new Vector2(40f, 0f), new Vector2(160f, 30f), 20, TextAnchor.MiddleLeft);
             caption.text = _continueText;
             caption.fontStyle = FontStyle.Bold;
             Object.Destroy(caption.GetComponent<Shadow>());

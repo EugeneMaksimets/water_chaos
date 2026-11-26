@@ -12,6 +12,8 @@ namespace WaterChaos.UI
     {
         private const float SlideDistance = 40f;
         private const float PopTime = 0.3f;
+        private const float LineHeight = 24f;
+        private const float Padding = 15f;
 
         private enum Phase { Active, Completed, Leaving, Collapsing, Gone }
 
@@ -130,11 +132,17 @@ namespace WaterChaos.UI
             _phaseTime = 0f;
         }
 
-        // Title wraps to its width; the card grows with it.
+        // Title wraps to its width and the card grows with it; the progress sits at the right of the first line.
         private void Resize()
         {
-            float titleHeight = Mathf.Max(24f, _title.preferredHeight);
-            Height = Mathf.Max(_baseHeight, titleHeight + (_hasProgress ? 24f : 0f) + 22f);
+            float titleHeight = Mathf.Max(LineHeight, _title.preferredHeight);
+            Height = Mathf.Max(_baseHeight, titleHeight + 2f * Padding);
+
+            float top = -(Height - titleHeight) * 0.5f;
+            _title.rectTransform.anchoredPosition = new Vector2(_title.rectTransform.anchoredPosition.x, top);
+            _title.rectTransform.sizeDelta = new Vector2(_title.rectTransform.sizeDelta.x, titleHeight);
+            _progress.rectTransform.anchoredPosition = new Vector2(_progress.rectTransform.anchoredPosition.x, top);
+
             _card.sizeDelta = new Vector2(_card.sizeDelta.x, Height);
             Root.sizeDelta = new Vector2(Root.sizeDelta.x, Height);
         }

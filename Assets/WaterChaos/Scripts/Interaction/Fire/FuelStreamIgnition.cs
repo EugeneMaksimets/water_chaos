@@ -10,7 +10,8 @@ namespace WaterChaos.Interaction
     /// While lit the stream is cut to <c>Flame Length</c>, so only the nearest thing in front of the nozzle burns.
     /// While lit it sets what it hits alight, once per interval per target: flammable objects (also re-lighting
     /// their extinguished fire at once), flammable ground, and inside a room any surface (a fire hitting a wall
-    /// starts on the floor below). The normal fire rules apply (fire limit, exclusion radius, water);
+    /// starts on the floor below). Hitting the outside wall of a room sets the room behind it alight
+    /// (or, if no fire fits there, the foot of the wall outside). The normal fire rules apply (fire limit, exclusion radius, water);
     /// room cooling protection only if <c>Respect Room Cooling</c> is on.
     /// It goes out at once when the nozzle is switched off, put down, set to zero pressure or runs dry;
     /// switched on again it needs a fire again.
@@ -32,6 +33,10 @@ namespace WaterChaos.Interaction
         [Tooltip("Seconds (s) between attempts of the lit stream to set the same target alight; a new target is tried at once.")]
         [SerializeField, Min(StreamIgnitionModel.MinInterval)] private float _ignitionInterval = StreamIgnitionModel.DefaultInterval;
 
+        [Tooltip("Pilot flame: the stream lights by itself as soon as flammable liquid flows, without touching a fire " +
+                 "(e.g. a teammate's nozzle that suddenly gets gasoline).")]
+        [SerializeField] private bool _selfIgniting;
+
         [Tooltip("Off: the flamethrower lights fires in a room even while all its coolers work. " +
                  "On: a room protected by its coolers cannot be set alight by it (like fire spreading).")]
         [SerializeField] private bool _respectRoomCooling;
@@ -43,6 +48,8 @@ namespace WaterChaos.Interaction
         private const float FloorMinUp = 0.7f;
         // A drop ray starts this far out of the wall, so it does not start inside it, in meters (m).
         private const float WallClearance = 0.2f;
+        // How far behind an outer wall a room is looked for (wall thickness plus a margin), in meters (m).
+        private const float WallDepth = 0.6f;
 
         private enum TargetKind
         {
@@ -50,6 +57,7 @@ namespace WaterChaos.Interaction
             Object,
             Ground,
             Room,
+            OuterWall,
         }
 
         private StreamIgnitionModel _model;
@@ -111,8 +119,14 @@ namespace WaterChaos.Interaction
                 kind = TargetKind.Room;
                 target = hit;
             }
+            else if (_model.IsLit && hit != null && fire == null && flammable == null && IsOuterWallOfRoom(_stream.HitPoint, _stream.HitNormal))
+            {
+                // A house hit from outside burns inside, behind the wall.
+                kind = TargetKind.OuterWall;
+                target = hit;
+            }
 
-            bool touchingFire = fire != null && fire.IsBurning;
+            bool touchingFire = _selfIgniting || (fire != null && fire.IsBurning);
             if (_model.Tick(Time.fixedDeltaTime, IsFlammableFlowing(), touchingFire, target))
                 Ignite(kind, flammable, _stream.HitPoint, _stream.HitNormal);
         }
@@ -130,6 +144,11 @@ namespace WaterChaos.Interaction
         public static bool IsFloorLike(Vector3 normal)
         {
             return normal.sqrMagnitude > 0f && normal.normalized.y >= FloorMinUp;
+        }
+
+        private bool IsOuterWallOfRoom(Vector3 hitPoint, Vector3 hitNormal)
+        {
+            return !IsFloorLike(hitNormal) && IsInRoom(hitPoint - hitNormal.normalized * WallDepth);
         }
 
         private bool IsInRoom(Vector3 hitPoint)
@@ -169,6 +188,12 @@ namespace WaterChaos.Interaction
                     Vector3 burnPoint = GetBurnPoint(hitPoint, hitNormal);
                     FireSpreader.TryStartFireAt(_settings.GetFirePosition(burnPoint), _settings, _respectRoomCooling);
                     return;
+
+                case TargetKind.OuterWall:
+                    Vector3 inside = DropToFloor(hitPoint - hitNormal.normalized * WallDepth, hitPoint);
+                    if (!FireSpreader.TryStartFireAt(_settings.GetFirePosition(inside), _settings, _respectRoomCooling))
+                        FireSpreader.TryStartFireAt(_settings.GetFirePosition(GetBurnPoint(hitPoint, hitNormal)), _settings, _respectRoomCooling);
+                    return;
             }
         }
 
@@ -178,10 +203,15 @@ namespace WaterChaos.Interaction
             if (IsFloorLike(hitNormal))
                 return hitPoint;
 
-            Vector3 from = hitPoint + hitNormal.normalized * WallClearance;
+            return DropToFloor(hitPoint + hitNormal.normalized * WallClearance, hitPoint);
+        }
+
+        /// <summary>The floor under <paramref name="from"/>; <paramref name="fallback"/> if none is close enough.</summary>
+        private Vector3 DropToFloor(Vector3 from, Vector3 fallback)
+        {
             return Physics.Raycast(from, Vector3.down, out RaycastHit floor, _maxDropToFloor, _settings.TargetMask, QueryTriggerInteraction.Ignore)
                 ? floor.point
-                : hitPoint;
+                : fallback;
         }
 
         private void OnModelLitChanged(bool lit)

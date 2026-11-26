@@ -32,11 +32,63 @@ namespace WaterChaos.EditorTools
     public static class MissionSetup
     {
         private const string NozzlePrefabPath = "Assets/WaterChaos/Prefabs/Nozzle.prefab";
+
+        /// <summary>The burning house in front of the truck (stages 3–5). Change it if the mission moves to another house.</summary>
+        private const string HouseName = "House_TwoStorey_Beige";
+        private const string HouseRoomName = "Beige House · Room";
+        private const float HydrantHoseLength = 80f;
+
+        // Beige house geometry from MiniVillageBuilder (house space: facing -Z, x ±Width/2, z 0..Depth), in meters (m).
+        private const float HouseWidth = 10f;
+        private const float HouseDepth = 8f;
+        private const float HouseFloorTop = 0.15f;
+        private const float HouseStoreyHeight = 3f;
+        // Room box margin past the outer walls, so wall-mounted air conditioners count as inside, in meters (m).
+        private const float HouseRoomMargin = 0.3f;
+
+        // A teammate's gasoline flame reaches the house from the street, in meters (m).
+        private const float TeammateFlameLength = 10f;
+
+        private const string PumpPrefabPath = "Assets/WaterChaos/Prefabs/Pump.prefab";
+        // The same transfer hose as the ones already in the village (real coil mesh and material).
+        private const string HosePrefabPath = "Assets/WaterChaos/Prefabs/WaterTransfer/TransferHose_20m 1.prefab";
+        // Extra pumps and hoses so no stage has to take equipment back from an earlier one; kept on Rebuild.
+        private const string TankPumpName = "Pump · Underground Tank";
+        private const string TankHoseName = "Hose · Underground Tank";
+        private const string NeutralPumpName = "Pump · Neutralize";
+        private const string NeutralHoseName = "Hose · Neutralize";
+
+        // Objects the setup creates (besides "Mission" and "Mission UI"); removed by Rebuild.
+        private const string TeammateNozzleName = "Teammate Nozzle";
+        private const string FeedName = "Hydrant → Splitter Feed";
         private const string Teammate = "Напарник";
         private const int Idle = 0;
         private const int Extinguish = 2;
 
         private static readonly List<string> s_report = new List<string>();
+
+        /// <summary>
+        /// Deletes what a previous setup created and builds again; keeps markers, the house room,
+        /// the extra pumps and hoses and the teammate nozzles (wherever you moved them).
+        /// </summary>
+        [MenuItem("Water Chaos/Rebuild Mission (Mini Village)")]
+        private static void Rebuild()
+        {
+            Undo.SetCurrentGroupName("Rebuild Mission");
+            foreach (Transform t in All<Transform>())
+            {
+                if (t == null)
+                    continue;
+
+                string name = t.name;
+                // Teammate nozzles are kept: they were placed in the hands by hand.
+                bool created = (t.parent == null && (name == "Mission" || name == "Mission UI")) || name == FeedName;
+                if (created)
+                    Undo.DestroyObjectImmediate(t.gameObject);
+            }
+
+            Build();
+        }
 
         [MenuItem("Water Chaos/Setup Mission (Mini Village)")]
         private static void Build()
@@ -65,6 +117,8 @@ namespace WaterChaos.EditorTools
             Set(runner, "_story", story);
             Set(runner, "_hints", hints);
 
+            EnsureHouseRoom(scene);
+            EnsureEquipment(scene);
             Zones zones = BuildZones(scene, root);
             SetUpTeammates(scene);
             BuildSteps(scene, zones, root);
@@ -92,6 +146,8 @@ namespace WaterChaos.EditorTools
             public PickableItem Axe;
             public PickableItem Nozzle;
             public BreakableDoor Door;
+            public Transform House;
+            public Bounds HouseBounds;
             public RoomTemperature HouseRoom;
             public CoolingAppliance[] Coolers;
 
@@ -101,7 +157,10 @@ namespace WaterChaos.EditorTools
             public PumpController ToxicPump;
             public PumpController PoolPump;
             public PumpController TankPump;
-            public TransferHose[] Hoses;
+            public PumpController NeutralPump;
+            public TransferHose PoolHose;
+            public TransferHose TankHose;
+            public TransferHose NeutralHose;
             public CorrodibleObject Grate;
             public SoapItem Soap;
 
@@ -131,32 +190,44 @@ namespace WaterChaos.EditorTools
                 TruckOutlet = Truck.GetComponentInChildren<WaterConnectionPoint>(true);
                 Axe = Nearest(All<AxeTool>().Select(a => a.GetComponentInParent<PickableItem>()), origin);
                 Nozzle = Nearest(All<NozzleController>().Select(n => n.GetComponentInParent<PickableItem>()), origin);
-                Door = Nearest(All<BreakableDoor>(), origin);
-                HouseRoom = Nearest(All<RoomTemperature>(), origin);
-                Coolers = HouseRoom != null
-                    ? All<CoolingAppliance>().Where(c => RoomBounds(HouseRoom).Contains(c.transform.position)).ToArray()
-                    : new CoolingAppliance[0];
+                House = All<Transform>().FirstOrDefault(t => t.name == HouseName);
+                if (House != null)
+                {
+                    HouseBounds = RendererBounds(House);
+                    Bounds near = HouseBounds;
+                    near.Expand(1f);
+                    Door = Nearest(All<BreakableDoor>().Where(d => near.Contains(d.transform.position)), origin);
+                    HouseRoom = All<RoomTemperature>().FirstOrDefault(r => HouseBounds.Contains(r.transform.position));
+                    Coolers = All<CoolingAppliance>().Where(c => near.Contains(c.transform.position)).ToArray();
+                }
+                else
+                {
+                    Coolers = new CoolingAppliance[0];
+                    s_report.Add($"HOUSE \"{HouseName}\" NOT FOUND: set the door, coolers, zones and room by hand (or change HouseName).");
+                }
 
                 WaterBody[] bodies = All<WaterBody>();
                 ToxicBody = bodies.FirstOrDefault(b => HasAncestorNamed(b.transform, "toxic"));
                 UndergroundBody = bodies.FirstOrDefault(b => HasAncestorNamed(b.transform, "underground"));
-                PoolBodies = bodies.Where(b => HasAncestorNamed(b.transform, "pool")).ToArray();
+                // The pool nearest to the underground tank comes first: the transfer hose must reach from it.
+                Vector3 tank = UndergroundBody != null ? UndergroundBody.transform.position : origin;
+                PoolBodies = bodies.Where(b => HasAncestorNamed(b.transform, "pool"))
+                    .OrderBy(b => Vector3.Distance(b.transform.position, tank)).ToArray();
 
-                List<PumpController> pumps = All<PumpController>().Where(p => p.GetComponent<PickableItem>() != null).ToList();
+                // The two pumps already in the scene: one for the toxic tank, one for the pool.
+                // The underground-tank and neutralizing pumps (and their hoses) are created by the setup.
+                List<PumpController> pumps = All<PumpController>()
+                    .Where(p => p.GetComponent<PickableItem>() != null && p.name != TankPumpName && p.name != NeutralPumpName)
+                    .ToList();
                 ToxicPump = TakeNearest(pumps, ToxicBody);
                 PoolPump = TakeNearest(pumps, PoolBodies.FirstOrDefault());
-                TankPump = TakeNearest(pumps, UndergroundBody);
-                if (TankPump == null)
-                {
-                    // The toxic pump is free again after the grate, so the player takes it from the toxic tank.
-                    TankPump = ToxicPump;
-                    s_report.Add("ONLY TWO PUMPS: the underground-tank stage reuses the toxic-tank pump. "
-                        + "Add a third Pump prefab and set it in steps \"Pick Up · Pump and Hose (Tank)\" … \"Pump · Start Tank Pump\" if you want a separate one.");
-                }
+                TankPump = All<PumpController>().FirstOrDefault(p => p.name == TankPumpName);
+                NeutralPump = All<PumpController>().FirstOrDefault(p => p.name == NeutralPumpName);
 
-                Hoses = All<TransferHose>();
-                if (PoolPump != null)
-                    Hoses = Hoses.OrderBy(h => Vector3.Distance(h.transform.position, PoolPump.transform.position)).ToArray();
+                List<TransferHose> hoses = All<TransferHose>().Where(h => h.name != TankHoseName && h.name != NeutralHoseName).ToList();
+                PoolHose = TakeNearest(hoses, PoolPump);
+                TankHose = All<TransferHose>().FirstOrDefault(h => h.name == TankHoseName);
+                NeutralHose = All<TransferHose>().FirstOrDefault(h => h.name == NeutralHoseName);
 
                 CorrodibleObject[] corrodibles = All<CorrodibleObject>();
                 Grate = corrodibles.FirstOrDefault(c => HasAncestorNamed(c.transform, "grate")) ?? corrodibles.FirstOrDefault();
@@ -173,16 +244,16 @@ namespace WaterChaos.EditorTools
                     .Where(s => !s.transform.IsChildOf(Player) && (talker == null || !s.transform.IsChildOf(talker.transform)))
                     .ToArray();
 
-                Report("House room (nearest to the truck)", HouseRoom);
-                Report("Breakable door (nearest to the truck)", Door);
+                Report("House", House);
+                Report("Breakable door of the house", Door);
                 s_report.Add($"Coolers in the house: {Coolers.Length}");
                 Report("Toxic tank water", ToxicBody);
                 Report("Underground tank water", UndergroundBody);
-                s_report.Add($"Pools: {PoolBodies.Length}");
+                Report("Pool for the transfer (nearest to the underground tank)", PoolBodies.FirstOrDefault());
                 Report("Pump for the toxic tank", ToxicPump);
                 Report("Pump for the pool", PoolPump);
                 Report("Pump for the underground tank", TankPump);
-                s_report.Add($"Transfer hoses: {Hoses.Length}");
+                Report("Hose for the pool", PoolHose);
                 Report("Grate", Grate);
                 Report("Splitter", Splitter);
                 Report("Talking teammate", Talker);
@@ -218,6 +289,7 @@ namespace WaterChaos.EditorTools
             public MissionZone Pool;
             public MissionZone UndergroundTank;
             public MissionZone Teammates;
+            public MissionZone TeammatesView;
             public MissionZone TeammateFires;
         }
 
@@ -229,9 +301,9 @@ namespace WaterChaos.EditorTools
             Zones zones = new Zones();
             if (scene.HouseRoom != null)
             {
-                Bounds room = RoomBounds(scene.HouseRoom);
+                Bounds room = scene.HouseRoom.GetComponent<BoxCollider>().bounds;
                 zones.House = CreateZone("Zone · House (entered)", parent, room);
-                room.Expand(new Vector3(4f, 2f, 4f));
+                room.Expand(new Vector3(2f, 1f, 2f));
                 zones.HouseFires = CreateZone("Zone · House Fires", parent, room);
             }
 
@@ -242,6 +314,17 @@ namespace WaterChaos.EditorTools
             List<Vector3> crew = scene.Sprayers.Select(s => s.transform.position).ToList();
             if (scene.Talker != null)
                 crew.Add(scene.Talker.position);
+
+            // Close enough to see the flamethrowers; the splitter and the underground tank stay outside it.
+            if (crew.Count > 0)
+            {
+                Bounds view = new Bounds(crew[0], Vector3.zero);
+                foreach (Vector3 point in crew)
+                    view.Encapsulate(point);
+                view.Expand(new Vector3(10f, 6f, 10f));
+                zones.TeammatesView = CreateZone("Zone · Teammates View (flamethrowers)", parent, view);
+            }
+
             if (scene.Splitter != null)
                 crew.Add(scene.Splitter.transform.position);
 
@@ -292,15 +375,7 @@ namespace WaterChaos.EditorTools
                 Set(scene.Hydrant, "_openOnStart", true);
 
             if (scene.Hydrant != null && scene.SplitterInlet != null)
-            {
-                GameObject feed = new GameObject("Hydrant → Splitter Feed");
-                Undo.RegisterCreatedObjectUndo(feed, "Setup Mission");
-                feed.transform.SetParent(scene.Hydrant.transform, false);
-                FixedHoseFeed component = feed.AddComponent<FixedHoseFeed>();
-                Set(component, "_source", scene.Hydrant);
-                Set(component, "_socket", scene.SplitterInlet);
-                s_report.Add("Hydrant → splitter feed added (no hose look: set Visual on it if you add one).");
-            }
+                AddHydrantFeed(scene);
             else
             {
                 s_report.Add("MISSING hydrant or splitter inlet: the teammates get no water.");
@@ -331,7 +406,207 @@ namespace WaterChaos.EditorTools
                     continue;
                 }
 
-                AddTeammateNozzle(sprayer.transform, scene.Outlets[i], nozzlePrefab);
+                TeammateNozzle existing = sprayer.GetComponentInChildren<TeammateNozzle>(true);
+                GameObject nozzle = existing != null ? existing.gameObject : CreateTeammateNozzle(sprayer.transform, nozzlePrefab);
+                ConfigureTeammateNozzle(nozzle, sprayer, scene.Outlets[i], existing == null);
+            }
+        }
+
+        /// <summary>
+        /// The tee is fed by the hydrant from the start: a fixed hose from the hydrant outlet to the splitter inlet,
+        /// drawn with the nozzle hose look (the hose part of the nozzle prefab, its end on the inlet).
+        /// </summary>
+        private static void AddHydrantFeed(SceneObjects scene)
+        {
+            WaterConnectionPoint outlet = scene.Hydrant.GetComponentInChildren<WaterConnectionPoint>(true);
+            if (outlet == null)
+            {
+                GameObject point = new GameObject("Hydrant Outlet");
+                Undo.RegisterCreatedObjectUndo(point, "Setup Mission");
+                point.transform.SetParent(scene.Hydrant.transform, false);
+                point.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+                outlet = point.AddComponent<WaterConnectionPoint>();
+                s_report.Add("Hydrant had no WaterConnectionPoint: added \"Hydrant Outlet\"; move it onto the hydrant nozzle.");
+            }
+
+            GameObject feed = new GameObject(FeedName);
+            Undo.RegisterCreatedObjectUndo(feed, "Setup Mission");
+            feed.transform.SetParent(scene.Hydrant.transform, false);
+            FixedHoseFeed component = feed.AddComponent<FixedHoseFeed>();
+            Set(component, "_from", outlet);
+            Set(component, "_socket", scene.SplitterInlet);
+
+            HoseController hose = CreateHoseFromNozzlePrefab(feed.transform, scene.SplitterInlet.Anchor);
+            Set(component, "_hose", hose);
+            s_report.Add(hose != null
+                ? $"Tee fed by the hydrant: hose {outlet.name} → {scene.SplitterInlet.name}. Put the splitter near the teammates."
+                : "Tee fed by the hydrant, but the hose look could not be made from the nozzle prefab.");
+        }
+
+        /// <summary>The hose part of the nozzle prefab on its own, its end at <paramref name="end"/>.</summary>
+        private static HoseController CreateHoseFromNozzlePrefab(Transform parent, Transform end)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(NozzlePrefabPath);
+            if (prefab == null)
+                return null;
+
+            GameObject nozzle = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent.gameObject.scene);
+            PrefabUtility.UnpackPrefabInstance(nozzle, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            HoseController hose = nozzle.GetComponentInChildren<HoseController>(true);
+            if (hose == null || hose.gameObject == nozzle)
+            {
+                Object.DestroyImmediate(nozzle);
+                return null;
+            }
+
+            hose.transform.SetParent(parent, true);
+            hose.gameObject.name = "Hydrant Hose";
+            Object.DestroyImmediate(nozzle);
+
+            Set(hose, "_endPoint", end);
+            Set(hose, "_maxLength", HydrantHoseLength);
+            return hose;
+        }
+
+        /// <summary>
+        /// The house needs its own temperature room, so coolers there lower the heat and slow the fire:
+        /// a copy of an existing room (same layer and settings) fitted to the house.
+        /// </summary>
+        private static void EnsureHouseRoom(SceneObjects scene)
+        {
+            if (scene.House == null)
+                return;
+
+            if (scene.HouseRoom == null)
+            {
+                RoomTemperature template = All<RoomTemperature>().FirstOrDefault();
+                if (template == null)
+                {
+                    s_report.Add("NO RoomTemperature in the scene to copy: the house has no temperature (run Water Chaos/Setup Room Temperature).");
+                    return;
+                }
+
+                GameObject copy = Object.Instantiate(template.gameObject, template.transform.parent);
+                Undo.RegisterCreatedObjectUndo(copy, "Setup Mission");
+                copy.name = HouseRoomName;
+                scene.HouseRoom = copy.GetComponent<RoomTemperature>();
+                Set(scene.HouseRoom, "_displayName", "Будинок");
+            }
+
+            if (scene.HouseRoom.name != HouseRoomName)
+            {
+                Report("House temperature room (kept as it is)", scene.HouseRoom);
+                return;
+            }
+
+            // Ground floor only: a fire spreads only inside its own room, so it never climbs to the upper floor
+            // and never creeps out into the yard.
+            Transform room = scene.HouseRoom.transform;
+            Undo.RecordObject(room, "Setup Mission");
+            room.SetPositionAndRotation(
+                scene.House.TransformPoint(new Vector3(0f, HouseFloorTop + HouseStoreyHeight * 0.5f, HouseDepth * 0.5f)),
+                scene.House.rotation);
+            room.localScale = Vector3.one;
+
+            BoxCollider box = room.GetComponent<BoxCollider>();
+            Undo.RecordObject(box, "Setup Mission");
+            box.center = Vector3.zero;
+            box.size = new Vector3(HouseWidth + 2f * HouseRoomMargin, HouseStoreyHeight - 0.1f, HouseDepth + 2f * HouseRoomMargin);
+            s_report.Add($"House temperature room {HouseRoomName}: ground floor of {scene.House.name} only.");
+        }
+
+        /// <summary>
+        /// A pump and a hose for the underground tank (stage 8) and for neutralizing (stage 9),
+        /// placed next to where they are used; existing ones (by name) are kept where you put them.
+        /// Every hose gets a length that reaches its target.
+        /// </summary>
+        private static void EnsureEquipment(SceneObjects scene)
+        {
+            Transform parent = scene.PoolPump != null ? scene.PoolPump.transform.parent : null;
+            Vector3 tank = scene.UndergroundBody != null ? scene.UndergroundBody.transform.position : scene.Truck.transform.position;
+            Vector3 toxic = scene.ToxicBody != null ? scene.ToxicBody.transform.position : tank;
+
+            if (scene.TankPump == null)
+                scene.TankPump = Spawn<PumpController>(PumpPrefabPath, TankPumpName, parent, tank + new Vector3(-4f, 0f, 3f));
+            scene.TankHose = ReplaceIfOtherPrefab(scene.TankHose, HosePrefabPath);
+            scene.NeutralHose = ReplaceIfOtherPrefab(scene.NeutralHose, HosePrefabPath);
+            if (scene.TankHose == null)
+                scene.TankHose = Spawn<TransferHose>(HosePrefabPath, TankHoseName, parent, tank + new Vector3(-5f, 0f, 4.5f));
+            if (scene.NeutralPump == null)
+                scene.NeutralPump = Spawn<PumpController>(PumpPrefabPath, NeutralPumpName, parent, toxic + new Vector3(6f, 0f, 3f));
+            if (scene.NeutralHose == null)
+                scene.NeutralHose = Spawn<TransferHose>(HosePrefabPath, NeutralHoseName, parent, toxic + new Vector3(7f, 0f, 4.5f));
+
+            Vector3 pool = scene.PoolBodies.Length > 0 ? scene.PoolBodies[0].transform.position : tank;
+            Vector3 splitter = scene.Splitter != null ? scene.Splitter.transform.position : tank;
+            FitHoseLength(scene.PoolHose, pool, tank);
+            FitHoseLength(scene.TankHose, tank, splitter);
+            FitHoseLength(scene.NeutralHose, toxic, tank);
+
+            Report("Pump for the underground tank", scene.TankPump);
+            Report("Pump for neutralizing (toxic tank → gasoline tank)", scene.NeutralPump);
+            s_report.Add($"NEW EQUIPMENT: \"{TankPumpName}\", \"{TankHoseName}\" next to the underground tank and "
+                + $"\"{NeutralPumpName}\", \"{NeutralHoseName}\" next to the toxic tank — move them where you want; Rebuild keeps them.");
+        }
+
+        /// <summary>An object made from another prefab is swapped for one of <paramref name="prefabPath"/> at the same place.</summary>
+        private static T ReplaceIfOtherPrefab<T>(T current, string prefabPath) where T : Component
+        {
+            if (current == null || PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(current.gameObject) == prefabPath)
+                return current;
+
+            Transform old = current.transform;
+            T replacement = Spawn<T>(prefabPath, old.name, old.parent, old.position);
+            if (replacement != null)
+            {
+                replacement.transform.SetPositionAndRotation(old.position, old.rotation);
+                s_report.Add($"{old.name}: replaced with {System.IO.Path.GetFileNameWithoutExtension(prefabPath)} (same look as the other hoses).");
+                Undo.DestroyObjectImmediate(old.gameObject);
+            }
+
+            return replacement;
+        }
+
+        private static T Spawn<T>(string prefabPath, string name, Transform parent, Vector3 near) where T : Component
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null)
+            {
+                s_report.Add($"MISSING {prefabPath}: {name} not created.");
+                return null;
+            }
+
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            Undo.RegisterCreatedObjectUndo(instance, "Setup Mission");
+            instance.name = name;
+            instance.transform.position = OnGround(near);
+            return instance.GetComponent<T>();
+        }
+
+        /// <summary>The first solid surface under the point (triggers such as water are skipped), slightly above it.</summary>
+        private static Vector3 OnGround(Vector3 point)
+        {
+            Physics.SyncTransforms();
+            Vector3 top = new Vector3(point.x, point.y + 30f, point.z);
+            return Physics.Raycast(top, Vector3.down, out RaycastHit hit, 60f, ~0, QueryTriggerInteraction.Ignore)
+                ? hit.point + Vector3.up * 0.3f
+                : new Vector3(point.x, 0.3f, point.z);
+        }
+
+        /// <summary>Long enough for the straight distance plus some slack for going around things.</summary>
+        private static void FitHoseLength(TransferHose hose, Vector3 from, Vector3 to)
+        {
+            if (hose == null)
+                return;
+
+            float needed = Mathf.Ceil((Vector3.Distance(from, to) * 1.4f + 5f) / 5f) * 5f;
+            SerializedObject data = new SerializedObject(hose);
+            SerializedProperty length = data.FindProperty("_maxLength");
+            if (length != null && length.floatValue < needed)
+            {
+                length.floatValue = needed;
+                data.ApplyModifiedProperties();
+                s_report.Add($"{hose.name}: length set to {needed} m to reach its target.");
             }
         }
 
@@ -339,12 +614,12 @@ namespace WaterChaos.EditorTools
         /// A copy of the nozzle prefab in front of the teammate, without its pickup parts (the player must not take it),
         /// fed from a splitter outlet. Its position and rotation need fixing by hand to fit the hands.
         /// </summary>
-        private static void AddTeammateNozzle(Transform teammate, SplitterOutlet outlet, GameObject prefab)
+        private static GameObject CreateTeammateNozzle(Transform teammate, GameObject prefab)
         {
             GameObject nozzle = (GameObject)PrefabUtility.InstantiatePrefab(prefab, teammate.gameObject.scene);
             Undo.RegisterCreatedObjectUndo(nozzle, "Setup Mission");
             PrefabUtility.UnpackPrefabInstance(nozzle, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-            nozzle.name = "Teammate Nozzle";
+            nozzle.name = TeammateNozzleName;
             nozzle.transform.SetParent(teammate, false);
             nozzle.transform.localPosition = new Vector3(0.25f, 1.2f, 0.55f);
             nozzle.transform.localRotation = Quaternion.identity;
@@ -358,11 +633,66 @@ namespace WaterChaos.EditorTools
             foreach (Collider part in nozzle.GetComponentsInChildren<Collider>(true))
                 Object.DestroyImmediate(part);
 
-            TeammateNozzle component = nozzle.AddComponent<TeammateNozzle>();
+            nozzle.AddComponent<TeammateNozzle>();
+            return nozzle;
+        }
+
+        /// <summary>
+        /// Wires the nozzle to its splitter outlet, makes its gasoline flame light by itself and reach the house,
+        /// and parents it to the teammate's right hand (keeping where it is), so it follows the animation.
+        /// </summary>
+        private static void ConfigureTeammateNozzle(GameObject nozzle, FirefighterAnimationSwitcher teammate, SplitterOutlet outlet, bool created)
+        {
+            TeammateNozzle component = nozzle.GetComponent<TeammateNozzle>();
             Set(component, "_stream", nozzle.GetComponentInChildren<WaterStream>(true));
             Set(component, "_outlet", outlet);
             Set(component, "_hose", nozzle.GetComponentInChildren<HoseController>(true));
-            s_report.Add($"Nozzle for {teammate.name} on outlet {outlet.name}: MOVE \"Teammate Nozzle\" into the hands and aim it at the fire.");
+
+            foreach (FuelStreamIgnition ignition in nozzle.GetComponentsInChildren<FuelStreamIgnition>(true))
+            {
+                Set(ignition, "_selfIgniting", true);
+                Set(ignition, "_flameLength", TeammateFlameLength);
+            }
+
+            Transform hand = FindRightHand(teammate.GetComponent<Animator>());
+            if (hand != null && nozzle.transform.parent != hand)
+            {
+                Undo.SetTransformParent(nozzle.transform, hand, "Setup Mission");
+                s_report.Add($"{teammate.name}: nozzle attached to the hand bone \"{hand.name}\" — it moves with the animation. "
+                    + "Check its offset in Play Mode (the pose differs from the Editor pose).");
+            }
+            else if (hand == null)
+            {
+                s_report.Add($"{teammate.name}: NO HAND BONE found; drag \"{TeammateNozzleName}\" onto the right-hand bone yourself.");
+            }
+
+            if (created)
+                s_report.Add($"Nozzle for {teammate.name} on outlet {outlet.name}: move it into the hands and aim it at the house.");
+        }
+
+        /// <summary>The right-hand bone: from the humanoid avatar, otherwise the child named like a right hand.</summary>
+        private static Transform FindRightHand(Animator animator)
+        {
+            if (animator == null)
+                return null;
+
+            if (animator.isHuman)
+            {
+                Transform bone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+                if (bone != null)
+                    return bone;
+            }
+
+            foreach (Transform child in animator.GetComponentsInChildren<Transform>(true))
+            {
+                string name = child.name.ToLowerInvariant().Replace(" ", string.Empty);
+                bool isHand = name.Contains("hand") && !name.Contains("finger") && !name.Contains("thumb") && !name.Contains("index");
+                bool isRight = name.Contains("right") || name.EndsWith("_r") || name.EndsWith(".r") || name.EndsWith("r_") || name.StartsWith("r_");
+                if (isHand && isRight)
+                    return child;
+            }
+
+            return null;
         }
 
         // ───────────── Steps ─────────────
@@ -381,10 +711,12 @@ namespace WaterChaos.EditorTools
             MissionMarker poolPump = Marker(s.PoolPump, 1f);
             MissionMarker toxicPump = Marker(s.ToxicPump, 1f);
             MissionMarker tankPump = Marker(s.TankPump, 1f);
+            MissionMarker neutralPump = Marker(s.NeutralPump, 1f);
+            Marker(s.NeutralHose, 0.8f);
+            Marker(s.TankHose, 0.8f);
             Marker(s.Axe, 0.8f);
             Marker(s.Nozzle, 0.8f);
-            foreach (TransferHose hose in s.Hoses)
-                Marker(hose, 0.8f);
+            Marker(s.PoolHose, 0.8f);
             foreach (CoolingAppliance cooler in s.Coolers)
                 Marker(cooler, 1.2f);
 
@@ -398,16 +730,17 @@ namespace WaterChaos.EditorTools
 
             // Stage 2: equipment.
             PickUp(root, Name("Pick Up · Axe and Nozzle"), "Знайди сокиру та пожежний ствол", s.Inventory, s.Axe, s.Nozzle);
+            // Stage 3: the door.
+            BreakDoorObjective breakDoor = Add<BreakDoorObjective>(root, Name("Break · Door"),
+                "Розбий двері сокирою, щоб потрапити всередину будинку.", door);
+            Set(breakDoor, "_door", s.Door);
+
+            // Then the nozzle on the truck.
             NozzleConnectObjective connectTruck = Add<NozzleConnectObjective>(root, Name("Connect · Nozzle to Truck"),
                 "Підключи пожежний ствол до машини", truckOutlet);
             Set(connectTruck, "_connector", s.Connector);
             SetArray(connectTruck, "_points", s.TruckOutlet);
             Hint(connectTruck, "Підключи ствол до машини", PlayerControl.Interact, null);
-
-            // Stage 3: the door.
-            BreakDoorObjective breakDoor = Add<BreakDoorObjective>(root, Name("Break · Door"),
-                "Розбий двері сокирою, щоб потрапити всередину будинку.", door);
-            Set(breakDoor, "_door", s.Door);
 
             // Stage 4: inside the house.
             EnterZoneObjective enterHouse = Add<EnterZoneObjective>(root, Name("Zone · Entered House"), null);
@@ -458,14 +791,14 @@ namespace WaterChaos.EditorTools
             Set(failure, "_releaseFeed", s.Hydrant != null ? s.Hydrant.GetComponentInChildren<FixedHoseFeed>(true) : null);
             Story(root, Name("Story · Out of Water"), Teammate, "Ти вчасно! У нас майже закінчилася вода! Треба терміново знайти нове джерело!");
 
-            PickUp(root, Name("Pick Up · Pump and Hose (Pool)"), "Знайди насос та шланг.", s.Inventory, Item(s.PoolPump), Item(s.Hoses.ElementAtOrDefault(0)));
+            PickUp(root, Name("Pick Up · Pump and Hose (Pool)"), "Знайди насос та шланг.", s.Inventory, Item(s.PoolPump), Item(s.PoolHose));
             PumpInWaterObjective poolIn = Add<PumpInWaterObjective>(root, Name("Pump · Into Pool"), "Встанови насос у басейн", pools);
             SetArray(poolIn, "_pumps", Deployments(s.PoolPump, s.ToxicPump, s.TankPump));
-            SetArray(poolIn, "_bodies", s.PoolBodies);
+            SetArray(poolIn, "_bodies", s.PoolBodies.Take(1).ToArray());
             Hint(poolIn, "Встанови насос у басейн.", PlayerControl.Drop, z.Pool);
             TransferHoseObjective poolHose = Add<TransferHoseObjective>(root, Name("Hose · Pool to Underground Tank"),
                 "Протягни шланг від насоса до підземного резервуара", underground);
-            SetArray(poolHose, "_hoses", s.Hoses);
+            SetArray(poolHose, "_hoses", s.PoolHose, s.TankHose);
             SetArray(poolHose, "_endBodies", s.UndergroundBody);
             SetArray(poolHose, "_endSockets", s.SplitterInlet);
             Hint(poolHose, "Підключи шланг до насоса та протягни його до підземного резервуара або перехідника.", null, null);
@@ -475,7 +808,7 @@ namespace WaterChaos.EditorTools
 
             // Stage 8: the second pump and the tee.
             PickUp(root, Name("Pick Up · Pump and Hose (Tank)"), "Знайди ще один насос та шланг", s.Inventory,
-                Item(s.TankPump), Item(s.Hoses.ElementAtOrDefault(1)));
+                Item(s.TankPump), Item(s.TankHose));
             PumpInWaterObjective tankIn = Add<PumpInWaterObjective>(root, Name("Pump · Into Underground Tank"),
                 "Помісти насос у підземний резервуар", underground);
             SetArray(tankIn, "_pumps", Deployments(s.TankPump, s.ToxicPump, s.PoolPump));
@@ -483,11 +816,11 @@ namespace WaterChaos.EditorTools
             Hint(tankIn, "Помісти насос у підземний резервуар.", PlayerControl.Drop, z.UndergroundTank);
             TransferHoseObjective tankHose = Add<TransferHoseObjective>(root, Name("Hose · Onto Tank Pump"),
                 "Підключи шланг до насоса", tankPump);
-            SetArray(tankHose, "_hoses", s.Hoses);
+            SetArray(tankHose, "_hoses", s.TankHose, s.PoolHose);
             SetArray(tankHose, "_startPoints", TransferPoint(s.TankPump));
             TransferHoseObjective tee = Add<TransferHoseObjective>(root, Name("Hose · Into Tee"),
                 "Знайди трійник та підключи до нього шланг.", splitter);
-            SetArray(tee, "_hoses", s.Hoses);
+            SetArray(tee, "_hoses", s.TankHose, s.PoolHose);
             SetArray(tee, "_startPoints", TransferPoint(s.TankPump));
             SetArray(tee, "_endSockets", s.SplitterInlet);
             PumpRunningObjective tankOn = Add<PumpRunningObjective>(root, Name("Pump · Start Tank Pump"),
@@ -495,15 +828,32 @@ namespace WaterChaos.EditorTools
             SetArray(tankOn, "_pumps", s.TankPump);
 
             // Stage 9: gasoline instead of water (the tank holds gasoline; the flame streams light by themselves).
-            WaitStep wait = Add<WaitStep>(root, Name("Wait · Gasoline Reaches Teammates"), null);
-            Set(wait, "_seconds", 2.5f);
+            // The player sees the flamethrowers first: the story waits until they are back with the teammates.
+            EnterZoneObjective back = Add<EnterZoneObjective>(root, Name("Zone · Back to Teammates"), "Повернись до напарників", talker);
+            Set(back, "_zone", z.TeammatesView);
             Story(root, Name("Story · Gasoline"), Teammate, "Ти що наробив?! Це ж не вода! У нас у шлангах бензин!");
+
+            // Neutralize with its own pump and long hose: toxic tank → gasoline tank, plus soap.
+            PickUp(root, Name("Pick Up · Pump and Hose (Neutralize)"), "Знайди спосіб нейтралізувати бензин: візьми насос і довгий шланг",
+                s.Inventory, Item(s.NeutralPump), Item(s.NeutralHose));
+            PumpInWaterObjective neutralIn = Add<PumpInWaterObjective>(root, Name("Pump · Into Toxic Tank (Neutralize)"),
+                "Встанови насос у резервуар із токсичною водою", toxicTank);
+            SetArray(neutralIn, "_pumps", Deployments(s.NeutralPump, s.ToxicPump));
+            SetArray(neutralIn, "_bodies", s.ToxicBody);
+            Hint(neutralIn, "Встанови насос у резервуар із токсичною водою.", PlayerControl.Drop, z.ToxicTank);
+            TransferHoseObjective neutralHose = Add<TransferHoseObjective>(root, Name("Hose · Toxic to Gasoline Tank"),
+                "Протягни шланг до резервуара з бензином", underground);
+            SetArray(neutralHose, "_hoses", s.NeutralHose, s.PoolHose);
+            SetArray(neutralHose, "_startPoints", TransferPoint(s.NeutralPump), TransferPoint(s.ToxicPump));
+            SetArray(neutralHose, "_endBodies", s.UndergroundBody);
             NeutralizeObjective neutralize = Add<NeutralizeObjective>(root, Name("Neutralize · Gasoline"),
-                "Знайди спосіб нейтралізувати бензин.", underground);
+                "Нейтралізуй бензин", underground);
             Set(neutralize, "_tank", s.UndergroundBody != null ? s.UndergroundBody.GetComponent<WaterReservoirComponent>() : null);
-            Set(neutralize, "_toxinMarker", toxicTank);
+            Set(neutralize, "_soap", s.Soap);
+            SetArray(neutralize, "_stopPumps", s.NeutralPump, s.ToxicPump);
+            Set(neutralize, "_toxinMarker", neutralPump);
             Set(neutralize, "_soapMarker", soap);
-            Hint(neutralize, "Накачай токсичну воду в резервуар із бензином і кинь туди мило.", null, null);
+            Hint(neutralize, "Увімкни насос, щоб накачати токсичну воду в резервуар із бензином, і кинь туди мило.", null, null);
 
             // Stage 10: the final fire.
             ExtinguishFiresObjective finalFires = Add<ExtinguishFiresObjective>(root, Name("Extinguish · Teammates"),
@@ -618,7 +968,17 @@ namespace WaterChaos.EditorTools
             return false;
         }
 
-        private static Bounds RoomBounds(RoomTemperature room) => room.GetComponent<BoxCollider>().bounds;
+        private static Bounds RendererBounds(Transform root)
+        {
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length == 0)
+                return new Bounds(root.position, Vector3.one * 10f);
+
+            Bounds bounds = renderers[0].bounds;
+            foreach (Renderer part in renderers)
+                bounds.Encapsulate(part.bounds);
+            return bounds;
+        }
 
         private static void Report(string label, Object found)
         {

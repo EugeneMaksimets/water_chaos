@@ -46,6 +46,10 @@ namespace WaterChaos.UI
             bool reached = _hoseConnector.IsLimitReached
                 || (_transferHose != null && _transferHose.IsLimitReached);
 
+            // The label may be shared with other notices (e.g. "Backpack is full!"), so the text is set every time it shows.
+            if (reached && !ReferenceEquals(_message.text, LimitText))
+                _message.text = LimitText;
+
             if (_message.gameObject.activeSelf != reached)
                 _message.gameObject.SetActive(reached);
         }

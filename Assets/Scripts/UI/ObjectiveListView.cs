@@ -13,6 +13,8 @@ namespace WaterChaos.UI
     public sealed class ObjectiveListView : MonoBehaviour
     {
         private const float CheckSize = 30f;
+        private const float TextLeft = 56f;
+        private const float ProgressWidth = 64f;
         private const float BaseHeight = 56f;
         private static readonly Vector2 TopLeft = new Vector2(0f, 1f);
 
@@ -72,18 +74,19 @@ namespace WaterChaos.UI
 
             // Check box: a ring, filled with a green disc and a tick on completion.
             RectTransform box = HudWidgets.CreateRect("Check Box", card, Vector2.zero, new Vector2(CheckSize, CheckSize));
-            box.anchorMin = box.anchorMax = new Vector2(0f, 1f);
-            box.anchoredPosition = new Vector2(30f, -BaseHeight * 0.5f);
+            box.anchorMin = box.anchorMax = new Vector2(0f, 0.5f);
+            box.anchoredPosition = new Vector2(30f, 0f);
             HudWidgets.CreateImage("Ring", box, Vector2.zero, box.sizeDelta, _ring, new Color(1f, 1f, 1f, 0.55f));
             RectTransform check = HudWidgets.CreateRect("Check", box, Vector2.zero, box.sizeDelta);
             HudWidgets.CreateImage("Fill", check, Vector2.zero, box.sizeDelta, _disc, HudWidgets.DoneColor);
             HudWidgets.CreateImage("Tick", check, Vector2.zero, box.sizeDelta * 0.8f, _tick, Color.white);
 
-            Text titleText = CreateLabel("Title", card, new Vector2(56f, -12f), 20, FontStyle.Bold, Color.white);
+            // Title on the left (wraps), progress ("1/2") at the right of the first line; heights are set by the line.
+            Text titleText = CreateLabel("Title", card, new Vector2(TextLeft, 0f), _width - TextLeft - ProgressWidth - 14f,
+                20, TextAnchor.UpperLeft, new Vector2(0f, 1f), Color.white);
             titleText.text = title;
-            Text progress = CreateLabel("Progress", card, new Vector2(56f, -12f), 17, FontStyle.Bold, HudWidgets.AccentColor);
-            // Below the title: placed once the title height is known.
-            progress.rectTransform.anchoredPosition = new Vector2(56f, -12f - Mathf.Max(24f, titleText.preferredHeight));
+            Text progress = CreateLabel("Progress", card, new Vector2(-16f, 0f), ProgressWidth,
+                18, TextAnchor.UpperRight, new Vector2(1f, 1f), HudWidgets.AccentColor);
 
             ObjectiveLine line = new ObjectiveLine(root, card, group, outline, check, titleText, progress, BaseHeight);
             _lines.Add(line);
@@ -117,15 +120,16 @@ namespace WaterChaos.UI
             }
         }
 
-        private Text CreateLabel(string name, Transform parent, Vector2 position, int fontSize, FontStyle style, Color color)
+        private static Text CreateLabel(string name, Transform parent, Vector2 position, float width, int fontSize,
+            TextAnchor alignment, Vector2 corner, Color color)
         {
-            Text text = HudWidgets.CreateText(name, parent, Vector2.zero, new Vector2(_width - 76f, 24f), fontSize, TextAnchor.UpperLeft);
+            Text text = HudWidgets.CreateText(name, parent, Vector2.zero, new Vector2(width, 24f), fontSize, alignment);
             RectTransform rect = text.rectTransform;
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+            rect.anchorMin = rect.anchorMax = rect.pivot = corner;
             rect.anchoredPosition = position;
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Overflow;
-            text.fontStyle = style;
+            text.fontStyle = FontStyle.Bold;
             text.color = color;
             Object.Destroy(text.GetComponent<Shadow>());
             HudWidgets.AddOutline(text);
