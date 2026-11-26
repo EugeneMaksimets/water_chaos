@@ -4,7 +4,7 @@ using WaterChaos.Player;
 
 namespace WaterChaos.UI
 {
-    /// <summary>Shows "Hose length reached!" while the hose holds the player back.</summary>
+    /// <summary>Shows "Hose length reached!" while a hose (the nozzle hose or a carried transfer hose) holds the player back.</summary>
     public sealed class HoseMessageView : MonoBehaviour
     {
         private const string LimitText = "Hose length reached!";
@@ -12,7 +12,10 @@ namespace WaterChaos.UI
         [Header("References")]
         [SerializeField] private PlayerHoseConnector _hoseConnector;
 
-        [Tooltip("Text shown while the hose is at full length; hidden otherwise.")]
+        [Tooltip("Transfer hose side of the player. Empty = taken from the Hose Connector's object.")]
+        [SerializeField] private PlayerTransferHoseInteractor _transferHose;
+
+        [Tooltip("Text shown while a hose is at full length; hidden otherwise.")]
         [SerializeField] private Text _message;
 
         private void Awake()
@@ -24,28 +27,26 @@ namespace WaterChaos.UI
                 return;
             }
 
+            if (_transferHose == null)
+                _transferHose = _hoseConnector.GetComponent<PlayerTransferHoseInteractor>();
+
             _message.text = LimitText;
             _message.gameObject.SetActive(false);
         }
 
-        private void OnEnable()
-        {
-            if (_hoseConnector == null)
-                return;
-
-            _hoseConnector.LimitReachedChanged += OnLimitReachedChanged;
-            OnLimitReachedChanged(_hoseConnector.IsLimitReached);
-        }
-
         private void OnDisable()
         {
-            if (_hoseConnector != null)
-                _hoseConnector.LimitReachedChanged -= OnLimitReachedChanged;
+            if (_message != null)
+                _message.gameObject.SetActive(false);
         }
 
-        private void OnLimitReachedChanged(bool reached)
+        // Polled: the transfer hose has no change event, and two flags per frame cost nothing.
+        private void LateUpdate()
         {
-            if (_message != null)
+            bool reached = _hoseConnector.IsLimitReached
+                || (_transferHose != null && _transferHose.IsLimitReached);
+
+            if (_message.gameObject.activeSelf != reached)
                 _message.gameObject.SetActive(reached);
         }
     }
