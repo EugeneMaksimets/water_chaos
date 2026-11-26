@@ -80,6 +80,9 @@ namespace WaterChaos.Water
         /// <summary>Collider the stream hit; null when <see cref="HasHit"/> is false.</summary>
         public Collider HitCollider { get; private set; }
 
+        /// <summary>Source the stream is fed from; null when disconnected.</summary>
+        public IWaterFlowSource Source => _source;
+
         /// <summary>What the source gives now (flow, pressure, liquid); no flow without a source.</summary>
         public WaterFlowData Flow => _source != null ? _source.Output : default;
 

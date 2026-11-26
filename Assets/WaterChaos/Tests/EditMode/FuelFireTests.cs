@@ -79,44 +79,76 @@ namespace WaterChaos.Tests
             Assert.IsTrue(fire.IsBurning);
         }
 
+        private static readonly object TargetA = new object();
+        private static readonly object TargetB = new object();
+
         [Test]
         public void StreamIgnition_LightsOnlyOnFireWithFlammableFlow()
         {
             StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
 
-            stream.Tick(Step, false, true, false);
+            stream.Tick(Step, false, true, null);
             Assert.IsFalse(stream.IsLit, "water touching fire");
 
-            stream.Tick(Step, true, false, false);
+            stream.Tick(Step, true, false, null);
             Assert.IsFalse(stream.IsLit, "gasoline not touching fire");
 
-            stream.Tick(Step, true, true, false);
+            stream.Tick(Step, true, true, null);
             Assert.IsTrue(stream.IsLit);
+        }
+
+        [Test]
+        public void StreamIgnition_RaisesLitChangedOnceOnIgnitionAndOnceOnReset()
+        {
+            StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
+            int lit = 0;
+            int unlit = 0;
+            stream.LitChanged += value => { if (value) lit++; else unlit++; };
+
+            stream.Tick(Step, true, true, null);
+            stream.Tick(Step, true, true, null);
+            stream.Tick(Step, false, false, null);
+            stream.Tick(Step, false, false, null);
+
+            Assert.AreEqual(1, lit);
+            Assert.AreEqual(1, unlit);
         }
 
         [Test]
         public void StreamIgnition_StaysLitWhileFlowingAndGoesOutWhenFlowStops()
         {
             StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
-            stream.Tick(Step, true, true, false);
+            stream.Tick(Step, true, true, null);
 
-            stream.Tick(Step, true, false, false);
+            stream.Tick(Step, true, false, null);
             Assert.IsTrue(stream.IsLit);
 
-            stream.Tick(Step, false, false, false);
+            stream.Tick(Step, false, false, null);
             Assert.IsFalse(stream.IsLit);
         }
 
         [Test]
-        public void StreamIgnition_RepeatedHits_IgniteAtMostOncePerInterval()
+        public void StreamIgnition_SwitchedOffAndOnAgain_StartsUnlit()
         {
             StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
-            stream.Tick(Step, true, true, false);
+            stream.Tick(Step, true, true, null);
+
+            stream.Tick(Step, false, false, null);
+            stream.Tick(Step, true, false, TargetA);
+
+            Assert.IsFalse(stream.IsLit);
+        }
+
+        [Test]
+        public void StreamIgnition_SameTarget_IgnitesAtMostOncePerInterval()
+        {
+            StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
+            stream.Tick(Step, true, true, null);
 
             int attempts = 0;
             for (int i = 0; i < 100; i++)
             {
-                if (stream.Tick(Step, true, false, true))
+                if (stream.Tick(Step, true, false, TargetA))
                     attempts++;
             }
 
@@ -125,12 +157,51 @@ namespace WaterChaos.Tests
         }
 
         [Test]
+        public void StreamIgnition_NewTarget_IsTriedAtOnce()
+        {
+            StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
+            stream.Tick(Step, true, true, null);
+
+            Assert.IsTrue(stream.Tick(Step, true, false, TargetA));
+            Assert.IsFalse(stream.Tick(Step, true, false, TargetA));
+            Assert.IsTrue(stream.Tick(Step, true, false, TargetB));
+        }
+
+        [Test]
+        public void StreamIgnition_DefaultInterval_Is075Seconds()
+        {
+            Assert.AreEqual(0.75f, StreamIgnitionModel.DefaultInterval, 1e-6f);
+        }
+
+        [Test]
         public void StreamIgnition_UnlitStream_NeverIgnites()
         {
             StreamIgnitionModel stream = new StreamIgnitionModel(Interval);
 
             for (int i = 0; i < 100; i++)
-                Assert.IsFalse(stream.Tick(Step, true, false, true));
+                Assert.IsFalse(stream.Tick(Step, true, false, TargetA));
+        }
+
+        [Test]
+        public void OutdoorFire_WithoutReigniteDelay_StaysOut()
+        {
+            FireModel fire = new FireModel(CoolingPerLiter, Threshold, 0f);
+            fire.ApplyWater(1000f);
+
+            fire.Tick(1000f);
+
+            Assert.IsFalse(fire.IsBurning);
+        }
+
+        [Test]
+        public void ExtinguishedFire_CanBeRelitAtOnce_WithoutWaiting()
+        {
+            FireModel fire = new FireModel(CoolingPerLiter, Threshold, 0f);
+            fire.ApplyWater(1000f);
+
+            fire.Reignite();
+
+            Assert.IsTrue(fire.IsBurning);
         }
 
         [Test]

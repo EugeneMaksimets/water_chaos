@@ -30,6 +30,7 @@ namespace WaterChaos.Player
         private WaterConnectionPoint _connected;
         private WaterConnectionPoint _target;
         private Action _interactTarget;
+        private Action<WaterConnectionPoint> _onAttachmentLost;
 
         /// <summary>The held hose is at full length and holds the player back; false without a hose.</summary>
         public event Action<bool> LimitReachedChanged;
@@ -54,6 +55,7 @@ namespace WaterChaos.Player
         private void Awake()
         {
             _interactTarget = InteractTarget;
+            _onAttachmentLost = OnAttachmentLost;
 
             // No nozzle in the hands yet.
             enabled = false;
@@ -90,9 +92,10 @@ namespace WaterChaos.Player
 
             // The stream and hose are still attached to the kept point; only the player's side is restored.
             _connected = kept;
+            _connected.AttachmentLost += _onAttachmentLost;
 
             // The source left the world while the nozzle lay there (the hose may already have let go): it comes off fully now.
-            if (!kept.isActiveAndEnabled || (_hose != null && !_hose.IsConnected))
+            if (!kept.isActiveAndEnabled || !kept.IsAttached || (_hose != null && !_hose.IsConnected))
                 Disconnect();
         }
 
@@ -103,8 +106,12 @@ namespace WaterChaos.Player
         public WaterConnectionPoint ReleaseNozzle()
         {
             WaterConnectionPoint kept = _connected;
-            if (kept != null && kept.Control != null)
-                kept.Control.Stop();
+            if (kept != null)
+            {
+                kept.AttachmentLost -= _onAttachmentLost;
+                if (kept.Control != null)
+                    kept.Control.Stop();
+            }
 
             _connected = null;
             DetachNozzle();
@@ -138,10 +145,6 @@ namespace WaterChaos.Player
 
         private void Update()
         {
-            // The attached source left the world (e.g. the pump was picked up): the hose comes off.
-            if (_connected != null && !_connected.isActiveAndEnabled)
-                Disconnect();
-
             _target = FindTarget();
         }
 
@@ -183,6 +186,7 @@ namespace WaterChaos.Player
 
             _connected = point;
             _connected.Attach();
+            _connected.AttachmentLost += _onAttachmentLost;
             _stream.SetSource(point.Source);
 
             if (_hose != null)
@@ -191,6 +195,7 @@ namespace WaterChaos.Player
 
         private void Disconnect()
         {
+            _connected.AttachmentLost -= _onAttachmentLost;
             if (_connected.Control != null)
                 _connected.Control.Stop();
 
@@ -200,6 +205,13 @@ namespace WaterChaos.Player
 
             if (_hose != null)
                 _hose.Disconnect();
+        }
+
+        /// <summary>The attached source left the world (e.g. the pump was picked up): the hose comes off at once.</summary>
+        private void OnAttachmentLost(WaterConnectionPoint point)
+        {
+            if (point == _connected)
+                Disconnect();
         }
 
         private void OnLimitReachedChanged(bool reached)

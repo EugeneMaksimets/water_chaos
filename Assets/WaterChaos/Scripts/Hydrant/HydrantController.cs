@@ -39,6 +39,7 @@ namespace WaterChaos.Hydrant
         private HydrantModel _model;
 
         public bool IsOpen => _model.IsOpen;
+        public bool IsActive => _model.IsOpen && _model.TargetPressure > 0f;
         public float MaxPressure => _model.MaxPressure;
         public float TargetPressure => _model.TargetPressure;
         public float OpenRatio => _model.OpenRatio;

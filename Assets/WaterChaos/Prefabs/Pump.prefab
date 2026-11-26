@@ -250,7 +250,8 @@ MonoBehaviour:
   _heldPosition: {x: 0, y: 0, z: 0}
   _heldRotation: {x: 0, y: 0, z: 0}
   _heldScale: 1
-  _disableWhileHeld: []
+  _disableWhileHeld:
+  - {fileID: 7206626462732310903}
   _keepUpright: 1
 --- !u!114 &7107269284256154071
 MonoBehaviour:

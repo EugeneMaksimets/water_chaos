@@ -25,10 +25,12 @@ namespace WaterChaos.Tools
 
         // Connection kept while the nozzle lies in the world; handed back to the connector on the next equip.
         private WaterConnectionPoint _keptConnection;
+        private System.Action<WaterConnectionPoint> _onKeptLost;
 
         private void Awake()
         {
             _item = GetComponentInParent<PickableItem>();
+            _onKeptLost = OnKeptConnectionLost;
 
             if (_stream == null)
                 Debug.LogError($"{name}: NozzleController needs a Stream reference.", this);
@@ -38,6 +40,7 @@ namespace WaterChaos.Tools
         {
             if (_keptConnection != null)
                 _keptConnection.Detach();
+            SetKeptConnection(null);
         }
 
         public void Equip(PlayerEquipment owner)
@@ -51,8 +54,9 @@ namespace WaterChaos.Tools
                 return;
             }
 
-            _connector.AttachNozzle(_stream, _hose, _keptConnection);
-            _keptConnection = null;
+            WaterConnectionPoint kept = _keptConnection;
+            SetKeptConnection(null);
+            _connector.AttachNozzle(_stream, _hose, kept);
         }
 
         public void Unequip()
@@ -63,11 +67,32 @@ namespace WaterChaos.Tools
             // Thrown or dropped: already released into the world before unequipping.
             bool putDown = _item != null && !_item.IsHeld;
             if (putDown)
-                _keptConnection = _connector.ReleaseNozzle();
+                SetKeptConnection(_connector.ReleaseNozzle());
             else
                 _connector.DetachNozzle();
 
             _connector = null;
+        }
+
+        private void SetKeptConnection(WaterConnectionPoint point)
+        {
+            if (_keptConnection != null)
+                _keptConnection.AttachmentLost -= _onKeptLost;
+
+            _keptConnection = point;
+
+            if (_keptConnection != null)
+                _keptConnection.AttachmentLost += _onKeptLost;
+        }
+
+        /// <summary>The source left the world while the nozzle lay there: the stream and hose let go, nothing stays attached.</summary>
+        private void OnKeptConnectionLost(WaterConnectionPoint point)
+        {
+            SetKeptConnection(null);
+            if (_stream != null)
+                _stream.SetSource(null);
+            if (_hose != null)
+                _hose.Disconnect();
         }
     }
 }

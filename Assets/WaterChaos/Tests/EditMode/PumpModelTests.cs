@@ -413,5 +413,25 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(expected, pump.SupplyRatio);
         }
+
+        [Test]
+        public void IsActive_OnlyWhileOnWithPressureAboveZero()
+        {
+            PumpModel pump = new PumpModel(100_000f, 10f, 50_000f);
+            pump.SetSource(new WaterReservoir(100f, 100f));
+            pump.SetOutletConnected(true);
+            pump.SetTargetPressure(50_000f);
+            Assert.IsFalse(pump.IsActive, "off");
+
+            pump.Start();
+            Assert.IsTrue(pump.IsActive);
+
+            pump.SetTargetPressure(0f);
+            Assert.IsFalse(pump.IsActive, "pressure set to zero");
+
+            pump.SetTargetPressure(50_000f);
+            pump.Stop();
+            Assert.IsFalse(pump.IsActive, "switched off");
+        }
     }
 }

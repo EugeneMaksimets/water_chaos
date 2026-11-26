@@ -40,7 +40,6 @@ namespace WaterChaos.UI
 
         [Header("Water Bar")]
         [SerializeField] private Color _waterColor = new Color(0.25f, 0.6f, 1f);
-        [SerializeField] private Color _gasolineColor = new Color(1f, 0.7f, 0.15f);
         [SerializeField] private Color _lowWaterColor = new Color(0.95f, 0.3f, 0.2f);
 
         [Tooltip("Fill ratio (0..1) below which the water bar turns to the low color.")]
@@ -53,6 +52,7 @@ namespace WaterChaos.UI
         private Image _waterFill;
         private Text _waterLabel;
         private string _shownWaterLabel;
+        private LiquidType _shownLiquid;
 
         private PlayerSourceControl _sourceControl;
         private KeyPrompt _pressureHint;
@@ -118,14 +118,16 @@ namespace WaterChaos.UI
             LiquidType liquid = connected != null ? connected.Source.Output.Liquid : LiquidType.Water;
             _waterFill.fillAmount = water;
             _waterFill.color = water < _lowWaterRatio ? _lowWaterColor
-                : liquid == LiquidType.Gasoline ? _gasolineColor : _waterColor;
+                : liquid == LiquidType.Water ? _waterColor : LiquidLabelColors.Get(liquid);
 
-            // The liquid is shown by color only; the label just says when the tank is empty. Rebuilt only when it changes.
+            // The liquid is shown by the label color only (LiquidLabelColors); the text just says when the tank is empty.
             string label = WaterReservoirInfoText.BarLabel(connected != null && water <= 0f);
-            if (label != _shownWaterLabel)
+            if (label != _shownWaterLabel || liquid != _shownLiquid || _shownWaterLabel == null)
             {
                 _shownWaterLabel = label;
+                _shownLiquid = liquid;
                 _waterLabel.text = label;
+                _waterLabel.color = LiquidLabelColors.Get(liquid);
             }
         }
 

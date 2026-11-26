@@ -5,6 +5,7 @@ namespace WaterChaos.Water
     [DefaultExecutionOrder(100)] // after WaterStream.LateUpdate, so the splash uses this frame's hit
     /// <summary>
     /// Plays a splash where the water stream hits a surface. Display only: all data comes from WaterStream.
+    /// Disabled, it shows nothing (e.g. while the stream burns as a flamethrower).
     /// </summary>
     public sealed class WaterStreamParticleView : MonoBehaviour
     {
@@ -25,6 +26,20 @@ namespace WaterChaos.Water
         private ParticleSystem _startBurst;
 
         private bool _wasFlowing;
+
+        private void OnDisable()
+        {
+            Hide(_nozzleSpray);
+            Hide(_startBurst);
+            Hide(_splashParticles);
+            _wasFlowing = false;
+        }
+
+        private static void Hide(ParticleSystem particles)
+        {
+            if (particles != null)
+                particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
 
         private void LateUpdate()
         {

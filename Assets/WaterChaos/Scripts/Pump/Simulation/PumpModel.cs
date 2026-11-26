@@ -30,6 +30,9 @@ namespace WaterChaos.Pump
         public event Action<PumpState> StateChanged;
 
         public bool IsTurnOn { get; private set; }
+
+        /// <summary>Switched on with a target pressure above zero.</summary>
+        public bool IsActive => IsTurnOn && TargetPressure > 0f;
         /// <summary>
         /// Pressure the pump aims for while running, in pascals (Pa).
         /// </summary>

@@ -5,6 +5,7 @@ namespace WaterChaos.Water
     [DefaultExecutionOrder(100)] // after WaterStream.LateUpdate, so the tube uses this frame's arc
     /// <summary>
     /// Draws the water stream as a procedural tube mesh along the arc. Display only: all data comes from WaterStream.
+    /// Disabled, it shows nothing (e.g. while the stream burns as a flamethrower).
     /// </summary>
     [RequireComponent(typeof(MeshFilter))]
     public sealed class WaterStreamTubeView : MonoBehaviour
@@ -58,6 +59,18 @@ namespace WaterChaos.Water
             _mesh.MarkDynamic();
             GetComponent<MeshFilter>().sharedMesh = _mesh;
             GetComponent<Renderer>().sortingOrder = _sortingOrder;
+        }
+
+        private void OnEnable()
+        {
+            GetComponent<Renderer>().enabled = true;
+        }
+
+        private void OnDisable()
+        {
+            GetComponent<Renderer>().enabled = false;
+            if (_mesh != null)
+                _mesh.Clear();
         }
 
         private void OnDestroy()

@@ -13,5 +13,8 @@ namespace WaterChaos.Water
 
         /// <summary>Turns the source off, e.g. when the hose is detached.</summary>
         void Stop();
+
+        /// <summary>Switched on with a target pressure above zero: the player wants it to deliver.</summary>
+        bool IsActive { get; }
     }
 }

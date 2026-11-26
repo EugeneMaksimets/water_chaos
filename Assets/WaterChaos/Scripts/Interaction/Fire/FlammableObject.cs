@@ -24,6 +24,9 @@ namespace WaterChaos.Interaction
         /// <summary>False while a fire is on its way or already here (burning or waiting to reignite).</summary>
         public bool CanIgnite => isActiveAndEnabled && !_isIgniting && _fire == null;
 
+        /// <summary>This object's fire went out and waits (e.g. for its room to re-light it); it can be lit again at once.</summary>
+        public bool CanRekindle => isActiveAndEnabled && _fire != null && !_fire.IsBurning;
+
         public Vector3 IgnitionPosition => _ignitionPoint != null ? _ignitionPoint.position : GetTopCenter();
 
         private void Awake()
@@ -54,6 +57,19 @@ namespace WaterChaos.Interaction
                 return false;
 
             StartCoroutine(Ignite(settings, firePosition));
+            return true;
+        }
+
+        /// <summary>
+        /// Lights this object's extinguished fire again at once (e.g. hit by a flamethrower), without waiting for
+        /// its room's temperature. Returns false if there is no extinguished fire here.
+        /// </summary>
+        public bool TryRekindle()
+        {
+            if (!CanRekindle)
+                return false;
+
+            _fire.Reignite();
             return true;
         }
 

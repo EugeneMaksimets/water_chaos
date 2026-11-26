@@ -18,8 +18,12 @@ namespace WaterChaos.Interaction
         [SerializeField, Range(0f, 1f)]
         private float _extinguishThreshold = 0.05f;
 
-        [Tooltip("Seconds (s) after which an extinguished fire burns again; 0 = never. " +
-                 "Not used while the fire belongs to an area (room) that controls re-ignition.")]
+        [Tooltip("Outdoors (no room): an extinguished fire lights again by itself after Reignite Delay. " +
+                 "Off = once out, it stays out. Fires in a room are always re-lit by the room (temperature), not by this.")]
+        [SerializeField]
+        private bool _reigniteOutdoors;
+
+        [Tooltip("Seconds (s) after which an extinguished outdoor fire burns again, if Reignite Outdoors is on.")]
         [SerializeField, Min(0f)]
         private float _reigniteDelay = 5f;
 
@@ -41,7 +45,8 @@ namespace WaterChaos.Interaction
 
         private void Awake()
         {
-            _model = new FireModel(_coolingPerLiter, _extinguishThreshold, _reigniteDelay);
+            // The delay only drives outdoor re-ignition (Tick below); a room re-lights its fires itself.
+            _model = new FireModel(_coolingPerLiter, _extinguishThreshold, _reigniteOutdoors ? _reigniteDelay : 0f);
             _wasBurning = _model.IsBurning;
             _colliders = GetComponentsInChildren<Collider>();
         }

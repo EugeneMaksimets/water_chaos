@@ -52,6 +52,7 @@ namespace WaterChaos.Pump
         public event Action<PumpState> StateChanged;
 
         public bool isTurnOn => _model.IsTurnOn;
+        public bool IsActive => _model.IsActive;
         public float MaxPressure => _model.MaxPressure;
 
         /// <summary>Flow at max pressure, in liters per second (L/s).</summary>

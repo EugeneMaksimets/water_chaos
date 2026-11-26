@@ -28,6 +28,7 @@ namespace WaterChaos.FireTruck
         /// <summary>The truck's water tank; null before the tank is created.</summary>
         public WaterReservoir Reservoir => _tank != null ? _tank.Reservoir : null;
         public bool IsOpen => Model.IsOpen;
+        public bool IsActive => Model.IsActive;
         public WaterFlowData Output => Model.Output;
 
         // Created on first use: the tank builds its reservoir in its own Awake.

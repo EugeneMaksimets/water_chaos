@@ -27,6 +27,9 @@ namespace WaterChaos.FireTruck
 
         public bool IsOpen => _valve.IsOpen;
 
+        /// <summary>Valve open with a target pressure above zero.</summary>
+        public bool IsActive => _valve.IsOpen && _valve.TargetPressure > 0f;
+
         /// <summary>Water delivered by the last <see cref="Tick"/>: flow in L/s, pressure in Pa.</summary>
         public WaterFlowData Output { get; private set; }
 
