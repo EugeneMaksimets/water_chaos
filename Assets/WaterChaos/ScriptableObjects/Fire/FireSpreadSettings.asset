@@ -21,7 +21,7 @@ MonoBehaviour:
   _surfaceSamples: 8
   _spawnHeight: 0.5
   _exclusionRadius: 1
-  _maxActiveFires: 25
+  _maxActiveFires: 20
   _targetMask:
     serializedVersion: 2
     m_Bits: 4294966891

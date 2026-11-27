@@ -112,6 +112,9 @@ namespace WaterChaos.Water
         /// </summary>
         public bool IsSnow { get; private set; }
 
+        /// <summary>Where the stream starts; its forward axis is the aim direction.</summary>
+        public Transform Nozzle => _nozzle;
+
         /// <summary>Source the stream is fed from; null when disconnected.</summary>
         public IWaterFlowSource Source => _source;
 

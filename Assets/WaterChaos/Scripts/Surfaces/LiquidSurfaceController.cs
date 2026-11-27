@@ -16,6 +16,11 @@ namespace WaterChaos.Surfaces
     public sealed class LiquidSurfaceController : MonoBehaviour, IFireIgnitionBlocker
     {
         private const int MaxFloorHits = 8;
+        // Directions and step used to measure the free floor around a new puddle.
+        private const int SpaceDirections = 8;
+        private const float SpaceStep = 0.25f;
+        // Floor this much higher or lower than the puddle counts as an edge (a step, a curb, the end of a table), in meters (m).
+        private const float EdgeHeight = 0.06f;
         // The floor ray starts this far off the hit surface, so it never starts inside it, in meters (m).
         private const float RayLift = 0.05f;
 
@@ -112,6 +117,15 @@ namespace WaterChaos.Surfaces
             _tickTimer = 0f;
         }
 
+        /// <summary>
+        /// Pours liquid that lands near <paramref name="point"/> (e.g. splashes from a fire): it joins the puddle on the
+        /// floor below or starts one. Returns that puddle, or null if there is no floor below.
+        /// </summary>
+        public PuddleModel AddLiquidAt(Vector3 point, LiquidType liquid, float liters)
+        {
+            return _puddles != null ? AddLiquidBelow(point, Vector3.up, liquid, liters) : null;
+        }
+
         public bool BlocksIgnitionAt(Vector3 firePosition)
         {
             return _drifts != null && _drifts.BlocksIgnitionAt(firePosition);
@@ -127,13 +141,106 @@ namespace WaterChaos.Surfaces
             if (surface == null || surface is CharacterController || surface.attachedRigidbody != null)
                 return;
 
-            if (!TryFindFloor(impact.ContactPoint, impact.Normal, out Vector3 floor))
-                return;
-
             if (impact.IsSnow)
-                _drifts.AddSnow(floor, impact.Volume);
-            else
-                _puddles.AddLiquid(floor, impact.Liquid, impact.Volume);
+            {
+                if (TryFindFloor(impact.ContactPoint, impact.Normal, out Vector3 floor))
+                    _drifts.AddSnow(floor, impact.Volume);
+                return;
+            }
+
+            AddLiquidBelow(impact.ContactPoint, impact.Normal, impact.Liquid, impact.Volume);
+        }
+
+        /// <summary>
+        /// Liquid lands on the first surface below the point with room for a puddle; a surface too small for one
+        /// (a table, a shelf, the back of a sofa) lets it run off onto the next surface below.
+        /// </summary>
+        private PuddleModel AddLiquidBelow(Vector3 point, Vector3 normal, LiquidType liquid, float liters)
+        {
+            int count = CastDown(point, normal);
+            SortByDistance(count);
+            for (int i = 0; i < count; i++)
+            {
+                RaycastHit hit = s_floorHits[i];
+                // Distance 0: the ray started inside the collider, so the hit point is not valid.
+                if (hit.distance <= 0f || !IsStaticSurface(hit.collider) || hit.normal.y < _settings.FloorMinUp)
+                    continue;
+
+                // Joining a puddle needs no measuring: it already has its room.
+                if (_puddles.FindNearby(hit.point) != null)
+                    return _puddles.AddLiquid(hit.point, liquid, liters);
+
+                float space = MeasureSpace(hit.point);
+                PuddleModel puddle = _puddles.AddLiquid(hit.point, liquid, liters, space);
+                if (puddle != null)
+                    return puddle;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Free floor around a point, in meters (m): how far the floor goes on at the same height in every direction
+        /// before an edge or a wall. Stops early once it is too small for a puddle.
+        /// </summary>
+        private float MeasureSpace(Vector3 point)
+        {
+            PuddleConfig config = _settings.ToPuddleConfig();
+            int mask = _settings.SurfaceMask;
+            float space = config.MaxRadius;
+            Vector3 lifted = point + Vector3.up * 0.1f;
+
+            for (int i = 0; i < SpaceDirections && space >= config.MinRadius; i++)
+            {
+                float angle = i * Mathf.PI * 2f / SpaceDirections;
+                var direction = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+
+                if (Physics.Raycast(lifted, direction, out RaycastHit wall, space, mask, QueryTriggerInteraction.Ignore))
+                    space = Mathf.Min(space, wall.distance);
+
+                for (float r = SpaceStep; r <= space; r += SpaceStep)
+                {
+                    Vector3 probe = point + direction * r + Vector3.up * 0.25f;
+                    bool floor = Physics.Raycast(probe, Vector3.down, out RaycastHit below, 0.5f, mask, QueryTriggerInteraction.Ignore)
+                        && Mathf.Abs(below.point.y - point.y) <= EdgeHeight;
+                    if (!floor)
+                    {
+                        space = r - SpaceStep;
+                        break;
+                    }
+                }
+            }
+
+            return space;
+        }
+
+        private int CastDown(Vector3 point, Vector3 normal)
+        {
+            Vector3 from = point + normal * RayLift + Vector3.up * RayLift;
+            return Physics.RaycastNonAlloc(from, Vector3.down, s_floorHits, _settings.MaxDropToFloor + RayLift * 2f,
+                _settings.SurfaceMask, QueryTriggerInteraction.Ignore);
+        }
+
+        private static void SortByDistance(int count)
+        {
+            for (int i = 1; i < count; i++)
+            {
+                RaycastHit hit = s_floorHits[i];
+                int j = i - 1;
+                while (j >= 0 && s_floorHits[j].distance > hit.distance)
+                {
+                    s_floorHits[j + 1] = s_floorHits[j];
+                    j--;
+                }
+
+                s_floorHits[j + 1] = hit;
+            }
+        }
+
+        /// <summary>Moving bodies (barrels, items) and characters are not floors.</summary>
+        private static bool IsStaticSurface(Collider collider)
+        {
+            return collider != null && collider.attachedRigidbody == null && !(collider is CharacterController);
         }
 
         /// <summary>A lit gasoline stream is a flame: it burns, it leaves no puddle.</summary>
@@ -195,7 +302,7 @@ namespace WaterChaos.Surfaces
             {
                 _puddleViews.Remove(puddle);
                 if (view != null)
-                    Destroy(view.gameObject);
+                    view.Sink();
             }
         }
 

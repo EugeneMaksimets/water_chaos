@@ -14,27 +14,39 @@ namespace WaterChaos.Surfaces
     public sealed class PuddleModel : ISurfacePatch
     {
         private readonly PuddleConfig _config;
+        private readonly float _maxRadius;
+        private readonly float _maxVolume;
         // Seconds (s) the puddle has been cold (liquid) or warm (frozen) enough to change state.
         private float _stateTimer;
 
-        public PuddleModel(Vector3 center, LiquidType liquid, PuddleConfig config)
+        /// <param name="maxRadius">
+        /// Space around the center, in meters (m): the puddle never grows past it (the edge of a surface, a wall).
+        /// Never below the config's minimum radius nor above its maximum.
+        /// </param>
+        public PuddleModel(Vector3 center, LiquidType liquid, PuddleConfig config, float maxRadius = float.PositiveInfinity)
         {
             Center = center;
             Liquid = liquid;
             _config = config;
+            _maxRadius = Mathf.Clamp(float.IsNaN(maxRadius) ? config.MaxRadius : maxRadius, config.MinRadius, config.MaxRadius);
+            _maxVolume = Mathf.PI * _maxRadius * _maxRadius / config.AreaPerLiter;
             Radius = config.MinRadius;
         }
 
         public Vector3 Center { get; }
         public float Radius { get; private set; }
         public LiquidType Liquid { get; private set; }
-        /// <summary>Liquid in the puddle, in liters (L); never above <see cref="PuddleConfig.MaxVolume"/>.</summary>
+        /// <summary>Liquid in the puddle, in liters (L); never more than fits its largest size.</summary>
         public float Volume { get; private set; }
         /// <summary>Water in the puddle froze: the surface is slippery ice.</summary>
         public bool IsFrozen { get; private set; }
         /// <summary>Grip on this puddle compared to normal ground (0..1): low on ice, normal otherwise.</summary>
         public float Friction => IsFrozen ? _config.IceFriction : 1f;
-        public bool IsFull => Volume >= _config.MaxVolume;
+        public bool IsFull => Volume >= _maxVolume;
+        /// <summary>Seconds (s) since the puddle appeared.</summary>
+        public float Age { get; private set; }
+        /// <summary>The puddle has lasted its lifetime (see <see cref="PuddleConfig.Lifetime"/>).</summary>
+        public bool IsDriedUp => _config.Lifetime > 0f && Age >= _config.Lifetime;
 
         /// <summary>Raised when size, liquid or ice state changes.</summary>
         public event Action<PuddleModel> Changed;
@@ -58,11 +70,11 @@ namespace WaterChaos.Surfaces
                     SetFrozen(false);
             }
 
-            float taken = Math.Min(liters, _config.MaxVolume - Volume);
+            float taken = Math.Min(liters, _maxVolume - Volume);
             if (taken > 0f)
             {
                 Volume += taken;
-                float radius = Mathf.Clamp(Mathf.Sqrt(Volume * _config.AreaPerLiter / Mathf.PI), _config.MinRadius, _config.MaxRadius);
+                float radius = Mathf.Clamp(Mathf.Sqrt(Volume * _config.AreaPerLiter / Mathf.PI), _config.MinRadius, _maxRadius);
                 if (!Mathf.Approximately(radius, Radius))
                 {
                     Radius = radius;
@@ -74,6 +86,13 @@ namespace WaterChaos.Surfaces
                 Changed?.Invoke(this);
 
             return Math.Max(0f, taken);
+        }
+
+        /// <summary>Ages the puddle by <paramref name="deltaTime"/> seconds (s).</summary>
+        public void Advance(float deltaTime)
+        {
+            if (deltaTime > 0f)
+                Age += deltaTime;
         }
 
         /// <summary>

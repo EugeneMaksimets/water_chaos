@@ -7,12 +7,14 @@ using WaterChaos.Water;
 namespace WaterChaos.Mission
 {
     /// <summary>
-    /// Neutralize the gasoline in a tank with toxic liquid and soap together.
-    /// Toxin counts once the gasoline has been neutralized at least once (gasoline + toxic turn into water,
-    /// see <see cref="LiquidTypeExtensions.MixWith"/>); pumping on would turn the water toxic, so it is latched.
+    /// Get rid of the gasoline in a tank with toxic liquid and soap.
+    /// Toxin counts once the gasoline is gone (toxic liquid wins over gasoline, see <see cref="LiquidTypeExtensions.MixWith"/>);
+    /// it is latched.
     /// Soap counts once the bar lies in the tank or has dissolved there.
     /// When both are done the listed pumps stop and the tank holds soapy water: the teammates' streams follow it,
     /// so the flamethrowers go out by themselves.
+    /// Toxin and soap can also be two separate steps (<c>Need Toxin</c> / <c>Need Soap</c>): the toxin step stops the
+    /// pumps and leaves plain water; the soap step turns it into soapy water.
     /// </summary>
     public sealed class NeutralizeObjective : ObjectiveStep
     {
@@ -26,6 +28,13 @@ namespace WaterChaos.Mission
         [Tooltip("Pumps stopped when the gasoline is neutralized (the one pumping toxic liquid in).")]
         [SerializeField] private PumpController[] _stopPumps = new PumpController[0];
 
+        [Header("What Counts")]
+        [Tooltip("The toxin has to neutralize the gasoline in this step.")]
+        [SerializeField] private bool _needToxin = true;
+
+        [Tooltip("The soap has to go into the tank in this step.")]
+        [SerializeField] private bool _needSoap = true;
+
         [Header("Markers")]
         [Tooltip("Shown until the toxin is in (e.g. on the neutralizing pump).")]
         [SerializeField] private MissionMarker _toxinMarker;
@@ -37,12 +46,13 @@ namespace WaterChaos.Mission
         private bool _toxinDone;
         private bool _soapDone;
 
-        protected override string Progress => $"{(_toxinDone ? 1 : 0) + (_soapDone ? 1 : 0)}/2";
+        protected override string Progress =>
+            _needToxin && _needSoap ? $"{(_toxinDone ? 1 : 0) + (_soapDone ? 1 : 0)}/2" : null;
 
         protected override void OnBegin()
         {
-            if (_tank == null || _soap == null)
-                Debug.LogError($"{name}: NeutralizeObjective needs Tank and Soap references.", this);
+            if (_tank == null || (_needSoap && _soap == null))
+                Debug.LogError($"{name}: NeutralizeObjective needs Tank (and Soap, if it needs soap) references.", this);
 
             _body = _tank != null ? _tank.GetComponent<WaterBody>() : null;
             base.OnBegin();
@@ -54,11 +64,11 @@ namespace WaterChaos.Mission
             if (tank == null)
                 return false;
 
-            _toxinDone |= !tank.IsEmpty && !tank.Liquid.IsFlammable();
-            _soapDone |= IsSoapInTank(tank);
+            _toxinDone |= !_needToxin || (!tank.IsEmpty && !tank.Liquid.IsFlammable());
+            _soapDone |= !_needSoap || IsSoapInTank(tank);
 
-            SetMarkerShown(_toxinMarker, !_toxinDone);
-            SetMarkerShown(_soapMarker, !_soapDone);
+            SetMarkerShown(_toxinMarker, _needToxin && !_toxinDone);
+            SetMarkerShown(_soapMarker, _needSoap && !_soapDone);
             return _toxinDone && _soapDone;
         }
 
@@ -73,6 +83,10 @@ namespace WaterChaos.Mission
                 if (pump != null)
                     pump.Stop();
             }
+
+            // A toxin-only step leaves the toxic liquid as it is; the soap comes in a later step.
+            if (!_needSoap)
+                return;
 
             // Toxin and soap together leave soapy water, whatever was pumped in after the gasoline was gone;
             // from now on nothing pumped in can spoil it (see WaterReservoir.Add).

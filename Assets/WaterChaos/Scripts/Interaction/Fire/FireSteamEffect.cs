@@ -4,7 +4,7 @@ using WaterChaos.Water;
 namespace WaterChaos.Interaction
 {
     /// <summary>
-    /// Cartoon steam where water (plain, soapy or toxic) meets a burning fire: puffs at the contact point
+    /// Cartoon steam where water (plain or soapy) meets a burning fire: puffs at the contact point
     /// while the stream keeps hitting, for a moment more as the fire goes out. Display only.
     /// Sits next to the fire's collider, like every impact receiver.
     /// </summary>

@@ -1,4 +1,5 @@
 using UnityEngine;
+using WaterChaos.Common;
 
 namespace WaterChaos.Soap
 {
@@ -75,7 +76,6 @@ namespace WaterChaos.Soap
         private SoapBubbleModel _model;
         private SoapBubbleView _bubble;
 
-        private bool[] _wasEnabled = new bool[0];
         private bool _savedKinematic;
         private bool _savedGravity;
         private bool _isSuspended;
@@ -219,16 +219,9 @@ namespace WaterChaos.Soap
             _isSuspended = true;
             _blockedAbove = false;
 
-            _wasEnabled = new bool[_suspendWhileCarried.Length];
-            for (int i = 0; i < _suspendWhileCarried.Length; i++)
-            {
-                Behaviour part = _suspendWhileCarried[i];
-                if (part == null)
-                    continue;
-
-                _wasEnabled[i] = part.enabled;
-                part.enabled = false;
-            }
+            // Locks, not plain switching: a knockdown or a pause may hold the same parts at the same time.
+            foreach (Behaviour part in _suspendWhileCarried)
+                BehaviourLocks.Lock(part, this);
 
             _body = GetComponent<Rigidbody>();
             if (_body != null)
@@ -253,11 +246,8 @@ namespace WaterChaos.Soap
 
             _isSuspended = false;
 
-            for (int i = 0; i < _suspendWhileCarried.Length && i < _wasEnabled.Length; i++)
-            {
-                if (_suspendWhileCarried[i] != null)
-                    _suspendWhileCarried[i].enabled = _wasEnabled[i];
-            }
+            foreach (Behaviour part in _suspendWhileCarried)
+                BehaviourLocks.Unlock(part, this);
 
             if (_body != null)
             {

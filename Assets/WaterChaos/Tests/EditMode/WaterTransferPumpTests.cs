@@ -86,26 +86,26 @@ namespace WaterChaos.Tests
 
         [TestCase(LiquidType.Toxic, LiquidType.Gasoline)]
         [TestCase(LiquidType.Gasoline, LiquidType.Toxic)]
-        public void GasolineAndToxicMeeting_TurnTheWholeTankIntoWater(LiquidType pumped, LiquidType stored)
+        public void GasolineAndToxicMeeting_TurnTheWholeTankToxic(LiquidType pumped, LiquidType stored)
         {
             Rig rig = CreateRig(500f, new WaterReservoir(1000f, 300f, 0f, stored), pumped);
 
             rig.Tick();
 
-            Assert.AreEqual(LiquidType.Water, rig.Destination.Liquid);
+            Assert.AreEqual(LiquidType.Toxic, rig.Destination.Liquid);
             Assert.AreEqual(800f, rig.Source.Volume + rig.Destination.Volume, Tolerance);
         }
 
         [TestCase(LiquidType.Toxic, LiquidType.Gasoline)]
         [TestCase(LiquidType.Gasoline, LiquidType.Toxic)]
-        public void PumpingOnAfterNeutralizing_SpoilsTheWaterWithThePumpedLiquid(LiquidType pumped, LiquidType stored)
+        public void PumpingOn_KeepsTheTankToxic(LiquidType pumped, LiquidType stored)
         {
             Rig rig = CreateRig(500f, new WaterReservoir(1000f, 300f, 0f, stored), pumped);
             rig.Tick();
 
             rig.Tick();
 
-            Assert.AreEqual(pumped, rig.Destination.Liquid);
+            Assert.AreEqual(LiquidType.Toxic, rig.Destination.Liquid);
         }
 
         [Test]

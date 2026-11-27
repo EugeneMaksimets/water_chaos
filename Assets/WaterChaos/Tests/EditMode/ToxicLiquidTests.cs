@@ -11,7 +11,7 @@ namespace WaterChaos.Tests
 {
     /// <summary>
     /// Toxic liquid is a real liquid: stored, pumped and mixed like the others, never turned into water;
-    /// it corrodes but puts fire out far worse than water and never feeds it.
+    /// it corrodes, never puts fire out (it reacts with it, see ToxicReactionTests) and never feeds it.
     /// Splitter, hose and nozzle propagation are covered in <see cref="HoseSplitterTests"/>.
     /// </summary>
     public class ToxicLiquidTests
@@ -44,12 +44,15 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void ExtinguishingPower_WaterFull_ToxicWeak_GasolineNone()
+        public void ExtinguishingPower_WaterFull_ToxicAndGasolineNone_ToxicReacts()
         {
             Assert.AreEqual(1f, LiquidType.Water.ExtinguishingPower());
-            Assert.AreEqual(0.15f, LiquidType.Toxic.ExtinguishingPower(), Tolerance);
+            Assert.AreEqual(0f, LiquidType.Toxic.ExtinguishingPower());
             Assert.AreEqual(0f, LiquidType.Gasoline.ExtinguishingPower());
-            Assert.IsTrue(LiquidType.Toxic.Extinguishes(), "toxic liquid still puts fire out, just slowly");
+            Assert.IsFalse(LiquidType.Toxic.Extinguishes(), "toxic liquid reacts with fire instead of putting it out");
+            Assert.IsTrue(LiquidType.Toxic.ReactsWithFire());
+            Assert.IsFalse(LiquidType.Water.ReactsWithFire());
+            Assert.IsFalse(LiquidType.Gasoline.ReactsWithFire());
         }
 
         [Test]
@@ -95,10 +98,10 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void Mix_GasolineAndToxic_NeutralizeIntoWater()
+        public void Mix_GasolineAndToxic_IsToxic()
         {
-            Assert.AreEqual(LiquidType.Water, LiquidType.Toxic.MixWith(LiquidType.Gasoline));
-            Assert.AreEqual(LiquidType.Water, LiquidType.Gasoline.MixWith(LiquidType.Toxic));
+            Assert.AreEqual(LiquidType.Toxic, LiquidType.Toxic.MixWith(LiquidType.Gasoline));
+            Assert.AreEqual(LiquidType.Toxic, LiquidType.Gasoline.MixWith(LiquidType.Toxic));
         }
 
         [Test]
@@ -114,7 +117,7 @@ namespace WaterChaos.Tests
 
         [TestCase(LiquidType.Gasoline, LiquidType.Toxic)]
         [TestCase(LiquidType.Toxic, LiquidType.Gasoline)]
-        public void Reservoir_GasolineAndToxic_TurnTheWholeTankIntoWater(LiquidType stored, LiquidType added)
+        public void Reservoir_GasolineAndToxic_TurnTheWholeTankToxic(LiquidType stored, LiquidType added)
         {
             WaterReservoir reservoir = new WaterReservoir(100f, 50f, 0f, stored);
 
@@ -122,7 +125,7 @@ namespace WaterChaos.Tests
 
             Assert.AreEqual(1f, accepted);
             Assert.AreEqual(51f, reservoir.Volume, "nothing is lost, the liquid just changes");
-            Assert.AreEqual(LiquidType.Water, reservoir.Liquid);
+            Assert.AreEqual(LiquidType.Toxic, reservoir.Liquid);
         }
 
         [Test]
@@ -179,30 +182,15 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void Toxic_CoolsFireAtFifteenPercentOfWater()
+        public void Toxic_NeverCoolsOrPutsOutFire()
         {
-            FireExtinguishHandler waterFire = CreateFire();
             FireExtinguishHandler toxicFire = CreateFire();
 
-            waterFire.ReceiveImpact(Impact(LiquidType.Water, 10f));
             toxicFire.ReceiveImpact(Impact(LiquidType.Toxic, 10f));
+            Assert.AreEqual(1f, toxicFire.Intensity, Tolerance);
 
-            float waterCooling = 1f - waterFire.Intensity;
-            float toxicCooling = 1f - toxicFire.Intensity;
-            Assert.Greater(toxicCooling, 0f);
-            Assert.AreEqual(waterCooling * 0.15f, toxicCooling, Tolerance);
-        }
-
-        [Test]
-        public void Toxic_PutsFireOutOnlyWithMuchMoreLiquid()
-        {
-            FireExtinguishHandler waterFire = CreateFire();
-            FireExtinguishHandler toxicFire = CreateFire();
-            int waterSteps = StepsToExtinguish(waterFire, LiquidType.Water);
-            int toxicSteps = StepsToExtinguish(toxicFire, LiquidType.Toxic);
-
-            Assert.IsFalse(toxicFire.IsBurning);
-            Assert.GreaterOrEqual(toxicSteps, waterSteps * 6, "toxic needs about 1 / 0.15 = 6.7 times the liquid");
+            StepsToExtinguish(toxicFire, LiquidType.Toxic);
+            Assert.IsTrue(toxicFire.IsBurning, "any amount of toxic liquid leaves the fire burning");
         }
 
         [Test]

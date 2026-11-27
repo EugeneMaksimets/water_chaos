@@ -4817,6 +4817,8 @@ GameObject:
   - component: {fileID: 3759582445966834499}
   - component: {fileID: 1937176222518221650}
   - component: {fileID: 3440566542056664378}
+  - component: {fileID: 6675662432337709633}
+  - component: {fileID: 2295994055118154381}
   m_Layer: 8
   m_Name: Cartoon Fire
   m_TagString: Fire
@@ -4839,6 +4841,7 @@ Transform:
   m_Children:
   - {fileID: 8379948493450324892}
   - {fileID: 6107482219364163548}
+  - {fileID: 3054541397979762053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4957175952460144630
@@ -7436,6 +7439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireExtinguishHandler
   _coolingPerLiter: 0.066
   _extinguishThreshold: 0.05
+  _snowEffectiveness: 0.2
   _reigniteOutdoors: 0
   _reigniteDelay: 5
 --- !u!114 &3759582445966834499
@@ -7478,3 +7482,99 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 885b66335a0bb4cad9530efa56ca0d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.FireSound
+--- !u!114 &6675662432337709633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940506567032470736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc51cf88d9f3b4b06934e3c380187cc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.ToxicReaction.FireToxicReaction
+  _settings: {fileID: 11400000, guid: f21d88d859af747fd96c81d240152d10, type: 2}
+--- !u!114 &2295994055118154381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940506567032470736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08620b443ebcb421898c95f8774c1607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.ToxicReaction.FireToxicReactionView
+  _bubbles: {fileID: 235649422854926964}
+  _toxicFlame: {r: 0.4, g: 1, b: 0.12, a: 1}
+  _toxicFlameTip: {r: 0.8, g: 1, b: 0.25, a: 1}
+  _flareBurst: 12
+--- !u!1001 &3013194630860577632
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1252699591611053445}
+    m_Modifications:
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133022403507240025, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_Name
+      value: Toxic Bubbles
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+--- !u!198 &235649422854926964 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3068135982361749780, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 3013194630860577632}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3054541397979762053 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 3013194630860577632}
+  m_PrefabAsset: {fileID: 0}

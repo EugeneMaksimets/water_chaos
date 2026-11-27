@@ -107,7 +107,7 @@ namespace WaterChaos.Interaction
             if (FireIgnitionRules.IsBlocked(firePosition))
                 return false;
 
-            if (ActiveCount + s_reserved.Count >= settings.MaxActiveFires)
+            if (IsAtFireLimit(settings))
                 return false;
 
             if (NoOutdoorFireZone.Covers(firePosition) && FindArea(firePosition, settings) == null)
@@ -162,18 +162,25 @@ namespace WaterChaos.Interaction
         }
 
         /// <summary>
-        /// Lights a new fire at once at <paramref name="firePosition"/> whatever the rules (fire limit, water, rooms,
-        /// no-fire zones) — only not where a fire already burns or is igniting, or on a covered surface
-        /// (<see cref="FireIgnitionRules"/>, e.g. a snowdrift). Used by flamethrowers.
+        /// Lights a new fire at once at <paramref name="firePosition"/> whatever the rules (water, rooms, no-fire zones)
+        /// — only not where a fire already burns or is igniting, on a covered surface (<see cref="FireIgnitionRules"/>,
+        /// e.g. a snowdrift), or past the fire limit: never more fires than <see cref="FireSpreadSettings.MaxActiveFires"/>.
+        /// Used by flamethrowers.
         /// </summary>
         public static bool StartFireIgnoringRules(Vector3 firePosition, FireSpreadSettings settings)
         {
-            if (settings == null || settings.FirePrefab == null || FireIgnitionRules.IsBlocked(firePosition)
+            if (settings == null || settings.FirePrefab == null || IsAtFireLimit(settings) || FireIgnitionRules.IsBlocked(firePosition)
                 || IsFireNear(firePosition, settings.ExclusionRadius, settings.FireMask))
                 return false;
 
             SpawnFire(firePosition, settings);
             return true;
+        }
+
+        /// <summary>As many fires burn or are igniting as the settings allow.</summary>
+        public static bool IsAtFireLimit(FireSpreadSettings settings)
+        {
+            return ActiveCount + s_reserved.Count >= settings.MaxActiveFires;
         }
 
         /// <summary>A new fire from the settings' prefab, starting at the settings' spawn intensity.</summary>

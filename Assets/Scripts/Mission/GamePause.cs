@@ -1,4 +1,5 @@
 using UnityEngine;
+using WaterChaos.Common;
 
 namespace WaterChaos.Mission
 {
@@ -20,7 +21,6 @@ namespace WaterChaos.Mission
         [Tooltip("Locks and hides the cursor again on resume (Esc in the Editor releases it).")]
         [SerializeField] private bool _lockCursorOnResume = true;
 
-        private bool[] _wasEnabled;
         private float _timeScaleBefore = 1f;
 
         public bool IsPaused { get; private set; }
@@ -37,16 +37,8 @@ namespace WaterChaos.Mission
             if (_pauseAudio)
                 AudioListener.pause = true;
 
-            _wasEnabled = new bool[_disableWhilePaused.Length];
-            for (int i = 0; i < _disableWhilePaused.Length; i++)
-            {
-                Behaviour part = _disableWhilePaused[i];
-                if (part == null)
-                    continue;
-
-                _wasEnabled[i] = part.enabled;
-                part.enabled = false;
-            }
+            foreach (Behaviour part in _disableWhilePaused)
+                BehaviourLocks.Lock(part, this);
         }
 
         public void Resume()
@@ -60,12 +52,8 @@ namespace WaterChaos.Mission
             if (_pauseAudio)
                 AudioListener.pause = false;
 
-            for (int i = 0; i < _disableWhilePaused.Length; i++)
-            {
-                Behaviour part = _disableWhilePaused[i];
-                if (part != null && _wasEnabled[i])
-                    part.enabled = true;
-            }
+            foreach (Behaviour part in _disableWhilePaused)
+                BehaviourLocks.Unlock(part, this);
 
             if (_lockCursorOnResume)
             {

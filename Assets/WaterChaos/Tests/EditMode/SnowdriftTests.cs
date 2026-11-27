@@ -42,7 +42,7 @@ namespace WaterChaos.Tests
         {
             Assert.AreEqual(1f, LiquidType.Water.ExtinguishingPower(true, 5f));
             Assert.AreEqual(0f, LiquidType.Water.ExtinguishingPower(true, -1f));
-            Assert.AreEqual(LiquidTypeExtensions.ToxicExtinguishingPower, LiquidType.Toxic.ExtinguishingPower(true, 0.2f));
+            Assert.AreEqual(0f, LiquidType.Toxic.ExtinguishingPower(true, 0.2f));
         }
 
         [Test]

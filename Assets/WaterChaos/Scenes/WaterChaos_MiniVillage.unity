@@ -734,7 +734,7 @@ GameObject:
   - component: {fileID: 8971687}
   - component: {fileID: 8971688}
   m_Layer: 0
-  m_Name: "26 \xB7 Pump \xB7 Start Tank Pump"
+  m_Name: "27 \xB7 Pump \xB7 Start Tank Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6768,6 +6768,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8573830801286647596, guid: 7400154652b044ce3be7d18932524380, type: 3}
   m_PrefabInstance: {fileID: 101739445}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &101978756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 101978757}
+  - component: {fileID: 101978758}
+  m_Layer: 0
+  m_Name: "43 \xB7 Pick Up \xB7 Cat"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &101978757
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101978756}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &101978758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101978756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2720f2e78db84977b261ad3c8d857ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.PickUpObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u0417\u043D\u0430\u0439\u0434\u0438 \u043A\u043E\u0442\u0438\u043A\u0430 \u0432 \u0431\u0443\u0434\u0438\u043D\u043A\u0443"
+  _markers:
+  - {fileID: 908349099}
+  _hint: 
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _requiredCount: 0
+  _inventory: {fileID: 1633715730}
+  _items:
+  - {fileID: 908349098}
 --- !u!1 &105327958
 GameObject:
   m_ObjectHideFlags: 0
@@ -6917,7 +6979,7 @@ GameObject:
   - component: {fileID: 106715145}
   - component: {fileID: 106715146}
   m_Layer: 0
-  m_Name: "31 \xB7 Hose \xB7 Onto Toxic Pump"
+  m_Name: "33 \xB7 Hose \xB7 Onto Toxic Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7610,6 +7672,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 123488422}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &124072458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 124072459}
+  - component: {fileID: 124072460}
+  m_Layer: 0
+  m_Name: "51 \xB7 Lift \xB7 Teammate in Bubble"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &124072459
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124072458}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &124072460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124072458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e848191fe8f6466299ecd93968f56c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.LiftTeammateObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u041E\u0431\u043B\u0438\u0439 \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0430 \u043C\u0438\u043B\u044C\u043D\u043E\u044E \u0432\u043E\u0434\u043E\u044E, \u0449\u043E\u0431 \u043F\u0456\u0434\u043D\u044F\u0442\u0438 \u0439\u043E\u0433\u043E \u043D\u0430 \u0434\u0430\u0445"
+  _markers: []
+  _hint: "\u041C\u0438\u043B\u044C\u043D\u0430 \u0432\u043E\u0434\u0430 \u043E\u0433\u043E\u0440\u0442\u0430\u0454 \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0430 \u0431\u0443\u043B\u044C\u0431\u0430\u0448\u043A\u043E\u044E \u0439 \u043F\u0456\u0434\u043D\u0456\u043C\u0430\u0454 \u0439\u043E\u0433\u043E \u0432\u0433\u043E\u0440\u0443."
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _teammates:
+  - {fileID: 2051583391}
+  - {fileID: 1633715743}
+  - {fileID: 920770900}
+  - {fileID: 1319076840}
 --- !u!1001 &126094911
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9395,6 +9519,59 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.25, y: 1.15, z: 2.7123883}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &168720659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 168720660}
+  - component: {fileID: 168720661}
+  m_Layer: 0
+  m_Name: "40 \xB7 Story \xB7 Cat"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &168720660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168720659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &168720661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168720659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed6527f3805a41e99d82a49bd6c5b02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.StoryStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _speaker: "\u041D\u0430\u043F\u0430\u0440\u043D\u0438\u043A"
+  _text: "\u0421\u0442\u0440\u0438\u0432\u0430\u0439! \u0412\u0456\u0434 \u0440\u0435\u0430\u043A\u0446\u0456\u0457 \u0442\u043E\u043A\u0441\u0438\u0447\u043D\u043E\u0457 \u0432\u043E\u0434\u0438 \u0437 \u0431\u0435\u043D\u0437\u0438\u043D\u043E\u043C \u043D\u0430\u0448 \u0431\u0443\u0434\u0438\u043D\u043E\u043A \u043D\u0430\u043F\u043E\u0432\u043D\u0438\u0432\u0441\u044F \u043E\u0442\u0440\u0443\u0439\u043D\u0438\u043C\u0438 \u0432\u0438\u043F\u0430\u0440\u0430\u043C\u0438\u2026 \u0410 \u0432\u0441\u0435\u0440\u0435\u0434\u0438\u043D\u0456 \u0437\u0430\u043B\u0438\u0448\u0438\u0432\u0441\u044F \u043A\u043E\u0442\u0438\u043A!\n\n\u0411\u0435\u0437 \u043F\u0440\u043E\u0442\u0438\u0433\u0430\u0437\u0443 \u0442\u0443\u0434\u0438 \u043D\u0435 \u043C\u043E\u0436\u043D\u0430 \u2014 \u0432\u0438\u043F\u0430\u0440\u0438 \u043E\u0434\u0440\u0430\u0437\u0443 \u0432\u0438\u0448\u0442\u043E\u0432\u0445\u043D\u0443\u0442\u044C \u0442\u0435\u0431\u0435 \u043D\u0430\u0437\u043E\u0432\u043D\u0456. \u041F\u0440\u043E\u0442\u0438\u0433\u0430\u0437 \u043B\u0435\u0436\u0438\u0442\u044C \u0431\u0456\u043B\u044F \u043D\u0430\u0441: \u0432\u0456\u0437\u044C\u043C\u0438 \u0439\u043E\u0433\u043E, \u043D\u0430\u0434\u0456\u043D\u044C, \u0437\u043D\u0430\u0439\u0434\u0438 \u043A\u043E\u0442\u0438\u043A\u0430 \u0439 \u0432\u0438\u043D\u0435\u0441\u0438 \u043D\u0430 \u0432\u0443\u043B\u0438\u0446\u044E. \u041F\u0440\u0438\u0441\u043B\u0443\u0445\u0430\u0439\u0441\u044F \u2014 \u0432\u0456\u043D \u043D\u044F\u0432\u043A\u0430\u0454!"
 --- !u!1001 &171429491
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10808,7 +10985,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5510205047547890194, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.75
+      value: -12.32
       objectReference: {fileID: 0}
     - target: {fileID: 5510205047547890194, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10857,6 +11034,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5510205047547890194, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 754385422}
     - targetCorrespondingSourceObject: {fileID: 5396739928136018476, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 659260238381340775}
@@ -10870,6 +11050,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6411501712302997822, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 201529127}
+    - targetCorrespondingSourceObject: {fileID: 6411501712302997822, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 201529135}
+    - targetCorrespondingSourceObject: {fileID: 6411501712302997822, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 201529134}
     - targetCorrespondingSourceObject: {fileID: 16568282585079736, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 41155372}
@@ -10954,6 +11140,40 @@ MonoBehaviour:
   _suspend:
   - {fileID: 41155372}
   _fireSearchRadius: 30
+--- !u!4 &201529129 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5510205047547890194, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
+  m_PrefabInstance: {fileID: 201529121}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &201529134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201529122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225631cb98fa3414798e0d45027956f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposureFumesView
+  _exposure: {fileID: 201529135}
+  _fumes: {fileID: 754385423}
+--- !u!114 &201529135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201529122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6f8b678baab4ab1b5d0bc8c319bcb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposure
+  _holdTime: 0.8
+  _puddleCheckInterval: 0.1
+  _feet: {fileID: 0}
 --- !u!1001 &203130061
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11078,6 +11298,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 203786461}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &204533663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 204533664}
+  - component: {fileID: 204533665}
+  m_Layer: 0
+  m_Name: "45 \xB7 Event \xB7 Toxic Air Clears"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &204533664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204533663}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &204533665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204533663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe77307d0c4c48f9813de5de419a566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.ToxicAirStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _zone: {fileID: 830739480}
+  _active: 0
 --- !u!1001 &206000523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11500,6 +11773,64 @@ MonoBehaviour:
       m_Calls: []
   _speaker: 
   _text: "\u0422\u0438 \u043F\u0440\u0438\u0457\u0445\u0430\u0432 \u043D\u0430 \u0432\u0438\u043A\u043B\u0438\u043A, \u0449\u043E\u0431 \u0434\u043E\u043F\u043E\u043C\u043E\u0433\u0442\u0438 \u0441\u0432\u043E\u0457\u043C \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0430\u043C. \u0410\u043B\u0435, \u0441\u0445\u043E\u0436\u0435, \u0442\u0438 \u0437\u0430\u0457\u0445\u0430\u0432 \u043D\u0435 \u0437 \u0442\u043E\u0433\u043E \u0431\u043E\u043A\u0443 \u2014 \u043F\u0440\u043E\u0457\u0437\u0434\u0443 \u0434\u0430\u043B\u0456 \u043D\u0435\u043C\u0430\u0454.\n\n\u041F\u043E\u043A\u0438 \u0449\u043E \u0434\u0430\u0432\u0430\u0439 \u0437\u0430\u0433\u0430\u0441\u0438\u043C\u043E \u0431\u0443\u0434\u0438\u043D\u043E\u043A \u043F\u0435\u0440\u0435\u0434 \u0442\u043E\u0431\u043E\u044E, \u0430 \u043F\u043E\u0442\u0456\u043C \u043F\u043E\u0434\u0443\u043C\u0430\u0454\u043C\u043E, \u044F\u043A \u0434\u0456\u0441\u0442\u0430\u0442\u0438\u0441\u044F \u0434\u043E \u0442\u0432\u043E\u0457\u0445 \u0434\u0440\u0443\u0437\u0456\u0432."
+--- !u!1 &223566286
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 223566287}
+  - component: {fileID: 223566288}
+  m_Layer: 0
+  m_Name: "42 \xB7 Wear \xB7 Gas Mask"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &223566287
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223566286}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &223566288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223566286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36498c4d6df034c138097c35b6c71b5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.WearGasMaskObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u041D\u0430\u0434\u0456\u043D\u044C \u043F\u0440\u043E\u0442\u0438\u0433\u0430\u0437"
+  _markers: []
+  _hint: "\u0412\u0438\u0431\u0435\u0440\u0438 \u043F\u0440\u043E\u0442\u0438\u0433\u0430\u0437 \u0432 \u0456\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u0456 \u0442\u0430 \u043D\u0430\u0442\u0438\u0441\u043D\u0438 \u041B\u041A\u041C, \u0449\u043E\u0431 \u043D\u0430\u0434\u0456\u0442\u0438 \u0430\u0431\u043E \u0437\u043D\u044F\u0442\u0438 \u0439\u043E\u0433\u043E."
+  _showHintKey: 1
+  _hintKey: 2
+  _hintZone: {fileID: 0}
+  _mask: {fileID: 1633715750}
 --- !u!1001 &225127697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12105,6 +12436,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7608801294385355547, guid: 85a403285f805453e94cdfb477c09389, type: 3}
   m_PrefabInstance: {fileID: 233386955}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &233466669
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 275917334}
+    m_Modifications:
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -16.615
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.570776
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 13.832
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_Name
+      value: Roof Fire 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+--- !u!4 &233466670 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  m_PrefabInstance: {fileID: 233466669}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &233495618
 PrefabInstance:
@@ -12916,6 +13309,41 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8608112844366340170, guid: 87751243da6894abebdedd987d44da66, type: 3}
   m_PrefabInstance: {fileID: 275006465}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &275917333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 275917334}
+  m_Layer: 0
+  m_Name: Roof Fires (Mission)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &275917334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275917333}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 233466670}
+  - {fileID: 1191704733}
+  - {fileID: 460965919}
+  - {fileID: 1306817795}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &276502510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16520,6 +16948,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4717477929012372964, guid: a32f2073a1ffe4eb8b94158656100425, type: 3}
   m_PrefabInstance: {fileID: 300236730}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &300484975
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1276023543}
+    m_Modifications:
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133022403507240025, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_Name
+      value: Toxic Fumes
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+--- !u!4 &300484976 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 300484975}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &300484977 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3068135982361749780, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 300484975}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &300835830
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17324,6 +17819,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3076453935699069558, guid: 6b261306aad7349c9ba2421e1f3b4cca, type: 3}
   m_PrefabInstance: {fileID: 317717024}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &321711575
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1562687006}
+    m_Modifications:
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133022403507240025, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_Name
+      value: Toxic Fumes
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+--- !u!4 &321711576 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 321711575}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &321711577 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3068135982361749780, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 321711575}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &322845007
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17500,7 +18062,7 @@ GameObject:
   - component: {fileID: 324592286}
   - component: {fileID: 324592287}
   m_Layer: 0
-  m_Name: "23 \xB7 Pick Up \xB7 Pump and Hose (Tank)"
+  m_Name: "24 \xB7 Pick Up \xB7 Pump and Hose (Tank)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18869,7 +19431,7 @@ GameObject:
   - component: {fileID: 373989849}
   - component: {fileID: 373989850}
   m_Layer: 0
-  m_Name: "21 \xB7 Pump \xB7 Start Pool Pump"
+  m_Name: "22 \xB7 Pump \xB7 Start Pool Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19070,6 +19632,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3e06aead8e041a193dd51bf009a244, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Soap.SoapItem
+--- !u!1 &382777451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 382777454}
+  - component: {fileID: 382777453}
+  - component: {fileID: 382777452}
+  m_Layer: 2
+  m_Name: "Zone \xB7 Roof Fires"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &382777452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382777451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97689a425cf6341e5a4a3584ce7e7c15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Mission.MissionZone
+--- !u!65 &382777453
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382777451}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8.85, y: 10.247576, z: 7.5600014}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &382777454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 382777451}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.96, y: 6.573788, z: 16.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2031689115}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &384896784
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19601,6 +20229,67 @@ MonoBehaviour:
   _reservoir: {fileID: 401745872}
   _bubbles: {fileID: 1576483624}
   _surface: {fileID: 439676043}
+--- !u!1 &401807874
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 401807875}
+  - component: {fileID: 401807876}
+  m_Layer: 0
+  m_Name: "52 \xB7 Extinguish \xB7 Roof"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &401807875
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401807874}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &401807876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401807874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17effded6e3384b338d46dc9d4519c90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.ExtinguishFiresObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u0417\u0430\u0433\u0430\u0441\u0438 \u0432\u043E\u0433\u043E\u043D\u044C \u043D\u0430 \u0434\u0430\u0445\u0443"
+  _markers: []
+  _hint: 
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _zones:
+  - {fileID: 382777452}
+  _timeLimit: 0
+  _settleRooms: []
 --- !u!1001 &405466818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20044,6 +20733,72 @@ CapsuleCollider:
   m_Height: 3.6902368
   m_Direction: 1
   m_Center: {x: 0, y: 1.8451184, z: 0}
+--- !u!1 &413088794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 413088797}
+  - component: {fileID: 413088796}
+  - component: {fileID: 413088795}
+  m_Layer: 2
+  m_Name: "Zone \xB7 Teammates House (toxic)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &413088795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413088794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97689a425cf6341e5a4a3584ce7e7c15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Mission.MissionZone
+--- !u!65 &413088796
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413088794}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8.85, y: 3, z: 7.5600014}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &413088797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413088794}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.96, y: 1.5, z: 16.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2031689115}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &414422889
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21574,6 +22329,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5333085209538515448, guid: 5bbe07d3c38f04e8680ac1c9282253ea, type: 3}
   m_PrefabInstance: {fileID: 443914027}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &445681845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 445681846}
+  - component: {fileID: 445681847}
+  m_Layer: 0
+  m_Name: "46 \xB7 Story \xB7 Cat Saved"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &445681846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445681845}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &445681847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445681845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed6527f3805a41e99d82a49bd6c5b02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.StoryStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _speaker: "\u041D\u0430\u043F\u0430\u0440\u043D\u0438\u043A"
+  _text: "\u0422\u0438 \u0432\u0440\u044F\u0442\u0443\u0432\u0430\u0432 \u043A\u043E\u0442\u0438\u043A\u0430! \u0412\u0456\u043D \u0442\u0440\u043E\u0445\u0438 \u043D\u0430\u043B\u044F\u043A\u0430\u043D\u0438\u0439, \u0430\u043B\u0435 \u0436\u0438\u0432\u0438\u0439 \u0456 \u0446\u0456\u043B\u0438\u0439.\n\n\u0412\u0438\u043F\u0430\u0440\u0438 \u0432\u0436\u0435 \u0440\u043E\u0437\u0432\u0456\u044E\u044E\u0442\u044C\u0441\u044F. \u0422\u0435\u043F\u0435\u0440 \u043A\u0438\u043D\u044C \u043C\u0438\u043B\u043E \u0432 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u0438\u0439 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440 \u2014 \u043C\u0438\u043B\u044C\u043D\u0430 \u0432\u043E\u0434\u0430 \u043D\u0430\u043C \u0449\u0435 \u0437\u043D\u0430\u0434\u043E\u0431\u0438\u0442\u044C\u0441\u044F."
 --- !u!1001 &447113142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22118,6 +22926,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5073055906872273980, guid: 0b1317b1141e94a94b90b1ed887002e7, type: 3}
   m_PrefabInstance: {fileID: 458137613}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &460965918
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 275917334}
+    m_Modifications:
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -16.1725
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.450776
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 18.368
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_Name
+      value: Roof Fire 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+--- !u!4 &460965919 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  m_PrefabInstance: {fileID: 460965918}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &463106133
 PrefabInstance:
@@ -23056,7 +23926,7 @@ GameObject:
   - component: {fileID: 490334901}
   - component: {fileID: 490334902}
   m_Layer: 0
-  m_Name: "19 \xB7 Pump \xB7 Into Pool"
+  m_Name: "20 \xB7 Pump \xB7 Into Pool"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27084,7 +27954,7 @@ GameObject:
   - component: {fileID: 538907105}
   - component: {fileID: 538907106}
   m_Layer: 0
-  m_Name: "25 \xB7 Hose \xB7 Onto Tank Pump"
+  m_Name: "26 \xB7 Hose \xB7 Onto Tank Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27879,7 +28749,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Rooms.RoomTemperature
   _displayName: "\u041F\u0435\u0440\u0448\u0438\u0439 \u043F\u043E\u0432\u0435\u0440\u0445"
   _startTemperature: 25
-  _minTemperature: -100
+  _minTemperature: -15
   _coolingLimit: 100
   _initialFireHeat: 5
   _extinguishHeatLoss: 5
@@ -27887,7 +28757,7 @@ MonoBehaviour:
   _heatPerInterval: 1
   _overheatCooling: 2.5
   _reigniteDelay: 15
-  _maxFires: 0
+  _maxFires: 20
 --- !u!54 &563359817
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -28195,7 +29065,7 @@ GameObject:
   - component: {fileID: 575597051}
   - component: {fileID: 575597052}
   m_Layer: 0
-  m_Name: "36 \xB7 Extinguish \xB7 Teammates"
+  m_Name: "53 \xB7 Extinguish \xB7 Teammates"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28256,7 +29126,7 @@ GameObject:
   - component: {fileID: 576833102}
   - component: {fileID: 576833103}
   m_Layer: 0
-  m_Name: "34 \xB7 Neutralize \xB7 Gasoline"
+  m_Name: "36 \xB7 Neutralize \xB7 Gasoline"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28296,10 +29166,10 @@ MonoBehaviour:
   _completed:
     m_PersistentCalls:
       m_Calls: []
-  _title: "\u041D\u0435\u0439\u0442\u0440\u0430\u043B\u0456\u0437\u0443\u0439 \u0431\u0435\u043D\u0437\u0438\u043D"
+  _title: "\u041D\u0435\u0439\u0442\u0440\u0430\u043B\u0456\u0437\u0443\u0439 \u0431\u0435\u043D\u0437\u0438\u043D \u0442\u043E\u043A\u0441\u0438\u0447\u043D\u043E\u044E \u0432\u043E\u0434\u043E\u044E"
   _markers:
   - {fileID: 1654272624}
-  _hint: "\u041A\u0438\u043D\u044C \u043C\u0438\u043B\u043E \u0432 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u0438\u0439 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440 \u2014 \u0440\u0430\u0437\u043E\u043C \u0456\u0437 \u0442\u043E\u043A\u0441\u0438\u0447\u043D\u043E\u044E \u0432\u043E\u0434\u043E\u044E \u0432\u043E\u043D\u043E \u043D\u0435\u0439\u0442\u0440\u0430\u043B\u0456\u0437\u0443\u0454 \u0431\u0435\u043D\u0437\u0438\u043D."
+  _hint: "\u0417\u0430\u043A\u0430\u0447\u0430\u0439 \u0442\u043E\u043A\u0441\u0438\u0447\u043D\u0443 \u0432\u043E\u0434\u0443 \u0432 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u0438\u0439 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440 \u2014 \u0432\u043E\u043D\u0430 \u043D\u0435\u0439\u0442\u0440\u0430\u043B\u0456\u0437\u0443\u0454 \u0431\u0435\u043D\u0437\u0438\u043D."
   _showHintKey: 0
   _hintKey: 3
   _hintZone: {fileID: 0}
@@ -28307,8 +29177,10 @@ MonoBehaviour:
   _soap: {fileID: 380113324}
   _stopPumps:
   - {fileID: 2065187168}
+  _needToxin: 1
+  _needSoap: 0
   _toxinMarker: {fileID: 2065187169}
-  _soapMarker: {fileID: 380113323}
+  _soapMarker: {fileID: 0}
 --- !u!1001 &579016472
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29473,7 +30345,7 @@ GameObject:
   - component: {fileID: 601459130}
   - component: {fileID: 601459131}
   m_Layer: 0
-  m_Name: "35 \xB7 Connect \xB7 Nozzle to Tee (Soapy Water)"
+  m_Name: "50 \xB7 Connect \xB7 Nozzle to Tee (Soapy Water)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29517,7 +30389,7 @@ MonoBehaviour:
   _markers:
   - {fileID: 115182733}
   _hint: "\u0423 \u0442\u0440\u0456\u0439\u043D\u0438\u043A\u0443 \u0442\u0435\u043F\u0435\u0440 \u043C\u0438\u043B\u044C\u043D\u0430 \u0432\u043E\u0434\u0430 \u2014 \u043F\u0456\u0434'\u0454\u0434\u043D\u0430\u0439 \u0431\u0440\u0430\u043D\u0434\u0441\u043F\u043E\u0439\u0442 \u0434\u043E \u0432\u0456\u043B\u044C\u043D\u043E\u0433\u043E \u0432\u0438\u0445\u043E\u0434\u0443."
-  _showHintKey: 1
+  _showHintKey: 0
   _hintKey: 0
   _hintZone: {fileID: 0}
   _connector: {fileID: 1633715726}
@@ -32358,6 +33230,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.WaterTransfer.TransferConnectionPoint
   _pump: {fileID: 0}
   _transferFlowRate: 10
+--- !u!1 &625040769
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 625040770}
+  m_Layer: 0
+  m_Name: Exit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &625040770
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 625040769}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.4226, y: 0.1, z: 10.328614}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 830739481}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &627741745
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32603,7 +33506,7 @@ MonoBehaviour:
   _markers:
   - {fileID: 910872828}
   _hint: "\u041F\u0456\u0434\u043A\u043B\u044E\u0447\u0438 \u0431\u0440\u0430\u043D\u0434\u0441\u043F\u043E\u0439\u0442 \u0434\u043E \u043C\u0430\u0448\u0438\u043D\u0438"
-  _showHintKey: 1
+  _showHintKey: 0
   _hintKey: 0
   _hintZone: {fileID: 0}
   _connector: {fileID: 1633715726}
@@ -33311,6 +34214,60 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5073055906872273980, guid: 0b1317b1141e94a94b90b1ed887002e7, type: 3}
   m_PrefabInstance: {fileID: 656806292}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &659285542
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 659285543}
+  - component: {fileID: 659285544}
+  m_Layer: 0
+  m_Name: "48 \xB7 Event \xB7 Roof Fires"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &659285543
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659285542}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &659285544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659285542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1f68ed62a3884bdfa4de1d7092db463, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.SetActiveStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _objects:
+  - {fileID: 275917333}
+  _active: 1
 --- !u!1001 &660480601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33622,6 +34579,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7535085978532721242, guid: a6ca3525b06b748a495f0281f9fee02e, type: 3}
   m_PrefabInstance: {fileID: 664637084}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &664670675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 664670677}
+  - component: {fileID: 664670676}
+  m_Layer: 0
+  m_Name: "Freeze Hint \xB7 Teammates House"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &664670676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 664670675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bef9cc60f55694164af143f138a44ef2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.RoomFreezeHint
+  _runner: {fileID: 1878279072}
+  _room: {fileID: 563359816}
+  _temperature: 0
+  _text: "\u0422\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u0430 \u0432\u043F\u0430\u043B\u0430 \u0434\u043E \u043D\u0443\u043B\u044F! \u0412\u043E\u0434\u0430 \u0437 \u0431\u0440\u0430\u043D\u0434\u0441\u043F\u043E\u0439\u0442\u0430 \u0442\u0443\u0442 \u043F\u0435\u0440\u0435\u0442\u0432\u043E\u0440\u044E\u0454\u0442\u044C\u0441\u044F \u043D\u0430 \u0441\u043D\u0456\u0433 \u2014 \u0432\u0456\u043D \u0433\u0430\u0441\u0438\u0442\u044C \u0432\u043E\u0433\u043E\u043D\u044C \u0437\u043D\u0430\u0447\u043D\u043E \u0441\u043B\u0430\u0431\u0448\u0435. \u0410 \u043A\u0430\u043B\u044E\u0436\u0456 \u0437\u0430\u043C\u0435\u0440\u0437\u0430\u044E\u0442\u044C \u0443 \u043B\u0456\u0434 \u2014 \u043D\u0430 \u043D\u044C\u043E\u043C\u0443 \u043C\u043E\u0436\u043D\u0430 \u043F\u043E\u0441\u043A\u043E\u0432\u0437\u043D\u0443\u0442\u0438\u0441\u044F!"
+  _seconds: 9
+--- !u!4 &664670677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 664670675}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &664991384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34261,6 +35267,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 682755884}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &686283314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 686283315}
+  - component: {fileID: 686283316}
+  m_Layer: 0
+  m_Name: "49 \xB7 Story \xB7 Roof"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &686283315
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686283314}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &686283316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686283314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed6527f3805a41e99d82a49bd6c5b02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.StoryStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _speaker: "\u041D\u0430\u043F\u0430\u0440\u043D\u0438\u043A"
+  _text: "\u041E\u0439, \u043D\u0456! \u0412\u043E\u0433\u043E\u043D\u044C \u043F\u0435\u0440\u0435\u043A\u0438\u043D\u0443\u0432\u0441\u044F \u043D\u0430 \u0434\u0430\u0445, \u0430 \u0437\u043D\u0438\u0437\u0443 \u043D\u0430\u043C \u0442\u0443\u0434\u0438 \u043D\u0435 \u0434\u0456\u0441\u0442\u0430\u0442\u0438!\n\n\u041F\u0456\u0434'\u0454\u0434\u043D\u0430\u0439 \u0431\u0440\u0430\u043D\u0434\u0441\u043F\u043E\u0439\u0442 \u0434\u043E \u0442\u0440\u0456\u0439\u043D\u0438\u043A\u0430 \u0437 \u043C\u0438\u043B\u044C\u043D\u043E\u044E \u0432\u043E\u0434\u043E\u044E \u0442\u0430 \u043E\u0431\u043B\u0438\u0439 \u043C\u0435\u043D\u0435 \u2014 \u0431\u0443\u043B\u044C\u0431\u0430\u0448\u043A\u0430 \u043F\u0456\u0434\u043D\u0456\u043C\u0435 \u043C\u0435\u043D\u0435 \u043D\u0430 \u0434\u0430\u0445, \u0456 \u044F \u0437\u0430\u0433\u0430\u0448\u0443 \u0432\u043E\u0433\u043E\u043D\u044C \u0437\u0433\u043E\u0440\u0438!"
 --- !u!1 &690413071
 GameObject:
   m_ObjectHideFlags: 0
@@ -35887,6 +36946,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 745937572}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &749259492
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 749259493}
+  - component: {fileID: 749259494}
+  m_Layer: 0
+  m_Name: "38 \xB7 Event \xB7 House Turns Toxic"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &749259493
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749259492}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &749259494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749259492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe77307d0c4c48f9813de5de419a566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.ToxicAirStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _zone: {fileID: 830739480}
+  _active: 1
 --- !u!1001 &750968656
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36070,6 +37182,73 @@ CapsuleCollider:
   m_Height: 2.791017
   m_Direction: 1
   m_Center: {x: 0, y: 1.3955085, z: 0}
+--- !u!1001 &754385421
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 201529129}
+    m_Modifications:
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133022403507240025, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+      propertyPath: m_Name
+      value: Toxic Fumes
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+--- !u!4 &754385422 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 266536713667483365, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 754385421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &754385423 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3068135982361749780, guid: 9fca09815618c495e8a2f9e7a19bd1c7, type: 3}
+  m_PrefabInstance: {fileID: 754385421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &754616235
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41651,6 +42830,57 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 829846132}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &830739479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 830739481}
+  - component: {fileID: 830739480}
+  m_Layer: 0
+  m_Name: "Toxic Air \xB7 Teammates House"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &830739480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830739479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471be3b6c28ba46cdbb896985cfc4839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicAirZone
+  _areas:
+  - {fileID: 563359818}
+  _activeOnStart: 0
+  _player: {fileID: 1633715722}
+  _exit: {fileID: 625040770}
+  _tolerance: 3
+--- !u!4 &830739481
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830739479}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 625040770}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &831022182
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43824,6 +45054,70 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8573830801286647596, guid: 7400154652b044ce3be7d18932524380, type: 3}
   m_PrefabInstance: {fileID: 882145550}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &885723460
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 885723461}
+  - component: {fileID: 885723462}
+  m_Layer: 0
+  m_Name: "47 \xB7 Neutralize \xB7 Soap"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &885723461
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885723460}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &885723462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885723460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f71b9495ae3304195b2c726f542480bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.NeutralizeObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u041A\u0438\u043D\u044C \u043C\u0438\u043B\u043E \u0432 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u0438\u0439 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440"
+  _markers: []
+  _hint: "\u041A\u0438\u043D\u044C \u043C\u0438\u043B\u043E \u0432 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u0438\u0439 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440 \u2014 \u0432\u043E\u0434\u0430 \u0432 \u043D\u044C\u043E\u043C\u0443 \u0441\u0442\u0430\u043D\u0435 \u043C\u0438\u043B\u044C\u043D\u043E\u044E."
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _tank: {fileID: 1654272621}
+  _soap: {fileID: 380113324}
+  _stopPumps: []
+  _needToxin: 0
+  _needSoap: 1
+  _toxinMarker: {fileID: 0}
+  _soapMarker: {fileID: 380113323}
 --- !u!1001 &888438212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44656,6 +45950,100 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 907990509}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &908349096
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 301850875352611697, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_Name
+      value: Cat
+      objectReference: {fileID: 0}
+    - target: {fileID: 301850875352611697, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.100183
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 17.605488
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577069315704290430, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 301850875352611697, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 908349099}
+  m_SourcePrefab: {fileID: 100100000, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+--- !u!1 &908349097 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 301850875352611697, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+  m_PrefabInstance: {fileID: 908349096}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &908349098 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2925266037363169523, guid: 1c2632f8259214aaeaaea490e80dce56, type: 3}
+  m_PrefabInstance: {fileID: 908349096}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908349097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 193eec3ade4e94c17b58c74cd44229a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Items.PickableItem
+--- !u!114 &908349099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908349097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed07a1ec8c0894880bbd345484d7b4ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Mission.MissionMarker
+  _anchor: {fileID: 0}
+  _height: 0.9
 --- !u!1 &908996565 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4192441823348476676, guid: 61b62d5f7c0404f6baa4da204d89f91e, type: 3}
@@ -54896,7 +56284,7 @@ GameObject:
   - component: {fileID: 1118527210}
   - component: {fileID: 1118527211}
   m_Layer: 0
-  m_Name: "20 \xB7 Hose \xB7 Onto Pool Pump"
+  m_Name: "21 \xB7 Hose \xB7 Onto Pool Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56723,7 +58111,7 @@ GameObject:
   - component: {fileID: 1163423229}
   - component: {fileID: 1163423230}
   m_Layer: 0
-  m_Name: "32 \xB7 Pump \xB7 Start Toxic Pump"
+  m_Name: "34 \xB7 Pump \xB7 Start Toxic Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57776,6 +59164,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3385248017688389201, guid: da5f2fa8dfcaa41c68b51f0de4ab047e, type: 3}
   m_PrefabInstance: {fileID: 1191425391}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1191704732
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 275917334}
+    m_Modifications:
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.305
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.797576
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_Name
+      value: Roof Fire 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+--- !u!4 &1191704733 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  m_PrefabInstance: {fileID: 1191704732}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1193668666
 PrefabInstance:
@@ -60963,6 +62413,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8719428587644996820, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 300484976}
     - targetCorrespondingSourceObject: {fileID: 4077371927301481466, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3896236092378724076}
@@ -60988,6 +62441,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8235520997835871854, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1276023544}
+    - targetCorrespondingSourceObject: {fileID: 8235520997835871854, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1276023547}
+    - targetCorrespondingSourceObject: {fileID: 8235520997835871854, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1276023546}
   m_SourcePrefab: {fileID: 100100000, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
 --- !u!4 &1276023541 stripped
 Transform:
@@ -61050,6 +62509,35 @@ MonoBehaviour:
   _suspend:
   - {fileID: 920770906}
   _fireSearchRadius: 30
+--- !u!114 &1276023546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920770895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225631cb98fa3414798e0d45027956f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposureFumesView
+  _exposure: {fileID: 1276023547}
+  _fumes: {fileID: 300484977}
+--- !u!114 &1276023547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920770895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6f8b678baab4ab1b5d0bc8c319bcb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposure
+  _holdTime: 0.8
+  _puddleCheckInterval: 0.1
+  _feet: {fileID: 0}
 --- !u!1001 &1276422033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62045,6 +63533,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5073055906872273980, guid: 0b1317b1141e94a94b90b1ed887002e7, type: 3}
   m_PrefabInstance: {fileID: 1306500677}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1306817794
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 275917334}
+    m_Modifications:
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.304999
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.450776
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 18.368
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+      propertyPath: m_Name
+      value: Roof Fire 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+--- !u!4 &1306817795 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  m_PrefabInstance: {fileID: 1306817794}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1309968316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62180,7 +63730,7 @@ GameObject:
   - component: {fileID: 1317157370}
   - component: {fileID: 1317157371}
   m_Layer: 0
-  m_Name: "22 \xB7 Hose \xB7 Pool End to Destination"
+  m_Name: "23 \xB7 Hose \xB7 Pool End to Destination"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62240,6 +63790,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3609318594344409201, guid: 02fca9e13fa264b98a6edeca691d6ca0, type: 3}
   m_PrefabInstance: {fileID: 115182728}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1319076840 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4363294813856578667, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
+  m_PrefabInstance: {fileID: 201529121}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201529122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e91726cdf33434f8b39a9c70ed0467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Soap.SoapBubbleController
 --- !u!1001 &1321433060
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63150,6 +64711,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1738915110938139795, guid: 3f8b687c71b374480933aab6d60e0696, type: 3}
+      propertyPath: _coolingPerSecond
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7411579959712798682, guid: 3f8b687c71b374480933aab6d60e0696, type: 3}
       propertyPath: m_Name
       value: AirConditioner
@@ -63202,6 +64767,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1338426795}
   m_SourcePrefab: {fileID: 100100000, guid: 3f8b687c71b374480933aab6d60e0696, type: 3}
+--- !u!114 &1338426793 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1738915110938139795, guid: 3f8b687c71b374480933aab6d60e0696, type: 3}
+  m_PrefabInstance: {fileID: 1338426792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338426794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28d778b19145a48fb94bd07d8e9a0d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Rooms.CoolingAppliance
 --- !u!1 &1338426794 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7411579959712798682, guid: 3f8b687c71b374480933aab6d60e0696, type: 3}
@@ -63873,7 +65449,7 @@ GameObject:
   - component: {fileID: 1365908094}
   - component: {fileID: 1365908095}
   m_Layer: 0
-  m_Name: "37 \xB7 Story \xB7 Finale"
+  m_Name: "54 \xB7 Story \xB7 Finale"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65472,7 +67048,7 @@ GameObject:
   - component: {fileID: 1413122154}
   - component: {fileID: 1413122155}
   m_Layer: 0
-  m_Name: "24 \xB7 Pump \xB7 Into Underground Tank"
+  m_Name: "25 \xB7 Pump \xB7 Into Underground Tank"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68026,7 +69602,7 @@ GameObject:
   - component: {fileID: 1482092631}
   - component: {fileID: 1482092632}
   m_Layer: 0
-  m_Name: "29 \xB7 Story \xB7 Gasoline"
+  m_Name: "31 \xB7 Story \xB7 Gasoline"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70915,6 +72491,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8719428587644996820, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 321711576}
     - targetCorrespondingSourceObject: {fileID: 4077371927301481466, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5544034294389444729}
@@ -70943,6 +72522,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8235520997835871854, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2051583399}
+    - targetCorrespondingSourceObject: {fileID: 8235520997835871854, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2051583402}
+    - targetCorrespondingSourceObject: {fileID: 8235520997835871854, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2051583401}
   m_SourcePrefab: {fileID: 100100000, guid: 962a0ab515b764c06a20005cdbf89404, type: 3}
 --- !u!4 &1562687004 stripped
 Transform:
@@ -71343,6 +72928,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8985078162170550097, guid: b5d66c1d4c4c345dda91cee895193ada, type: 3}
   m_PrefabInstance: {fileID: 1579783395}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1580980543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1580980544}
+  - component: {fileID: 1580980545}
+  m_Layer: 0
+  m_Name: "37 \xB7 Check \xB7 Toxic Reaches Teammates"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1580980544
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1580980543}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1580980545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1580980543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d776c6a5827d343e3b30e865ff5b01bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.TeammateSupplyStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _teammates:
+  - {fileID: 5544034294389444730}
+  - {fileID: 659260238381340776}
+  - {fileID: 4420818194403060823}
+  _liquid: 2
+  _pump: {fileID: 1321692895}
+  _pumpMarker: {fileID: 1321692896}
+  _teeMarker: {fileID: 115182733}
+  _pumpTitle: "\u0423\u0432\u0456\u043C\u043A\u043D\u0438 \u043D\u0430\u0441\u043E\u0441 \u0443 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u043E\u043C\u0443 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440\u0456 \u2014 \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0438 \u0431\u0435\u0437 \u043F\u043E\u0434\u0430\u0447\u0456"
+  _hoseTitle: "\u041F\u0456\u0434'\u0454\u0434\u043D\u0430\u0439 \u0448\u043B\u0430\u043D\u0433 \u0432\u0456\u0434 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u043E\u0433\u043E \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440\u0430 \u0434\u043E \u0442\u0440\u0456\u0439\u043D\u0438\u043A\u0430"
+  _grace: 1
 --- !u!1 &1583829483
 GameObject:
   m_ObjectHideFlags: 0
@@ -71354,7 +73001,7 @@ GameObject:
   - component: {fileID: 1583829484}
   - component: {fileID: 1583829485}
   m_Layer: 0
-  m_Name: "30 \xB7 Pick Up \xB7 Long Hose (Neutralize)"
+  m_Name: "32 \xB7 Pick Up \xB7 Long Hose (Neutralize)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71780,7 +73427,7 @@ GameObject:
   - component: {fileID: 1589566635}
   - component: {fileID: 1589566636}
   m_Layer: 0
-  m_Name: "18 \xB7 Pick Up \xB7 Pump and Hose (Pool)"
+  m_Name: "19 \xB7 Pick Up \xB7 Pump and Hose (Pool)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72234,6 +73881,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3045633776265167923, guid: c23b056e70ed246d3b18aca362b0c30c, type: 3}
   m_PrefabInstance: {fileID: 1609434759}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1611409177
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1611409178}
+  - component: {fileID: 1611409179}
+  m_Layer: 0
+  m_Name: "18 \xB7 Cooling \xB7 Teammates House"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1611409178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611409177}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1611409179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611409177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a16fb339150149338fe4275ca252742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.CoolingObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u0423\u0432\u0456\u043C\u043A\u043D\u0438 \u0445\u043E\u043B\u043E\u0434\u0438\u043B\u044C\u043D\u0438\u043A \u0456 \u043A\u043E\u043D\u0434\u0438\u0446\u0456\u043E\u043D\u0435\u0440 \u0443 \u0431\u0443\u0434\u0438\u043D\u043A\u0443 \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0456\u0432"
+  _markers:
+  - {fileID: 1338426795}
+  - {fileID: 2056493079}
+  _hint: "\u0425\u043E\u043B\u043E\u0434\u0438\u043B\u044C\u043D\u0438\u043A \u0456 \u043A\u043E\u043D\u0434\u0438\u0446\u0456\u043E\u043D\u0435\u0440 \u0448\u0432\u0438\u0434\u043A\u043E \u0437\u043D\u0438\u0437\u044F\u0442\u044C \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u0443 \u0432 \u0431\u0443\u0434\u0438\u043D\u043A\u0443 \u2014 \u0432\u043E\u0433\u043E\u043D\u044C \u043F\u0435\u0440\u0435\u0441\u0442\u0430\u043D\u0435 \u043F\u043E\u0448\u0438\u0440\u044E\u0432\u0430\u0442\u0438\u0441\u044F."
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _requiredCount: 0
+  _appliances:
+  - {fileID: 1338426793}
+  - {fileID: 2056493077}
 --- !u!4 &1612216999 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5396739928136018476, guid: 9fabf1392b7a94d76ac1fb69d51352c5, type: 3}
@@ -72849,6 +74559,9 @@ GameObject:
   - component: {fileID: 1633715746}
   - component: {fileID: 1633715748}
   - component: {fileID: 1633715747}
+  - component: {fileID: 1633715750}
+  - component: {fileID: 1633715749}
+  - component: {fileID: 1633715751}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -73551,6 +75264,48 @@ MonoBehaviour:
   _holdTime: 0.8
   _puddleCheckInterval: 0.1
   _feet: {fileID: 0}
+--- !u!114 &1633715749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19da0d4c88078412684253f0cfa4b566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.PlayerGasMaskOverlay
+  _fadeTime: 0.4
+  _sortingOrder: 28
+--- !u!114 &1633715750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eb8960094737419c87e3eb099e5ad39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerGasMask
+--- !u!114 &1633715751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61e4bbbbae0a46beb1b1aafe50e3ce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerBubbleSteering
+  _bubble: {fileID: 1633715743}
+  _camera: {fileID: 330585546}
+  _hoseConnector: {fileID: 1633715726}
+  _speed: 3
 --- !u!1001 &1636266194
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -75032,6 +76787,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8236750734095396464, guid: 95ea1f92f5f47421485fea93d4eef67d, type: 3}
   m_PrefabInstance: {fileID: 1673160886}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1674068983
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2614218599904224663, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_Name
+      value: Gas Mask
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -12.820422
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5426078294807801768, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2614218599904224663, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1674068986}
+  m_SourcePrefab: {fileID: 100100000, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+--- !u!1 &1674068984 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2614218599904224663, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+  m_PrefabInstance: {fileID: 1674068983}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1674068985 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1330008561959116443, guid: 424757e4a06dd4d7cbc0a437ed948ddb, type: 3}
+  m_PrefabInstance: {fileID: 1674068983}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674068984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 193eec3ade4e94c17b58c74cd44229a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Items.PickableItem
+--- !u!114 &1674068986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674068984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed07a1ec8c0894880bbd345484d7b4ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Mission.MissionMarker
+  _anchor: {fileID: 0}
+  _height: 0.8
 --- !u!1001 &1674582563
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78864,6 +80709,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 203495263296359785, guid: ee02cc6130c5b4791a7771af987673aa, type: 3}
   m_PrefabInstance: {fileID: 1801442142}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1804662679
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1804662680}
+  - component: {fileID: 1804662681}
+  m_Layer: 0
+  m_Name: "41 \xB7 Pick Up \xB7 Gas Mask"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1804662680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804662679}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1804662681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804662679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2720f2e78db84977b261ad3c8d857ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.PickUpObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u0412\u0456\u0437\u044C\u043C\u0438 \u043F\u0440\u043E\u0442\u0438\u0433\u0430\u0437"
+  _markers: []
+  _hint: 
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _requiredCount: 0
+  _inventory: {fileID: 1633715730}
+  _items:
+  - {fileID: 1674068985}
 --- !u!1001 &1805063555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -80690,7 +82596,7 @@ GameObject:
   - component: {fileID: 1865641047}
   - component: {fileID: 1865641048}
   m_Layer: 0
-  m_Name: "27 \xB7 Hose \xB7 Tank End to Destination"
+  m_Name: "28 \xB7 Hose \xB7 Tank End to Destination"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80756,7 +82662,7 @@ GameObject:
   - component: {fileID: 1866929452}
   - component: {fileID: 1866929453}
   m_Layer: 0
-  m_Name: "28 \xB7 See \xB7 Flamethrowers"
+  m_Name: "30 \xB7 See \xB7 Flamethrowers"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81210,6 +83116,7 @@ Transform:
   - {fileID: 447484935}
   - {fileID: 1217543147}
   - {fileID: 1356233488}
+  - {fileID: 1611409178}
   - {fileID: 1589566635}
   - {fileID: 490334901}
   - {fileID: 1118527210}
@@ -81220,6 +83127,7 @@ Transform:
   - {fileID: 538907105}
   - {fileID: 8971687}
   - {fileID: 1865641047}
+  - {fileID: 2126621831}
   - {fileID: 1866929452}
   - {fileID: 1482092631}
   - {fileID: 1583829484}
@@ -81227,7 +83135,22 @@ Transform:
   - {fileID: 1163423229}
   - {fileID: 2000026307}
   - {fileID: 576833102}
+  - {fileID: 1580980544}
+  - {fileID: 749259493}
+  - {fileID: 1972057936}
+  - {fileID: 168720660}
+  - {fileID: 1804662680}
+  - {fileID: 223566287}
+  - {fileID: 101978757}
+  - {fileID: 1949455082}
+  - {fileID: 204533664}
+  - {fileID: 445681846}
+  - {fileID: 885723461}
+  - {fileID: 659285543}
+  - {fileID: 686283315}
   - {fileID: 601459130}
+  - {fileID: 124072459}
+  - {fileID: 401807875}
   - {fileID: 575597051}
   - {fileID: 1365908094}
   m_Father: {fileID: 0}
@@ -82694,7 +84617,7 @@ MonoBehaviour:
   _markers:
   - {fileID: 2065187169}
   _hint: "\u041F\u0456\u0434\u043A\u043B\u044E\u0447\u0438 \u0431\u0440\u0430\u043D\u0434\u0441\u043F\u043E\u0439\u0442 \u0434\u043E \u043D\u0430\u0441\u043E\u0441\u0430."
-  _showHintKey: 1
+  _showHintKey: 0
   _hintKey: 0
   _hintZone: {fileID: 706977968}
   _connector: {fileID: 1633715726}
@@ -84252,6 +86175,66 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1949455081
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1949455082}
+  - component: {fileID: 1949455083}
+  m_Layer: 0
+  m_Name: "44 \xB7 Rescue \xB7 Cat"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1949455082
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949455081}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1949455083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949455081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3e3a06a054a9408aae54d8a506d2008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.RescueObjective
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _title: "\u0412\u0438\u043D\u0435\u0441\u0438 \u043A\u043E\u0442\u0438\u043A\u0430 \u043D\u0430 \u0432\u0443\u043B\u0438\u0446\u044E \u0439 \u043F\u043E\u0441\u0442\u0430\u0432 \u0439\u043E\u0433\u043E"
+  _markers: []
+  _hint: "\u0412\u0438\u043D\u0435\u0441\u0438 \u043A\u043E\u0442\u0438\u043A\u0430 \u0437 \u0431\u0443\u0434\u0438\u043D\u043A\u0443 \u0439 \u043F\u043E\u0441\u0442\u0430\u0432 \u043D\u0430 \u0437\u0435\u043C\u043B\u044E (F \u2014 \u043F\u043E\u043A\u043B\u0430\u0441\u0442\u0438)."
+  _showHintKey: 0
+  _hintKey: 3
+  _hintZone: {fileID: 0}
+  _target: {fileID: 908349098}
+  _inventory: {fileID: 1633715730}
+  _zone: {fileID: 413088795}
 --- !u!1001 &1949465940
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -84808,6 +86791,60 @@ CapsuleCollider:
   m_Height: 2.7910175
   m_Direction: 1
   m_Center: {x: 0, y: 1.3955088, z: 0}
+--- !u!1 &1972057935
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1972057936}
+  - component: {fileID: 1972057937}
+  m_Layer: 0
+  m_Name: "39 \xB7 Event \xB7 Cat Appears"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1972057936
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972057935}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1972057937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972057935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1f68ed62a3884bdfa4de1d7092db463, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.SetActiveStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _objects:
+  - {fileID: 908349097}
+  _active: 1
 --- !u!1001 &1973653472
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86002,7 +88039,7 @@ GameObject:
   - component: {fileID: 2000026307}
   - component: {fileID: 2000026308}
   m_Layer: 0
-  m_Name: "33 \xB7 Hose \xB7 Toxic End to Destination"
+  m_Name: "35 \xB7 Hose \xB7 Toxic End to Destination"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86954,6 +88991,8 @@ Transform:
   - {fileID: 188714198}
   - {fileID: 845135992}
   - {fileID: 1869330081}
+  - {fileID: 413088797}
+  - {fileID: 382777454}
   m_Father: {fileID: 1878279073}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2032898707
@@ -88086,6 +90125,35 @@ MonoBehaviour:
   _suspend:
   - {fileID: 2051583398}
   _fireSearchRadius: 30
+--- !u!114 &2051583401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051583386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225631cb98fa3414798e0d45027956f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposureFumesView
+  _exposure: {fileID: 2051583402}
+  _fumes: {fileID: 321711577}
+--- !u!114 &2051583402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051583386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6f8b678baab4ab1b5d0bc8c319bcb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposure
+  _holdTime: 0.8
+  _puddleCheckInterval: 0.1
+  _feet: {fileID: 0}
 --- !u!1001 &2052509862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88383,6 +90451,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6482164417606895461, guid: c92c78e178227442f913382495d79a9b, type: 3}
+      propertyPath: _coolingPerSecond
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -88399,6 +90471,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5692436391913184642, guid: c92c78e178227442f913382495d79a9b, type: 3}
   m_PrefabInstance: {fileID: 2056493075}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2056493077 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6482164417606895461, guid: c92c78e178227442f913382495d79a9b, type: 3}
+  m_PrefabInstance: {fileID: 2056493075}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056493078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28d778b19145a48fb94bd07d8e9a0d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Rooms.CoolingAppliance
 --- !u!1 &2056493078 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5022718724638869304, guid: c92c78e178227442f913382495d79a9b, type: 3}
@@ -91128,6 +93211,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4717477929012372964, guid: a32f2073a1ffe4eb8b94158656100425, type: 3}
   m_PrefabInstance: {fileID: 2124667627}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2126621830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2126621831}
+  - component: {fileID: 2126621832}
+  m_Layer: 0
+  m_Name: "29 \xB7 Check \xB7 Gasoline Reaches Teammates"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2126621831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126621830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1878279073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2126621832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126621830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d776c6a5827d343e3b30e865ff5b01bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.TeammateSupplyStep
+  _optional: 0
+  _started:
+    m_PersistentCalls:
+      m_Calls: []
+  _completed:
+    m_PersistentCalls:
+      m_Calls: []
+  _teammates:
+  - {fileID: 5544034294389444730}
+  - {fileID: 659260238381340776}
+  - {fileID: 4420818194403060823}
+  _liquid: 1
+  _pump: {fileID: 1321692895}
+  _pumpMarker: {fileID: 1321692896}
+  _teeMarker: {fileID: 115182733}
+  _pumpTitle: "\u0423\u0432\u0456\u043C\u043A\u043D\u0438 \u043D\u0430\u0441\u043E\u0441 \u0443 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u043E\u043C\u0443 \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440\u0456 \u2014 \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0438 \u0431\u0435\u0437 \u043F\u043E\u0434\u0430\u0447\u0456"
+  _hoseTitle: "\u041F\u0456\u0434'\u0454\u0434\u043D\u0430\u0439 \u0448\u043B\u0430\u043D\u0433 \u0432\u0456\u0434 \u043F\u0456\u0434\u0437\u0435\u043C\u043D\u043E\u0433\u043E \u0440\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440\u0430 \u0434\u043E \u0442\u0440\u0456\u0439\u043D\u0438\u043A\u0430"
+  _grace: 1
 --- !u!1001 &2129831180
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -91770,6 +93915,7 @@ GameObject:
   m_Component:
   - component: {fileID: 659260238381340775}
   - component: {fileID: 659260238381340776}
+  - component: {fileID: 659260238381340777}
   m_Layer: 0
   m_Name: Teammate Nozzle
   m_TagString: Untagged
@@ -91987,6 +94133,26 @@ MonoBehaviour:
   _outlet: {fileID: 115182730}
   _hose: {fileID: 7301835719162069432}
   _openOnStart: 1
+--- !u!114 &659260238381340777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175069864458846941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103519ec533514590b54ec3756b46f82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Teammate.TeammateAim
+  _body: {fileID: 201529129}
+  _range: 18
+  _heightWeight: 2
+  _retargetInterval: 0.5
+  _turnSpeed: 120
+  _aimSpeed: 4
+  _maxNozzleAngle: 55
+  _correctionSpeed: 3
 --- !u!23 &733786440478608475
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -114059,6 +116225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3896236092378724076}
   - component: {fileID: 4420818194403060823}
+  - component: {fileID: 4420818194403060824}
   m_Layer: 0
   m_Name: Teammate Nozzle
   m_TagString: Untagged
@@ -114082,6 +116249,26 @@ MonoBehaviour:
   _outlet: {fileID: 115182730}
   _hose: {fileID: 6512569286431764275}
   _openOnStart: 1
+--- !u!114 &4420818194403060824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4420818194403060822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103519ec533514590b54ec3756b46f82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Teammate.TeammateAim
+  _body: {fileID: 1276023543}
+  _range: 18
+  _heightWeight: 2
+  _retargetInterval: 0.5
+  _turnSpeed: 120
+  _aimSpeed: 4
+  _maxNozzleAngle: 55
+  _correctionSpeed: 3
 --- !u!199 &4612486000563137588
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -116486,6 +118673,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5544034294389444729}
   - component: {fileID: 5544034294389444730}
+  - component: {fileID: 5544034294389444731}
   m_Layer: 0
   m_Name: Teammate Nozzle
   m_TagString: Untagged
@@ -116915,6 +119103,26 @@ MonoBehaviour:
   _outlet: {fileID: 115182731}
   _hose: {fileID: 2342751994416122278}
   _openOnStart: 1
+--- !u!114 &5544034294389444731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5168880568185309891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103519ec533514590b54ec3756b46f82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Teammate.TeammateAim
+  _body: {fileID: 1562687006}
+  _range: 18
+  _heightWeight: 2
+  _retargetInterval: 0.5
+  _turnSpeed: 120
+  _aimSpeed: 4
+  _maxNozzleAngle: 55
+  _correctionSpeed: 3
 --- !u!23 &5554741264867795329
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -136740,3 +138948,8 @@ SceneRoots:
   - {fileID: 336562383}
   - {fileID: 1654478653}
   - {fileID: 1962847904}
+  - {fileID: 830739481}
+  - {fileID: 908349096}
+  - {fileID: 1674068983}
+  - {fileID: 275917334}
+  - {fileID: 664670677}

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using WaterChaos.Common;
 using WaterChaos.Interaction;
 using WaterChaos.Water;
 
@@ -46,7 +47,6 @@ namespace WaterChaos.Characters
         private GameObject _flames;
         private readonly List<Tween> _panic = new List<Tween>();
         private bool _panicking;
-        private bool[] _wasEnabled;
         private float _burnLeft;
         private float _nextNearCheck;
 
@@ -224,24 +224,13 @@ namespace WaterChaos.Characters
 
         private void SetSuspended(bool suspend)
         {
-            if (suspend)
-                _wasEnabled = new bool[_suspend.Length];
-
-            for (int i = 0; i < _suspend.Length; i++)
+            // Locks, not plain switching: a bubble or a pause may hold the same parts at the same time.
+            foreach (Behaviour part in _suspend)
             {
-                Behaviour part = _suspend[i];
-                if (part == null)
-                    continue;
-
                 if (suspend)
-                {
-                    _wasEnabled[i] = part.enabled;
-                    part.enabled = false;
-                }
-                else if (_wasEnabled != null && _wasEnabled[i])
-                {
-                    part.enabled = true;
-                }
+                    BehaviourLocks.Lock(part, this);
+                else
+                    BehaviourLocks.Unlock(part, this);
             }
         }
     }

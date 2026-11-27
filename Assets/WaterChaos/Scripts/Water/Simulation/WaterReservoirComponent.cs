@@ -10,7 +10,7 @@ namespace WaterChaos.Water
     {
         [Header("Liquid")]
         [Tooltip("What the reservoir holds at start (Water, Gasoline, Toxic). Gasoline pumped in turns all of it into gasoline, " +
-                 "toxic liquid pumped into water turns it toxic; gasoline and toxic liquid together neutralize into water.")]
+                 "toxic liquid pumped into water turns it toxic; toxic liquid also wins over gasoline; soapy water wins over everything.")]
         [SerializeField]
         private LiquidType _liquid = LiquidType.Water;
 

@@ -57,6 +57,7 @@ namespace WaterChaos.EditorTools
             (SoundId.MenuClose, new[] { "UI_MenuClose" }, 0.4f, false, 1f, 10f, 1f, 1f),
             (SoundId.GameStart, new[] { "UI_Start" }, 0.6f, false, 1f, 10f, 1f, 1f),
             (SoundId.MenuMusic, new[] { "Menu_Music" }, 0.45f, false, 1f, 10f, 1f, 1f),
+            (SoundId.CatMeow, new[] { "Cat_Meow_1", "Cat_Meow_2" }, 0.85f, true, 2f, 22f, 0.92f, 1.12f),
         };
 
         private static readonly List<string> s_report = new List<string>();

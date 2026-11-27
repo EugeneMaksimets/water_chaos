@@ -33,5 +33,8 @@ namespace WaterChaos.Sounds
         MenuClose,
         GameStart,
         MenuMusic,
+
+        // Rescue mission.
+        CatMeow,
     }
 }

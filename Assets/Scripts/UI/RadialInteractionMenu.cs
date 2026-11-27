@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using WaterChaos.Common;
 using UnityEngine.UI;
 using WaterChaos.Interaction;
 using WaterChaos.Player;
@@ -57,7 +58,6 @@ namespace WaterChaos.UI
         [SerializeField] private Color _highlightTextColor = new Color(0.08f, 0.08f, 0.08f);
 
         private readonly InteractionAction[] _shown = new InteractionAction[MaxOptions];
-        private readonly bool[] _wasEnabled = new bool[32];
 
         private Canvas _canvas;
         private RectTransform _root;
@@ -250,13 +250,11 @@ namespace WaterChaos.UI
             _prompt.Hide();
             _menuPrompt.Hide();
 
-            for (int i = 0; i < _blockWhileOpen.Length && i < _wasEnabled.Length; i++)
+            foreach (Behaviour behaviour in _blockWhileOpen)
             {
-                Behaviour behaviour = _blockWhileOpen[i];
                 // Switching off a provider would remove its actions from the open menu.
-                _wasEnabled[i] = behaviour != null && behaviour.enabled && !(behaviour is IInteractionProvider);
-                if (_wasEnabled[i])
-                    behaviour.enabled = false;
+                if (!(behaviour is IInteractionProvider))
+                    BehaviourLocks.Lock(behaviour, this);
             }
 
             Cursor.lockState = CursorLockMode.None;
@@ -286,11 +284,8 @@ namespace WaterChaos.UI
             _input.GameplayBlocked = false;
             _root.gameObject.SetActive(false);
 
-            for (int i = 0; i < _blockWhileOpen.Length && i < _wasEnabled.Length; i++)
-            {
-                if (_wasEnabled[i] && _blockWhileOpen[i] != null)
-                    _blockWhileOpen[i].enabled = true;
-            }
+            foreach (Behaviour behaviour in _blockWhileOpen)
+                BehaviourLocks.Unlock(behaviour, this);
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

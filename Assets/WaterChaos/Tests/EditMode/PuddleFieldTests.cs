@@ -122,6 +122,70 @@ namespace WaterChaos.Tests
         }
 
         [Test]
+        public void Puddle_DriesUp_AfterItsLifetime()
+        {
+            var config = new PuddleConfig(0.1f, 0.4f, 3f, 0.6f, 0f, 0.5f, 1f, 3f, 0.05f, 60f);
+            var field = new PuddleField(config, 10);
+            PuddleModel puddle = field.AddLiquid(Vector3.zero, LiquidType.Water, 5f);
+            PuddleModel removed = null;
+            field.Removed += p => removed = p;
+
+            field.Tick(59f, null);
+            Assert.AreEqual(1, field.Count, "still there before a minute");
+
+            field.Tick(2f, null);
+            Assert.AreEqual(0, field.Count, "dried up after a minute");
+            Assert.AreSame(puddle, removed, "the view gets told, so it can sink away");
+        }
+
+        [Test]
+        public void Puddle_DriesUp_EvenWhileStillBeingFilled_AndANewOneForms()
+        {
+            var config = new PuddleConfig(0.1f, 0.4f, 3f, 0.6f, 0f, 0.5f, 1f, 3f, 0.05f, 60f);
+            var field = new PuddleField(config, 10);
+            PuddleModel first = field.AddLiquid(Vector3.zero, LiquidType.Toxic, 5f);
+
+            // A teammate keeps spraying the same spot.
+            for (int i = 0; i < 61; i++)
+            {
+                field.Tick(1f, null);
+                field.AddLiquid(Vector3.zero, LiquidType.Toxic, 1f);
+            }
+
+            Assert.IsFalse(field.TryGetAt(Vector3.zero, out PuddleModel now) && now == first, "the first puddle is gone after a minute");
+            Assert.AreEqual(1, field.Count, "the spray starts a new one");
+        }
+
+        [Test]
+        public void Puddle_NeverGrowsPastTheSpaceAroundIt()
+        {
+            PuddleField field = NewField();
+            PuddleModel puddle = field.AddLiquid(Vector3.zero, LiquidType.Water, 100000f, 0.9f);
+
+            Assert.AreEqual(0.9f, puddle.Radius, 1e-4f, "stops at the edge of the surface or a wall");
+            Assert.IsTrue(puddle.IsFull);
+        }
+
+        [Test]
+        public void NoRoomForAPuddle_LeavesNone()
+        {
+            PuddleField field = NewField();
+
+            Assert.IsNull(field.AddLiquid(Vector3.zero, LiquidType.Water, 5f, Config.MinRadius * 0.5f));
+            Assert.AreEqual(0, field.Count);
+        }
+
+        [Test]
+        public void ExistingPuddle_FoundNearby_BeforeMeasuringSpace()
+        {
+            PuddleField field = NewField();
+            PuddleModel puddle = field.AddLiquid(Vector3.zero, LiquidType.Water, 5f);
+
+            Assert.AreSame(puddle, field.FindNearby(new Vector3(0.3f, 0f, 0f)));
+            Assert.IsNull(field.FindNearby(new Vector3(20f, 0f, 0f)));
+        }
+
+        [Test]
         public void NoLiquid_CreatesNothing()
         {
             PuddleField field = NewField();
@@ -153,9 +217,9 @@ namespace WaterChaos.Tests
             field.AddLiquid(Vector3.zero, LiquidType.Toxic, 1f);
             Assert.AreEqual(LiquidType.Toxic, puddle.Liquid);
 
-            // Gasoline and toxic neutralize each other into water, as in a reservoir.
+            // Toxic wins over gasoline, as in a reservoir.
             field.AddLiquid(Vector3.zero, LiquidType.Gasoline, 1f);
-            Assert.AreEqual(LiquidType.Water, puddle.Liquid);
+            Assert.AreEqual(LiquidType.Toxic, puddle.Liquid);
             Assert.AreEqual(1, field.Count);
         }
     }

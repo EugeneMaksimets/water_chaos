@@ -23,9 +23,11 @@ namespace WaterChaos.Surfaces
         public float MeltDelay { get; }
         /// <summary>Grip on ice compared to normal ground (0..1).</summary>
         public float IceFriction { get; }
+        /// <summary>Seconds (s) a puddle lasts after it appeared; then it dries up (liquid still coming starts a new one). 0 = forever.</summary>
+        public float Lifetime { get; }
 
         public PuddleConfig(float areaPerLiter, float minRadius, float maxRadius, float mergeDistance,
-            float freezeBelow, float meltAbove, float freezeDelay, float meltDelay, float iceFriction)
+            float freezeBelow, float meltAbove, float freezeDelay, float meltDelay, float iceFriction, float lifetime = 60f)
         {
             if (!(areaPerLiter > 0f))
                 throw new ArgumentException("Area per liter must be positive.", nameof(areaPerLiter));
@@ -43,6 +45,7 @@ namespace WaterChaos.Surfaces
             FreezeDelay = NonNegative(freezeDelay);
             MeltDelay = NonNegative(meltDelay);
             IceFriction = float.IsNaN(iceFriction) ? 0f : Math.Min(1f, Math.Max(0f, iceFriction));
+            Lifetime = NonNegative(lifetime);
         }
 
         /// <summary>Most liquid one puddle holds: enough to reach <see cref="MaxRadius"/>, in liters (L).</summary>

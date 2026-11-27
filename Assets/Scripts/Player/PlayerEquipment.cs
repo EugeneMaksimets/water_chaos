@@ -29,6 +29,9 @@ namespace WaterChaos.Player
         /// <summary>The player's view; tools aim along its forward.</summary>
         public Transform Camera => _camera;
 
+        /// <summary>The inventory the equipped item comes from.</summary>
+        public PlayerInventory Inventory => _inventory;
+
         /// <summary>Item in the hands; null when the selected slot is empty.</summary>
         public IPickableItem Current => _model?.Current;
 

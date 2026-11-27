@@ -73,13 +73,13 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void Soap_InToxicLiquid_DoesNothing()
+        public void Soap_InToxicLiquid_MakesSoapyWater()
         {
             WaterReservoir reservoir = new WaterReservoir(1000f, 500f, 0f, LiquidType.Toxic);
 
-            Assert.IsFalse(reservoir.AddSoap());
-            Assert.IsFalse(reservoir.IsSoapy);
-            Assert.AreEqual(LiquidType.Toxic, reservoir.Liquid);
+            Assert.IsTrue(reservoir.AddSoap());
+            Assert.IsTrue(reservoir.IsSoapy);
+            Assert.AreEqual(LiquidType.Water, reservoir.Liquid);
         }
 
         [TestCase(LiquidType.Water, true)]
@@ -279,14 +279,14 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void GasolineMeetingToxic_NeutralizesIntoPlainWater()
+        public void GasolineMeetingToxic_TurnsToxic()
         {
             WaterReservoir reservoir = new WaterReservoir(1000f, 500f, 0f, LiquidType.Gasoline);
 
             reservoir.Add(10f, LiquidType.Toxic, true);
 
-            Assert.AreEqual(LiquidType.Water, reservoir.Liquid);
-            Assert.IsFalse(reservoir.IsSoapy);
+            Assert.AreEqual(LiquidType.Toxic, reservoir.Liquid);
+            Assert.IsFalse(reservoir.IsSoapy, "toxic liquid is never soapy");
         }
 
         [Test]

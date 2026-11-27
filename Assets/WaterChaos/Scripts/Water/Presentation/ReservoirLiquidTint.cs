@@ -5,7 +5,7 @@ namespace WaterChaos.Water
 {
     /// <summary>
     /// Colors the liquid look of a reservoir by what it holds (greenish for toxic liquid), from the first frame on,
-    /// and follows the liquid when it changes (water turned toxic by a transfer, toxic neutralized back to water).
+    /// and follows the liquid when it changes (water turned toxic by a transfer, toxic turned into soapy water by soap).
     /// Every color of the material (base, shade, rim, stripe) is multiplied by the tint, so shading and highlights stay.
     /// Liquids without an entry keep the material's own colors. Display only.
     /// </summary>

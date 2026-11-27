@@ -12,16 +12,13 @@ namespace WaterChaos.Water
     {
         Water = 0,
         Gasoline = 1,
-        /// <summary>Corrodes walls and fences; a poor extinguisher.</summary>
+        /// <summary>Corrodes walls and fences; never puts fire out, it reacts with it (toxic smoke).</summary>
         Toxic = 2,
     }
 
     /// <summary>Gameplay roles of each liquid.</summary>
     public static class LiquidTypeExtensions
     {
-        /// <summary>Share of water's cooling that toxic liquid gives a fire (0.15 = 15 %).</summary>
-        public const float ToxicExtinguishingPower = 0.15f;
-
         /// <summary>Cools and puts out fire (at any strength, see <see cref="ExtinguishingPower"/>).</summary>
         public static bool Extinguishes(this LiquidType liquid)
         {
@@ -37,7 +34,6 @@ namespace WaterChaos.Water
             switch (liquid)
             {
                 case LiquidType.Water: return 1f;
-                case LiquidType.Toxic: return ToxicExtinguishingPower;
                 default: return 0f;
             }
         }
@@ -77,6 +73,15 @@ namespace WaterChaos.Water
             return liquid == LiquidType.Water;
         }
 
+        /// <summary>
+        /// Does not cool a fire it hits but reacts with it: the fire turns toxic for a while, gives off a toxic cloud
+        /// and splashes toxic puddles around (only corrosive liquids).
+        /// </summary>
+        public static bool ReactsWithFire(this LiquidType liquid)
+        {
+            return liquid.Corrodes();
+        }
+
         /// <summary>Burns: feeds fire it touches and can be lit into a stream of flame.</summary>
         public static bool IsFlammable(this LiquidType liquid)
         {
@@ -98,30 +103,31 @@ namespace WaterChaos.Water
         }
 
         /// <summary>
-        /// Liquid that results from adding <paramref name="added"/> to <paramref name="stored"/>.
-        /// A flammable and a corrosive liquid neutralize each other: the whole mix turns into water at once
-        /// (gasoline with toxic is water). Otherwise the more dominant one wins: a flammable liquid spoils water
-        /// (water with gasoline is gasoline), and so does a corrosive one (water with toxic is toxic).
+        /// Soap thrown in dissolves and leaves soapy water: in water, and in toxic liquid, which the soap neutralizes.
+        /// Gasoline does not take soap (the bar just lies there).
+        /// </summary>
+        public static bool AcceptsSoap(this LiquidType liquid)
+        {
+            return !liquid.IsFlammable();
+        }
+
+        /// <summary>
+        /// Liquid that results from mixing <paramref name="added"/> with <paramref name="stored"/>; the order does not
+        /// matter. The more dominant liquid wins: corrosive over flammable over water
+        /// (water with gasoline is gasoline, water with toxic is toxic, gasoline with toxic is toxic).
+        /// Soapy water is handled by the tank: it wins over every liquid (see <see cref="WaterReservoir.Add(float, LiquidType, bool)"/>).
         /// </summary>
         public static LiquidType MixWith(this LiquidType stored, LiquidType added)
         {
-            if (Neutralize(stored, added))
-                return LiquidType.Water;
-
             return Dominance(added) > Dominance(stored) ? added : stored;
-        }
-
-        private static bool Neutralize(LiquidType a, LiquidType b)
-        {
-            return (a.IsFlammable() && b.Corrodes()) || (a.Corrodes() && b.IsFlammable());
         }
 
         private static int Dominance(LiquidType liquid)
         {
-            if (liquid.IsFlammable())
+            if (liquid.Corrodes())
                 return 2;
 
-            return liquid.Corrodes() ? 1 : 0;
+            return liquid.IsFlammable() ? 1 : 0;
         }
     }
 }

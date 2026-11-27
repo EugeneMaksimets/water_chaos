@@ -5,7 +5,7 @@ namespace WaterChaos.Water
     /// <summary>
     /// Pure model of a liquid tank: finite volume of one liquid (<see cref="Liquid"/>) that can be drawn until empty.
     /// Added liquid mixes in (<see cref="LiquidTypeExtensions.MixWith"/>): gasoline or toxic liquid spoils water,
-    /// and gasoline meeting toxic liquid turns the whole tank into water.
+    /// and toxic liquid wins over gasoline. Soapy water wins over everything.
     /// The tank also owns whether its water is soapy (<see cref="IsSoapy"/>): every pump, hose and nozzle downstream
     /// only passes that on.
     /// </summary>
@@ -21,8 +21,8 @@ namespace WaterChaos.Water
         public LiquidType Liquid { get; private set; }
 
         /// <summary>
-        /// Soap is dissolved in the water (<see cref="AddSoap"/>). Only water can be soapy: anything that turns the tank
-        /// into another liquid washes the soap out, and the tank stays plain even if it turns back into water.
+        /// Soap is dissolved in the water (<see cref="AddSoap"/>). Only water can be soapy, and soapy water stays soapy
+        /// whatever is added to it.
         /// </summary>
         public bool IsSoapy { get; private set; }
 
@@ -70,15 +70,17 @@ namespace WaterChaos.Water
         }
 
         /// <summary>
-        /// Dissolves a bar of soap in the tank. Works only on water that is there (<see cref="LiquidTypeExtensions.CanBeSoapy"/>):
-        /// an empty tank, gasoline or toxic liquid stay as they are.
+        /// Dissolves a bar of soap in the tank: water or toxic liquid (neutralized by the soap) become soapy water
+        /// (<see cref="LiquidTypeExtensions.AcceptsSoap"/>). An empty tank, gasoline and water that is already soapy
+        /// do not take it: the bar is not used up.
         /// </summary>
-        /// <returns>True if the water is soapy now.</returns>
+        /// <returns>True if the soap dissolved (the tank just turned soapy).</returns>
         public bool AddSoap()
         {
-            if (IsEmpty || !Liquid.CanBeSoapy())
+            if (IsEmpty || IsSoapy || !Liquid.AcceptsSoap())
                 return false;
 
+            Liquid = LiquidType.Water;
             IsSoapy = true;
             return true;
         }
@@ -86,8 +88,8 @@ namespace WaterChaos.Water
         /// <summary>
         /// Puts up to the given volume of <paramref name="liquid"/> into the reservoir (e.g. pumped in from another one).
         /// An empty tank takes the new liquid; otherwise the two mix (<see cref="LiquidTypeExtensions.MixWith"/>).
-        /// Soapy water cannot be spoiled: whatever is pumped into it (toxic liquid, gasoline) becomes soapy water too.
-        /// Soapy water added to water makes it soapy.
+        /// Soapy water wins over everything, whichever side it is on: soapy water with toxic liquid, gasoline or water
+        /// is soapy water.
         /// </summary>
         /// <param name="amount">Offered volume in liters (L); negative and NaN are treated as 0.</param>
         /// <param name="isSoapy">The added liquid is soapy water.</param>
@@ -95,16 +97,14 @@ namespace WaterChaos.Water
         public float Add(float amount, LiquidType liquid, bool isSoapy = false)
         {
             bool wasEmpty = IsEmpty;
-            // The soap in the tank neutralizes anything added: it stays soapy water.
-            bool keepsSoap = !wasEmpty && IsSoapy;
-            LiquidType mixed = wasEmpty ? liquid : keepsSoap ? LiquidType.Water : Liquid.MixWith(liquid);
-            bool addsSoap = isSoapy && liquid.CanBeSoapy();
+            bool soapy = (!wasEmpty && IsSoapy) || (isSoapy && liquid.CanBeSoapy());
+            LiquidType mixed = soapy ? LiquidType.Water : wasEmpty ? liquid : Liquid.MixWith(liquid);
 
             float accepted = Add(amount);
             if (accepted > 0f)
             {
                 Liquid = mixed;
-                IsSoapy = mixed.CanBeSoapy() && (keepsSoap || addsSoap);
+                IsSoapy = soapy;
             }
 
             return accepted;

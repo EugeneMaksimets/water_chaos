@@ -80,7 +80,7 @@ namespace WaterChaos.EditorTools
         // Objects the setup creates (besides "Mission" and "Mission UI"); removed by Rebuild.
         private const string TeammateNozzleName = "Teammate Nozzle";
         private const string FeedName = "Hydrant → Splitter Feed";
-        private const string Teammate = "Напарник";
+        internal const string Teammate = "Напарник";
         private const int Idle = 0;
         private const int Extinguish = 2;
 
@@ -142,6 +142,7 @@ namespace WaterChaos.EditorTools
             SetUpTeammates(scene);
             SetUpSoapBubbles();
             BuildSteps(scene, zones, root);
+            RescueMissionSetup.Apply(root, s_report);
 
             Undo.CollapseUndoOperations(undoGroup);
             EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
@@ -429,7 +430,7 @@ namespace WaterChaos.EditorTools
             return CreateZone(name, parent, bounds);
         }
 
-        private static MissionZone CreateZone(string name, Transform parent, Bounds bounds)
+        internal static MissionZone CreateZone(string name, Transform parent, Bounds bounds)
         {
             GameObject go = new GameObject(name, typeof(BoxCollider));
             go.transform.SetParent(parent, false);
@@ -1293,7 +1294,7 @@ namespace WaterChaos.EditorTools
 
         // ───────────── Step helpers ─────────────
 
-        private static T Add<T>(Transform parent, string name, string title, params MissionMarker[] markers) where T : MissionStep
+        internal static T Add<T>(Transform parent, string name, string title, params MissionMarker[] markers) where T : MissionStep
         {
             GameObject go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -1309,21 +1310,21 @@ namespace WaterChaos.EditorTools
             return step;
         }
 
-        private static void Story(Transform parent, string name, string speaker, string text)
+        internal static void Story(Transform parent, string name, string speaker, string text)
         {
             StoryStep step = Add<StoryStep>(parent, name, null);
             Set(step, "_speaker", speaker ?? string.Empty);
             Set(step, "_text", text);
         }
 
-        private static void PickUp(Transform parent, string name, string title, PlayerInventory inventory, params PickableItem[] items)
+        internal static void PickUp(Transform parent, string name, string title, PlayerInventory inventory, params PickableItem[] items)
         {
             PickUpObjective step = Add<PickUpObjective>(parent, name, title);
             Set(step, "_inventory", inventory);
             SetArray(step, "_items", items.Where(i => i != null).ToArray());
         }
 
-        private static void Hint(ObjectiveStep step, string text, PlayerControl? key, MissionZone zone)
+        internal static void Hint(ObjectiveStep step, string text, PlayerControl? key, MissionZone zone)
         {
             Set(step, "_hint", text);
             Set(step, "_showHintKey", key.HasValue);
@@ -1332,7 +1333,7 @@ namespace WaterChaos.EditorTools
             Set(step, "_hintZone", zone);
         }
 
-        private static MissionMarker Marker(Component target, float height)
+        internal static MissionMarker Marker(Component target, float height)
         {
             if (target == null)
                 return null;
@@ -1408,7 +1409,7 @@ namespace WaterChaos.EditorTools
 
         // ───────────── Serialized fields ─────────────
 
-        private static void Set(Object target, string field, object value)
+        internal static void Set(Object target, string field, object value)
         {
             SerializedObject data = new SerializedObject(target);
             SerializedProperty property = data.FindProperty(field);
@@ -1435,7 +1436,7 @@ namespace WaterChaos.EditorTools
             data.ApplyModifiedProperties();
         }
 
-        private static void SetEnum(Object target, string field, int index)
+        internal static void SetEnum(Object target, string field, int index)
         {
             SerializedObject data = new SerializedObject(target);
             SerializedProperty property = data.FindProperty(field);
@@ -1447,7 +1448,7 @@ namespace WaterChaos.EditorTools
             data.ApplyModifiedProperties();
         }
 
-        private static void SetArray(Object target, string field, params Object[] values)
+        internal static void SetArray(Object target, string field, params Object[] values)
         {
             SerializedObject data = new SerializedObject(target);
             SerializedProperty property = data.FindProperty(field);

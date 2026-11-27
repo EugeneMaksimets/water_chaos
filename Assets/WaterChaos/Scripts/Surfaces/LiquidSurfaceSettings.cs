@@ -36,6 +36,9 @@ namespace WaterChaos.Surfaces
         [Tooltip("Liquid landing this far past a puddle's edge joins it instead of starting a new one, in meters (m).")]
         [SerializeField, Range(0f, 2f)] private float _puddleMergeDistance = 0.6f;
 
+        [Tooltip("Seconds (s) a puddle lasts after it appeared; then it sinks into the ground. 0 = forever.")]
+        [SerializeField, Range(0f, 600f)] private float _puddleLifetime = 60f;
+
         [Tooltip("Most puddles at once; past it the oldest puddle dries up.")]
         [SerializeField, Range(1, 500)] private int _maxPuddles = 150;
 
@@ -98,7 +101,7 @@ namespace WaterChaos.Surfaces
         {
             float maxRadius = Mathf.Max(_puddleMinRadius, _puddleMaxRadius);
             return new PuddleConfig(_puddleAreaPerLiter, _puddleMinRadius, maxRadius, _puddleMergeDistance,
-                _freezeBelow, Mathf.Max(_freezeBelow, _meltAbove), _freezeDelay, _meltDelay, _iceFriction);
+                _freezeBelow, Mathf.Max(_freezeBelow, _meltAbove), _freezeDelay, _meltDelay, _iceFriction, _puddleLifetime);
         }
 
         public SnowdriftConfig ToSnowdriftConfig()

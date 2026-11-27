@@ -30,6 +30,8 @@ namespace WaterChaos.Player
         [SerializeField, Min(0f)] private float _maxDistance = 3f;
         [SerializeField] private LayerMask _interactMask = ~0;
 
+        private readonly RaycastHit[] _hits = new RaycastHit[16];
+
         private readonly List<WaterConnectionPoint> _itemPoints = new List<WaterConnectionPoint>();
         private IWaterFlowReceiver _stream;
         private string _connectText = "Під'єднати " + DefaultItemName;
@@ -201,18 +203,34 @@ namespace WaterChaos.Player
                 Interact(target);
         }
 
+        /// <summary>
+        /// The connection point under the crosshair. Triggers without a point (water surfaces, zones) are looked through,
+        /// so a pump lying in a tank can still be reached; the first solid object stops the look.
+        /// </summary>
         private WaterConnectionPoint FindTarget()
         {
             Ray ray = new Ray(_camera.position, _camera.forward);
-            if (!Physics.Raycast(ray, out RaycastHit hit, _maxDistance, _interactMask, QueryTriggerInteraction.Collide))
-                return null;
+            int count = Physics.RaycastNonAlloc(ray, _hits, _maxDistance, _interactMask, QueryTriggerInteraction.Collide);
+            System.Array.Sort(_hits, 0, count, HitDistance);
 
-            WaterConnectionPoint point = hit.collider.GetComponentInParent<WaterConnectionPoint>();
-            if (point == null)
-                point = FindOnItem(hit);
+            for (int i = 0; i < count; i++)
+            {
+                RaycastHit hit = _hits[i];
+                WaterConnectionPoint point = hit.collider.GetComponentInParent<WaterConnectionPoint>();
+                if (point == null)
+                    point = FindOnItem(hit);
 
-            return IsUsable(point) ? point : null;
+                if (IsUsable(point))
+                    return point;
+                if (!hit.collider.isTrigger)
+                    return null;
+            }
+
+            return null;
         }
+
+        private static readonly IComparer<RaycastHit> HitDistance =
+            Comparer<RaycastHit>.Create((a, b) => a.distance.CompareTo(b.distance));
 
         private bool IsUsable(WaterConnectionPoint point)
         {

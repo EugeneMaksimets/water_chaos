@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f791dd57d6c84480a4ffd410f8ee271, type: 3}
+  m_Name: ToxicReactionSettings
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.ToxicReaction.ToxicReactionSettings
+  _duration: 2.5
+  _cooldown: 6
+  _cloudPrefab: {fileID: 71855052604526833, guid: 84efc56c8317b4ef689fc4e9a0ce0295, type: 3}
+  _cloudHeight: 1
+  _cloudStartRadius: 0.6
+  _cloudMaxRadius: 3
+  _cloudSpreadTime: 2
+  _cloudLifetime: 6
+  _maxChainGeneration: 1
+  _chainScale: 0.5
+  _chainBlastPrefab: {fileID: 6656679089381490589, guid: 8bf8535c4c4204f72882fc3ef6979ce2, type: 3}
+  _splashCount: 3
+  _splashLiters: 4
+  _splashRadius: 1.5

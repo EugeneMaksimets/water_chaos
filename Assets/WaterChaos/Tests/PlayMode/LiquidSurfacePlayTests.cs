@@ -239,6 +239,54 @@ namespace WaterChaos.Tests
             Assert.AreEqual(1, _player.GetComponents<ToxicExposure>().Length);
         }
 
+        // ───────────── Puddles never hang in the air ─────────────
+
+        [UnityTest]
+        public IEnumerator WaterOnASmallTable_RunsOffOntoTheFloor()
+        {
+            GameObject table = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            table.name = "Table";
+            table.transform.position = Outdoors + new Vector3(0f, 0.8f, 0f);
+            table.transform.localScale = new Vector3(0.9f, 0.05f, 0.6f);
+            try
+            {
+                Spray(LiquidType.Water, table.transform.position + Vector3.up * 0.03f, table.transform.position + new Vector3(-3f, 1.5f, 0f));
+                yield return Wait(1.5f);
+
+                Assert.AreEqual(1, _controller.Puddles.Count);
+                PuddleModel puddle = _controller.Puddles.Puddles[0];
+                Assert.Less(puddle.Center.y, 0.1f, "the puddle is on the floor, not on the table top");
+            }
+            finally
+            {
+                Object.Destroy(table);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PuddleByAStep_StopsAtTheEdge()
+        {
+            // A raised platform 1.2 m from the impact point toward +x: the floor ends there.
+            GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            platform.transform.position = Outdoors + new Vector3(-6f, 0.1f, 0f);
+            platform.transform.localScale = new Vector3(8f, 0.2f, 8f);
+            try
+            {
+                Vector3 target = Outdoors + new Vector3(-3.2f, 0.2f, 0f);
+                Spray(LiquidType.Water, target, target + new Vector3(-3f, 1.5f, 0f));
+                yield return Wait(6f);
+
+                Assert.AreEqual(1, _controller.Puddles.Count);
+                PuddleModel puddle = _controller.Puddles.Puddles[0];
+                Assert.Greater(puddle.Center.y, 0.15f, "on the platform");
+                Assert.LessOrEqual(puddle.Radius, 1.25f, "never past the edge of the platform");
+            }
+            finally
+            {
+                Object.Destroy(platform);
+            }
+        }
+
         // ───────────── Helpers ─────────────
 
         private ToxicExposure SpawnPlayer(Vector3 position)

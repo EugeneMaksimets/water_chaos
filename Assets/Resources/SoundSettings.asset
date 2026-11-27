@@ -241,3 +241,12 @@ MonoBehaviour:
     Spatial: 0
     MinDistance: 1
     MaxDistance: 10
+  - Id: 28
+    Clips:
+    - {fileID: 8300000, guid: edf17986ccc094932b501209d1adf2b7, type: 3}
+    - {fileID: 8300000, guid: b9ce342b9b5b74abd87fb307d4bd552d, type: 3}
+    Volume: 0.85
+    Pitch: {x: 0.92, y: 1.12}
+    Spatial: 1
+    MinDistance: 2
+    MaxDistance: 22

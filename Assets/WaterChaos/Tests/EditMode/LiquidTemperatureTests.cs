@@ -12,7 +12,8 @@ namespace WaterChaos.Tests
     /// </summary>
     public class LiquidTemperatureTests
     {
-        private static readonly PuddleConfig Config = PuddleConfig.Default;
+        // Puddles that never dry up: these tests run the clock for minutes to watch freezing and melting.
+        private static readonly PuddleConfig Config = new PuddleConfig(0.1f, 0.4f, 3f, 0.6f, 0f, 0.5f, 1f, 3f, 0.05f, 0f);
         private static readonly Vector3 Indoor = new Vector3(0f, 0f, 0f);
         private static readonly Vector3 Outdoor = new Vector3(50f, 0f, 0f);
         private const float LongTime = 60f;
@@ -248,13 +249,13 @@ namespace WaterChaos.Tests
         public void ExistingLiquidRoles_Unchanged()
         {
             Assert.AreEqual(1f, LiquidType.Water.ExtinguishingPower());
-            Assert.AreEqual(LiquidTypeExtensions.ToxicExtinguishingPower, LiquidType.Toxic.ExtinguishingPower());
+            Assert.AreEqual(0f, LiquidType.Toxic.ExtinguishingPower());
             Assert.AreEqual(0f, LiquidType.Gasoline.ExtinguishingPower());
             Assert.IsTrue(LiquidType.Gasoline.IsFlammable());
             Assert.IsTrue(LiquidType.Toxic.Corrodes());
             Assert.IsTrue(LiquidType.Water.CanBeSoapy());
             Assert.IsFalse(LiquidType.Toxic.CanBeSoapy());
-            Assert.AreEqual(LiquidType.Water, LiquidType.Gasoline.MixWith(LiquidType.Toxic));
+            Assert.AreEqual(LiquidType.Toxic, LiquidType.Gasoline.MixWith(LiquidType.Toxic));
             Assert.AreEqual(LiquidType.Gasoline, LiquidType.Water.MixWith(LiquidType.Gasoline));
 
             Assert.IsTrue(LiquidType.Water.CanFreeze());

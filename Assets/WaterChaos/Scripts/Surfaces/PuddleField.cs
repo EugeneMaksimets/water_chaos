@@ -20,6 +20,7 @@ namespace WaterChaos.Surfaces
         private readonly PuddleConfig _config;
         private readonly int _maxPuddles;
         private readonly SurfacePatchRegistry<PuddleModel> _registry;
+        private readonly List<PuddleModel> _dried = new List<PuddleModel>();
 
         /// <param name="maxPuddles">Most puddles at once; past it the oldest one is removed.</param>
         public PuddleField(PuddleConfig config, int maxPuddles)
@@ -36,25 +37,38 @@ namespace WaterChaos.Surfaces
         /// <summary>Raised when a new puddle appears.</summary>
         public event Action<PuddleModel> Created;
 
-        /// <summary>Raised when a puddle is removed (the oldest one, to make room for a new one).</summary>
+        /// <summary>Raised when a puddle is removed: it dried up, or it was the oldest and made room for a new one.</summary>
         public event Action<PuddleModel> Removed;
+
+        /// <summary>The puddle liquid landing at <paramref name="point"/> would join, if any.</summary>
+        public PuddleModel FindNearby(Vector3 point)
+        {
+            return _registry.FindNearest(point, _config.MergeDistance, FloorTolerance);
+        }
 
         /// <summary>
         /// Liquid landed on a floor at <paramref name="point"/>: joins the puddle there or starts a new one.
-        /// Returns that puddle, or null when no liquid was given.
+        /// Returns that puddle, or null when no liquid was given or a new puddle has no room.
         /// </summary>
-        public PuddleModel AddLiquid(Vector3 point, LiquidType liquid, float liters)
+        /// <param name="space">
+        /// Free floor around the point for a new puddle, in meters (m) (to the edge of the surface or a wall);
+        /// less than the smallest puddle leaves none.
+        /// </param>
+        public PuddleModel AddLiquid(Vector3 point, LiquidType liquid, float liters, float space = float.PositiveInfinity)
         {
             if (!(liters > 0f))
                 return null;
 
-            PuddleModel puddle = _registry.FindNearest(point, _config.MergeDistance, FloorTolerance);
+            PuddleModel puddle = FindNearby(point);
             if (puddle == null)
             {
+                if (!(space >= _config.MinRadius))
+                    return null;
+
                 while (_registry.Count >= _maxPuddles)
                     RemoveOldest();
 
-                puddle = new PuddleModel(point, liquid, _config);
+                puddle = new PuddleModel(point, liquid, _config, space);
                 _registry.Add(puddle);
                 puddle.AddLiquid(liquid, liters);
                 Created?.Invoke(puddle);
@@ -65,16 +79,29 @@ namespace WaterChaos.Surfaces
             return puddle;
         }
 
-        /// <summary>Freezes and melts every puddle by the temperature where it lies (no zone = no freezing).</summary>
+        /// <summary>
+        /// Freezes and melts every puddle by the temperature where it lies (no zone = no freezing) and removes the ones
+        /// that dried up (no new liquid for their lifetime).
+        /// </summary>
         public void Tick(float deltaTime, ITemperatureProvider temperatures)
         {
             IReadOnlyList<PuddleModel> all = _registry.All;
+            _dried.Clear();
             for (int i = 0; i < all.Count; i++)
             {
                 PuddleModel puddle = all[i];
                 float temperature = 0f;
                 bool hasZone = temperatures != null && temperatures.TryGetTemperature(puddle.Center, out temperature);
                 puddle.UpdateTemperature(hasZone, temperature, deltaTime);
+                puddle.Advance(deltaTime);
+                if (puddle.IsDriedUp)
+                    _dried.Add(puddle);
+            }
+
+            foreach (PuddleModel puddle in _dried)
+            {
+                _registry.Remove(puddle);
+                Removed?.Invoke(puddle);
             }
         }
 

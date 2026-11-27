@@ -100,6 +100,16 @@ namespace WaterChaos.Hose
             SetLimitReached(false);
         }
 
+        /// <summary>
+        /// Lays the hose again in a straight line from its start to its end, dropping the bends it had
+        /// (e.g. after the teammate holding it was lifted over a roof and landed again).
+        /// </summary>
+        public void ResetPath()
+        {
+            if (IsConnected && _model != null)
+                _model.Reset(_anchor.position, _endPoint.position);
+        }
+
         public void Disconnect()
         {
             _anchor = null;

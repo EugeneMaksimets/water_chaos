@@ -7,7 +7,7 @@ namespace WaterChaos.Interaction
 {
     /// <summary>
     /// Owns the fire's FireModel and puts it out with extinguishing liquids hitting this object,
-    /// each as strong as its <see cref="LiquidTypeExtensions.ExtinguishingPower"/> (toxic liquid cools far less than water).
+    /// each as strong as its <see cref="LiquidTypeExtensions.ExtinguishingPower"/> (snow cools far less than water; toxic liquid does not cool at all, it reacts with the fire).
     /// Other liquids are ignored here; fuel is handled by <see cref="FireFuelHandler"/>.
     /// </summary>
     public sealed class FireExtinguishHandler : MonoBehaviour, IWaterImpactReceiver
@@ -97,7 +97,7 @@ namespace WaterChaos.Interaction
             if (!(power > 0f))
                 return;
 
-            // A weak extinguisher (toxic liquid, snow) cools like a smaller amount of water.
+            // A weak extinguisher (snow) cools like a smaller amount of water.
             _model.ApplyWater(impact.Volume * power);
             NotifyIfChanged();
         }
