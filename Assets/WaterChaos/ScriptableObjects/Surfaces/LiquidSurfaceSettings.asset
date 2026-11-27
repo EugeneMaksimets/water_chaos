@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8152aec43c41b4859a24092a413fcb12, type: 3}
+  m_Name: LiquidSurfaceSettings
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.LiquidSurfaceSettings
+  _surfaceMask:
+    serializedVersion: 2
+    m_Bits: 4294966281
+  _floorMinUp: 0.7
+  _maxDropToFloor: 3
+  _surfaceOffset: 0.015
+  _tickInterval: 0.25
+  _puddleAreaPerLiter: 0.1
+  _puddleMinRadius: 0.4
+  _puddleMaxRadius: 3
+  _puddleMergeDistance: 0.6
+  _maxPuddles: 150
+  _freezeBelow: 0
+  _meltAbove: 0.5
+  _freezeDelay: 1
+  _meltDelay: 3
+  _iceFriction: 0.05
+  _snowPerLiter: 1
+  _snowdriftFullVolume: 20
+  _snowdriftMinRadius: 0.2
+  _snowdriftMaxRadius: 0.7
+  _snowdriftMaxHeight: 0.35
+  _snowdriftMergeDistance: 0.3
+  _snowMeltAbove: 0
+  _snowMeltRate: 0.5
+  _snowBlockingFill: 0.05
+  _maxSnowdrifts: 80

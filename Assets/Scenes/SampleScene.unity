@@ -173,9 +173,64 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2164106973126472119, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1033788482}
+    - targetCorrespondingSourceObject: {fileID: 2164106973126472119, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1839969984}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8417524686959310171, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 18366840}
   m_SourcePrefab: {fileID: 100100000, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+--- !u!114 &18366836 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6473187469787547825, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 18366835}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18366838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf9c91fddd597430893150f1cfb0aa6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterStream
+--- !u!4 &18366837 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2164106973126472119, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 18366835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &18366838 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8417524686959310171, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 18366835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!120 &18366839 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 106751407916194830, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 18366835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &18366840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18366838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb331c910bdc403c808e0e95bbe9e85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.SnowStreamView
+  _stream: {fileID: 18366836}
+  _waterRenderers:
+  - {fileID: 18366839}
+  _snowflakes: {fileID: 1033788483}
+  _impactPowder: {fileID: 1839969985}
+  _flakesPerSecond: 220
+  _flakeSpeed: 6
+  _spread: 0.12
 --- !u!1 &63195088
 GameObject:
   m_ObjectHideFlags: 0
@@ -573,6 +628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.HoseMessageView
   _hoseConnector: {fileID: 1633715726}
+  _transferHose: {fileID: 0}
   _message: {fileID: 2117384520}
 --- !u!1 &303584250
 GameObject:
@@ -1081,6 +1137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb68d3c7dddc4069a2157a23397b120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirComponent
+  _liquid: 0
   _capacity: 5000
   _lowLevelRatio: 0.05
   _initialVolume: 5000
@@ -1105,6 +1162,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6, y: 0.8, z: 6}
   m_Center: {x: 0, y: 0.4, z: 0}
+--- !u!1 &409427733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 409427735}
+  - component: {fileID: 409427734}
+  m_Layer: 0
+  m_Name: Liquid Surfaces
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &409427734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409427733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c536973ac21460e92721fb942046ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.LiquidSurfaceController
+  _settings: {fileID: 11400000, guid: 2413b234aac434719adaf12ea3c14f35, type: 2}
+  _puddlePrefab: {fileID: 4955118814001894050, guid: b5cfc6e07eae34ce79a534eb590fb42a, type: 3}
+  _snowdriftPrefab: {fileID: 1064629377604783184, guid: 536b95692592a44d7a220ff9316a7afe, type: 3}
+--- !u!4 &409427735
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409427733}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -4146,6 +4250,73 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 161151389}
   m_SourcePrefab: {fileID: 100100000, guid: 60f38a01237547147bc883f756cf6881, type: 3}
+--- !u!1001 &684268285
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 882382565}
+    m_Modifications:
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8249865779704655742, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_Name
+      value: SnowStreamFlakes
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+--- !u!4 &684268286 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+  m_PrefabInstance: {fileID: 684268285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &684268287 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3610412639308202888, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+  m_PrefabInstance: {fileID: 684268285}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &695974346
 GameObject:
   m_ObjectHideFlags: 0
@@ -7275,9 +7446,64 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2164106973126472119, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 684268286}
+    - targetCorrespondingSourceObject: {fileID: 2164106973126472119, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1050069093}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8417524686959310171, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 882382568}
   m_SourcePrefab: {fileID: 100100000, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+--- !u!114 &882382564 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6473187469787547825, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 882382563}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882382566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf9c91fddd597430893150f1cfb0aa6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterStream
+--- !u!4 &882382565 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2164106973126472119, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 882382563}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &882382566 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8417524686959310171, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 882382563}
+  m_PrefabAsset: {fileID: 0}
+--- !u!120 &882382567 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 106751407916194830, guid: 8b072329ea3c446a0af512745bcccbc6, type: 3}
+  m_PrefabInstance: {fileID: 882382563}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &882382568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882382566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb331c910bdc403c808e0e95bbe9e85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.SnowStreamView
+  _stream: {fileID: 882382564}
+  _waterRenderers:
+  - {fileID: 882382567}
+  _snowflakes: {fileID: 684268287}
+  _impactPowder: {fileID: 1050069094}
+  _flakesPerSecond: 220
+  _flakeSpeed: 6
+  _spread: 0.12
 --- !u!1 &891847946
 GameObject:
   m_ObjectHideFlags: 0
@@ -7712,6 +7938,140 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1033788481
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 18366837}
+    m_Modifications:
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8249865779704655742, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+      propertyPath: m_Name
+      value: SnowStreamFlakes
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+--- !u!4 &1033788482 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7801729790212780970, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+  m_PrefabInstance: {fileID: 1033788481}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1033788483 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3610412639308202888, guid: 39355caa10670491fa72c3ff26240e35, type: 3}
+  m_PrefabInstance: {fileID: 1033788481}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1050069092
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 882382565}
+    m_Modifications:
+    - target: {fileID: 1884958863418703703, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_Name
+      value: SnowImpactPowder
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+--- !u!4 &1050069093 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+  m_PrefabInstance: {fileID: 1050069092}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1050069094 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7328003254043866820, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+  m_PrefabInstance: {fileID: 1050069092}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1055329592
 GameObject:
   m_ObjectHideFlags: 0
@@ -7743,6 +8103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb68d3c7dddc4069a2157a23397b120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirComponent
+  _liquid: 0
   _capacity: 200
   _lowLevelRatio: 0
   _initialVolume: 10
@@ -10881,6 +11242,8 @@ GameObject:
   - component: {fileID: 1633715738}
   - component: {fileID: 1633715737}
   - component: {fileID: 1633715739}
+  - component: {fileID: 1633715741}
+  - component: {fileID: 1633715740}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -10906,6 +11269,10 @@ MonoBehaviour:
   _gravity: -9.81
   _cameraTransform: {fileID: 330585546}
   _hoseConnector: {fileID: 1633715726}
+  _iceAcceleration: 6
+  _iceMaxSpeed: 9
+  _iceGroundDeceleration: 20
+  _iceTurnSpeed: 120
 --- !u!143 &1633715718
 CharacterController:
   m_ObjectHideFlags: 0
@@ -11069,6 +11436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Player.PlayerHoseConnector
   _camera: {fileID: 330585546}
+  _input: {fileID: 0}
   _maxDistance: 3
   _interactMask:
     serializedVersion: 2
@@ -11270,13 +11638,11 @@ MonoBehaviour:
   _input: {fileID: 1633715727}
   _inventory: {fileID: 1633715730}
   _camera: {fileID: 330585546}
-  _trajectoryLine: {fileID: 1633715731}
-  _throwImpulse: 10
   _spawnDistance: 0.8
+  _dropBelowEyes: 0.6
   _collisionMask:
     serializedVersion: 2
     m_Bits: 127
-  _trajectoryTimeStep: 0.05
 --- !u!114 &1633715733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11406,6 +11772,40 @@ MonoBehaviour:
   _interactMask:
     serializedVersion: 2
     m_Bits: 4294967167
+  _highlight: 0.3
+--- !u!114 &1633715740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4814794639e42689277408f5ecd399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.PlayerToxicOverlay
+  _intensity: 1
+  _fadeInTime: 0.25
+  _fadeOutTime: 0.8
+  _drips: 8
+  _bubbles: 14
+  _sortingOrder: 29
+--- !u!114 &1633715741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6f8b678baab4ab1b5d0bc8c319bcb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Surfaces.ToxicExposure
+  _holdTime: 0.8
+  _puddleCheckInterval: 0.1
+  _feet: {fileID: 0}
 --- !u!1 &1694194528
 GameObject:
   m_ObjectHideFlags: 0
@@ -11672,6 +12072,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf9c91fddd597430893150f1cfb0aa6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterStream
+--- !u!1001 &1839969983
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 18366837}
+    m_Modifications:
+    - target: {fileID: 1884958863418703703, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_Name
+      value: SnowImpactPowder
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+--- !u!4 &1839969984 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4464843713931494171, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+  m_PrefabInstance: {fileID: 1839969983}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1839969985 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7328003254043866820, guid: 11bebd24a438e4f218d610968cf2404c, type: 3}
+  m_PrefabInstance: {fileID: 1839969983}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1842185819
 GameObject:
   m_ObjectHideFlags: 0
@@ -11965,6 +12432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb68d3c7dddc4069a2157a23397b120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterReservoirComponent
+  _liquid: 0
   _capacity: 2000
   _lowLevelRatio: 0
   _initialVolume: 100
@@ -12330,6 +12798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b50578bac3b94877be3bf35d44e98f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.WaterPushHandler
+  _profile: {fileID: 0}
 --- !u!54 &2078530269
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12772,3 +13241,4 @@ SceneRoots:
   - {fileID: 18366835}
   - {fileID: 63195090}
   - {fileID: 1330259128}
+  - {fileID: 409427735}

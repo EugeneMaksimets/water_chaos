@@ -1,3 +1,5 @@
+using System;
+
 namespace WaterChaos.Water
 {
     /// <summary>
@@ -38,6 +40,32 @@ namespace WaterChaos.Water
                 case LiquidType.Toxic: return ToxicExtinguishingPower;
                 default: return 0f;
             }
+        }
+
+        /// <summary>Share of water's cooling that snow gives a fire by default (0.2 = 20 %).</summary>
+        public const float DefaultSnowExtinguishingPower = 0.2f;
+
+        /// <summary>
+        /// Cooling of the liquid compared to water, taking snow into account:
+        /// snow cools only <paramref name="snowMultiplier"/> (0..1) of what the same liquid would as liquid.
+        /// </summary>
+        public static float ExtinguishingPower(this LiquidType liquid, bool isSnow, float snowMultiplier)
+        {
+            float power = liquid.ExtinguishingPower();
+            if (!isSnow || !liquid.CanFreeze())
+                return power;
+
+            float multiplier = float.IsNaN(snowMultiplier) ? 0f : Math.Min(1f, Math.Max(0f, snowMultiplier));
+            return power * multiplier;
+        }
+
+        /// <summary>
+        /// Leaves a cold nozzle as snow and freezes into ice in a puddle: only water (soapy or not).
+        /// Gasoline and toxic liquid always stay liquid.
+        /// </summary>
+        public static bool CanFreeze(this LiquidType liquid)
+        {
+            return liquid == LiquidType.Water;
         }
 
         /// <summary>

@@ -11,6 +11,15 @@ namespace WaterChaos.Water
     /// </summary>
     public sealed class WaterStream : MonoBehaviour, IWaterFlowReceiver
     {
+        /// <summary>Called after a stream delivered an impact to the collider it hit.</summary>
+        public delegate void ImpactDeliveredHandler(WaterStream stream, in WaterImpact impact, Collider surface);
+
+        /// <summary>
+        /// Raised for every impact of every stream, after its receivers got it (e.g. puddles and snowdrifts
+        /// form where liquid lands). Subscribers must not change the stream.
+        /// </summary>
+        public static event ImpactDeliveredHandler ImpactDelivered;
+
         // Reuse a fixed buffer to avoid allocating memory during physics queries.
         // Hits beyond this capacity cannot be collected by the current cast.
         private const int MaxHitsPerCast = 8;
@@ -45,6 +54,12 @@ namespace WaterChaos.Water
         [Tooltip("Stream thickness for hit detection, in meters (m).")]
         [SerializeField, Min(0f)] 
         private float _radius = 0.1f;
+
+        [Header("Snow")]
+        [Tooltip("Water leaves the nozzle as snow while the nozzle is in a temperature zone (room) colder than this, " +
+                 "in degrees Celsius (°C). Outside every zone it never snows.")]
+        [SerializeField]
+        private float _snowBelowTemperature = FreezingRules.DefaultFreezingPoint;
 
         [Header("Influences")]
         [Tooltip("Layers of trigger volumes that bend the stream (e.g. wind zones).")]
@@ -91,6 +106,12 @@ namespace WaterChaos.Water
             set => _maxLength = Mathf.Max(0f, value);
         }
 
+        /// <summary>
+        /// Water leaves the nozzle as snow: the nozzle is in a temperature zone below the snow temperature.
+        /// Only a liquid that can freeze (water) turns into snow; the liquid type itself never changes.
+        /// </summary>
+        public bool IsSnow { get; private set; }
+
         /// <summary>Source the stream is fed from; null when disconnected.</summary>
         public IWaterFlowSource Source => _source;
 
@@ -120,10 +141,39 @@ namespace WaterChaos.Water
         /// <summary>Connects the stream to another source. Null disconnects.</summary>
         public void SetSource(IWaterFlowSource source) => _source = source;
 
+        // Domain reload on entering Play Mode is off in this project: drop subscribers left from the last run.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            ImpactDelivered = null;
+        }
+
         private void FixedUpdate()
         {
+            UpdateSnow();
             if (TryBuildStream(true, out RaycastHit hit, out Vector3 direction))
                 DeliverImpact(hit, direction, _source.Output);
+        }
+
+        /// <summary>Snow depends on the temperature where the water leaves the nozzle (see <see cref="IsSnow"/>).</summary>
+        private void UpdateSnow()
+        {
+            if (_source == null || _nozzle == null)
+            {
+                IsSnow = false;
+                return;
+            }
+
+            IsSnow = EmitsSnow(_source.Output.Liquid, TemperatureZones.Provider, _nozzle.position, _snowBelowTemperature);
+        }
+
+        /// <summary>
+        /// True if <paramref name="liquid"/> leaving a nozzle at <paramref name="nozzle"/> comes out as snow:
+        /// only a freezing liquid (water), only inside a temperature zone, only below <paramref name="snowBelow"/> (°C).
+        /// </summary>
+        public static bool EmitsSnow(LiquidType liquid, ITemperatureProvider temperatures, Vector3 nozzle, float snowBelow)
+        {
+            return liquid.CanFreeze() && FreezingRules.IsFreezingAt(temperatures, nozzle, snowBelow);
         }
 
         // The player moves and rotates in Update, so the arc from FixedUpdate is stale by render time.
@@ -294,7 +344,8 @@ namespace WaterChaos.Water
                 flow.FlowRate * Time.fixedDeltaTime,
                 _tuning.GetImpactForce(flow.FlowRate),
                 flow.Liquid,
-                flow.IsSoapy);
+                flow.IsSoapy,
+                IsSnow);
 
             hit.collider.GetComponents(_receivers);
             for(int i = 0; i < _receivers.Count; i++)
@@ -302,6 +353,8 @@ namespace WaterChaos.Water
                 _receivers[i].ReceiveImpact(impact);
             }
             _receivers.Clear();
+
+            ImpactDelivered?.Invoke(this, impact, hit.collider);
         }
 
     }

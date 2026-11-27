@@ -142,6 +142,17 @@ namespace WaterChaos.Rooms
         }
 
         /// <summary>
+        /// Cools the room by <paramref name="degrees"/> (°C), never below the minimum. Negative and NaN values are ignored.
+        /// </summary>
+        public void RemoveHeat(float degrees)
+        {
+            if (!(degrees > 0f))
+                return;
+
+            Temperature = Math.Max(Temperature - degrees, _minTemperature);
+        }
+
+        /// <summary>
         /// A burning fire went out or left the room: the room loses the extinguish heat loss once and the fire stops heating.
         /// Returns false (and changes nothing) if this fire was not burning here.
         /// </summary>

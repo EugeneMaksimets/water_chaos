@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using WaterChaos.Environment;
 using WaterChaos.Interaction;
 
 namespace WaterChaos.Rooms
@@ -15,7 +16,7 @@ namespace WaterChaos.Rooms
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(BoxCollider), typeof(Rigidbody))]
-    public sealed class RoomTemperature : MonoBehaviour, IFireArea
+    public sealed class RoomTemperature : MonoBehaviour, IFireArea, ITemperatureZone
     {
         [Header("Room")]
         [Tooltip("Name shown on the HUD.")]
@@ -109,8 +110,16 @@ namespace WaterChaos.Rooms
             _onApplianceChanged = OnApplianceChanged;
         }
 
+        private void OnEnable()
+        {
+            // Streams and puddles ask the zone registry for the temperature at a point.
+            TemperatureZones.Register(this);
+        }
+
         private void OnDisable()
         {
+            TemperatureZones.Unregister(this);
+
             _buffer.Clear();
             _buffer.AddRange(_owned);
             foreach (Component member in _buffer)
@@ -152,6 +161,14 @@ namespace WaterChaos.Rooms
         {
             if (_model != null)
                 _model.AddHeat(50f);
+        }
+
+        // Play-mode test helper: freezes the room quickly to try snow, ice and sliding.
+        [ContextMenu("Debug/Cool -50 °C")]
+        private void DebugCool()
+        {
+            if (_model != null)
+                _model.RemoveHeat(50f);
         }
 
         /// <summary>True if the point belongs to this room (half-open box, so shared walls are not double counted).</summary>

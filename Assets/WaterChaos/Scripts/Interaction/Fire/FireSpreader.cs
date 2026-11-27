@@ -99,11 +99,14 @@ namespace WaterChaos.Interaction
 
         /// <summary>
         /// True if a new fire may appear at <paramref name="firePosition"/>: under the fire limit,
-        /// not in water, not outdoors in a <see cref="NoOutdoorFireZone"/>,
-        /// and no fire (existing or igniting) within the exclusion radius.
+        /// not in water, not outdoors in a <see cref="NoOutdoorFireZone"/>, not on a covered surface
+        /// (<see cref="FireIgnitionRules"/>, e.g. a snowdrift), and no fire (existing or igniting) within the exclusion radius.
         /// </summary>
         public static bool CanBurnAt(Vector3 firePosition, FireSpreadSettings settings)
         {
+            if (FireIgnitionRules.IsBlocked(firePosition))
+                return false;
+
             if (ActiveCount + s_reserved.Count >= settings.MaxActiveFires)
                 return false;
 
@@ -160,11 +163,13 @@ namespace WaterChaos.Interaction
 
         /// <summary>
         /// Lights a new fire at once at <paramref name="firePosition"/> whatever the rules (fire limit, water, rooms,
-        /// no-fire zones) — only not where a fire already burns or is igniting. Used by flamethrowers.
+        /// no-fire zones) — only not where a fire already burns or is igniting, or on a covered surface
+        /// (<see cref="FireIgnitionRules"/>, e.g. a snowdrift). Used by flamethrowers.
         /// </summary>
         public static bool StartFireIgnoringRules(Vector3 firePosition, FireSpreadSettings settings)
         {
-            if (settings == null || settings.FirePrefab == null || IsFireNear(firePosition, settings.ExclusionRadius, settings.FireMask))
+            if (settings == null || settings.FirePrefab == null || FireIgnitionRules.IsBlocked(firePosition)
+                || IsFireNear(firePosition, settings.ExclusionRadius, settings.FireMask))
                 return false;
 
             SpawnFire(firePosition, settings);

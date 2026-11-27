@@ -36,6 +36,11 @@ namespace WaterChaos.Water
         /// Soapy water hit (see <see cref="WaterFlowData.IsSoapy"/>); always false for other liquids
         /// </summary>
         public bool IsSoapy { get; }
+        /// <summary>
+        /// The liquid arrived as snow (water from a nozzle in a cold temperature zone).
+        /// The liquid type stays the same; always false for liquids that cannot freeze (<see cref="LiquidTypeExtensions.CanFreeze"/>).
+        /// </summary>
+        public bool IsSnow { get; }
 
         public WaterImpact(Vector3 point, 
             Vector3 normal, 
@@ -43,10 +48,12 @@ namespace WaterChaos.Water
             float volume,
             float force,
             LiquidType liquid = LiquidType.Water,
-            bool isSoapy = false)
+            bool isSoapy = false,
+            bool isSnow = false)
         {
             Liquid = liquid;
             IsSoapy = isSoapy && liquid.CanBeSoapy();
+            IsSnow = isSnow && liquid.CanFreeze();
             ContactPoint = point;
             Normal = normal;
             Direction = direction;

@@ -20,6 +20,10 @@ namespace WaterChaos.Interaction
         [SerializeField, Range(0f, 1f)]
         private float _extinguishThreshold = 0.05f;
 
+        [Tooltip("How well snow cools compared to the same liquid as a stream (0..1): 0.2 = snow puts fire out 5 times slower.")]
+        [SerializeField, Range(0f, 1f)]
+        private float _snowEffectiveness = LiquidTypeExtensions.DefaultSnowExtinguishingPower;
+
         [Tooltip("Outdoors (no room): an extinguished fire lights again by itself after Reignite Delay. " +
                  "Off = once out, it stays out. Fires in a room are always re-lit by the room (temperature), not by this.")]
         [SerializeField]
@@ -89,11 +93,11 @@ namespace WaterChaos.Interaction
         // Called during FixedUpdate by WaterStream
         public void ReceiveImpact(in WaterImpact impact)
         {
-            float power = impact.Liquid.ExtinguishingPower();
+            float power = impact.Liquid.ExtinguishingPower(impact.IsSnow, _snowEffectiveness);
             if (!(power > 0f))
                 return;
 
-            // A weak extinguisher (toxic liquid) cools like a smaller amount of water.
+            // A weak extinguisher (toxic liquid, snow) cools like a smaller amount of water.
             _model.ApplyWater(impact.Volume * power);
             NotifyIfChanged();
         }

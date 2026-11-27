@@ -34,6 +34,22 @@ namespace WaterChaos.Tests
             return room;
         }
 
+        [Test]
+        public void RemoveHeat_CoolsTheRoom_NeverBelowMinimum_IgnoresBadValues()
+        {
+            RoomTemperatureModel room = CreateRoom();
+
+            room.RemoveHeat(30f);
+            Assert.AreEqual(Start - 30f, room.Temperature, Tolerance);
+
+            room.RemoveHeat(-10f);
+            room.RemoveHeat(float.NaN);
+            Assert.AreEqual(Start - 30f, room.Temperature, Tolerance);
+
+            room.RemoveHeat(10000f);
+            Assert.AreEqual(Min, room.Temperature, Tolerance);
+        }
+
         private void Tick(RoomTemperatureModel room, float seconds)
         {
             _ready.Clear();
