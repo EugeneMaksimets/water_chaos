@@ -436,7 +436,7 @@ MonoBehaviour:
   _hose: {fileID: 6659364289387479359}
   _material: {fileID: 2100000, guid: 8aec4cb69e13948b0b01e52c0a9dea9f, type: 2}
   _rate: 30
-  _size: {x: 0.05, y: 0.1}
+  _size: {x: 0.09, y: 0.16}
   _water: {r: 0.45, g: 0.75, b: 1, a: 0.9}
   _gasoline: {r: 1, g: 0.7, b: 0.15, a: 0.9}
   _toxic: {r: 0.45, g: 1, b: 0.15, a: 0.9}

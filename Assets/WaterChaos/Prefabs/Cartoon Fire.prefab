@@ -4815,6 +4815,7 @@ GameObject:
   - component: {fileID: 572095665593796408}
   - component: {fileID: 2233029035384726905}
   - component: {fileID: 3759582445966834499}
+  - component: {fileID: 1937176222518221650}
   m_Layer: 8
   m_Name: Cartoon Fire
   m_TagString: Fire
@@ -7295,6 +7296,21 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &942743266661332968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940506567032470736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b794798c40be40b89954c836bafb78a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireFuelHandler
+  _intensityPerLiter: 0.1
+  _maxIntensity: 2
+  _overburnFadeRate: 0.15
 --- !u!114 &8044254262934987310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7419,6 +7435,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireExtinguishHandler
   _coolingPerLiter: 0.066
   _extinguishThreshold: 0.05
+  _reigniteOutdoors: 0
   _reigniteDelay: 5
 --- !u!114 &3759582445966834499
 MonoBehaviour:
@@ -7433,7 +7450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireSpreader
   _settings: {fileID: 11400000, guid: d16241bf99847470ea2a721d689b9aa4, type: 2}
---- !u!114 &942743266661332968
+--- !u!114 &1937176222518221650
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7442,9 +7459,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7940506567032470736}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b794798c40be40b89954c836bafb78a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 01f1499e0a5074919823f9eb263b3f96, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireFuelHandler
-  _intensityPerLiter: 0.1
-  _maxIntensity: 2
-  _overburnFadeRate: 0.15
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireSteamEffect
+  _steamPrefab: {fileID: 940121394731464956, guid: e601bcad98f7145839d5d155c073e0a2, type: 3}
+  _holdTime: 0.15
+  _afterOutTime: 0.6

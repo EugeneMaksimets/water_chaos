@@ -327,6 +327,10 @@ namespace WaterChaos.Soap
                     continue;
                 if (_bubble != null && part.transform.IsChildOf(_bubble.transform))
                     continue;
+                // Only the character: never the water stream (its tube mesh reaches far) or flames on the body.
+                if (part.GetComponentInParent<WaterChaos.Water.WaterStream>() != null
+                    || part.GetComponentInParent<WaterChaos.Fire.FireSway>() != null)
+                    continue;
 
                 if (!found)
                     bounds = part.bounds;

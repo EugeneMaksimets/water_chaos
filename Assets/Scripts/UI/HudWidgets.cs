@@ -221,6 +221,72 @@ namespace WaterChaos.UI
                 SpriteMeshType.FullRect, new Vector4(radius, radius, radius, radius));
         }
 
+        /// <summary>
+        /// White cartoon flame (a round base narrowing to a leaning tip), pivot at the bottom center,
+        /// in the look of the room temperature flame icon.
+        /// </summary>
+        public static Sprite CreateFlameSprite(int size)
+        {
+            const float baseY = 0.35f;
+            const float radius = 0.3f;
+            const float tipY = 0.97f;
+            Color32[] pixels = new Color32[size * size];
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float u = (x + 0.5f) / size;
+                    float v = (y + 0.5f) / size;
+                    float edge;
+
+                    if (v <= baseY)
+                    {
+                        edge = radius - Vector2.Distance(new Vector2(u, v), new Vector2(0.5f, baseY));
+                    }
+                    else
+                    {
+                        float t = Mathf.Clamp01((v - baseY) / (tipY - baseY));
+                        float center = 0.5f + 0.06f * t * t;
+                        float halfWidth = radius * Mathf.Sqrt(1f - t);
+                        edge = halfWidth - Mathf.Abs(u - center);
+                    }
+
+                    float alpha = Mathf.Clamp01(edge * size + 0.5f);
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.05f));
+        }
+
+        /// <summary>White frame fading toward the middle: transparent center, opaque edges (a screen vignette).</summary>
+        public static Sprite CreateVignetteSprite(int size)
+        {
+            Color32[] pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    Vector2 p = new Vector2((x + 0.5f) / size - 0.5f, (y + 0.5f) / size - 0.5f) * 2f;
+                    float edge = Mathf.Max(Mathf.Abs(p.x), Mathf.Abs(p.y));
+                    float round = p.magnitude / 1.414f;
+                    float alpha = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 1f, Mathf.Max(edge * 0.85f, round)));
+                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+
         /// <summary>White check mark (tick) sprite.</summary>
         public static Sprite CreateCheckSprite(int size)
         {

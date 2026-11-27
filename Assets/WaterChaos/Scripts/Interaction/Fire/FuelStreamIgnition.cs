@@ -65,6 +65,9 @@ namespace WaterChaos.Interaction
         // Stands for "the air in front": one target, so the ignition interval applies to it like to any other.
         private readonly object _airTarget = new object();
 
+        private static readonly System.Collections.Generic.List<IFlameHitReceiver> s_flameReceivers =
+            new System.Collections.Generic.List<IFlameHitReceiver>();
+
         private StreamIgnitionModel _model;
 
         /// <summary>Raised when the stream lights (true) or goes out (false).</summary>
@@ -124,6 +127,15 @@ namespace WaterChaos.Interaction
             {
                 kind = TargetKind.Air;
                 target = _airTarget;
+            }
+
+            // Whatever the burning stream touches can react to it (a teammate catches fire, the player's screen burns).
+            if (_model.IsLit && hit != null)
+            {
+                hit.GetComponentsInParent(false, s_flameReceivers);
+                foreach (IFlameHitReceiver burnt in s_flameReceivers)
+                    burnt.ReceiveFlame(_stream.HitPoint);
+                s_flameReceivers.Clear();
             }
 
             bool touchingFire = _selfIgniting || (fire != null && fire.IsBurning);
