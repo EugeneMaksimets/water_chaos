@@ -90,7 +90,7 @@ namespace WaterChaos.Interaction
             if (!FireSpreader.CanBurnAt(firePosition, settings))
                 yield break;
 
-            _fire = Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
+            _fire = FireSpreader.SpawnFire(firePosition, settings);
 
             // A movable object carries its fire along.
             if (_body != null)

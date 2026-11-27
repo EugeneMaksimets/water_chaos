@@ -154,7 +154,7 @@ namespace WaterChaos.Interaction
             if (respectRoomProtection && !AllowsIgnition(FindArea(firePosition, settings), firePosition))
                 return false;
 
-            Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
+            SpawnFire(firePosition, settings);
             return true;
         }
 
@@ -167,8 +167,16 @@ namespace WaterChaos.Interaction
             if (settings == null || settings.FirePrefab == null || IsFireNear(firePosition, settings.ExclusionRadius, settings.FireMask))
                 return false;
 
-            Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
+            SpawnFire(firePosition, settings);
             return true;
+        }
+
+        /// <summary>A new fire from the settings' prefab, starting at the settings' spawn intensity.</summary>
+        public static FireExtinguishHandler SpawnFire(Vector3 firePosition, FireSpreadSettings settings)
+        {
+            FireExtinguishHandler fire = Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
+            fire.SetIntensity(settings.SpawnIntensity);
+            return fire;
         }
 
         private void SetCounted(bool value)
@@ -316,7 +324,7 @@ namespace WaterChaos.Interaction
 
             // Checked again: something may have changed during the delay.
             if (CanBurnAt(firePosition, _settings))
-                Instantiate(_settings.FirePrefab, firePosition, Quaternion.identity);
+                SpawnFire(firePosition, _settings);
         }
 
         private static bool ContainsTarget(FlammableObject target)

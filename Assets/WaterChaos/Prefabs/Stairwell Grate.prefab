@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 801c14ea3700a4fc7af8a94280edd933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.CorrodibleObject
-  _profile: {fileID: 11400000, guid: 7c2c14ce1abc64245bca4394272d92bc, type: 2}
+  _profile: {fileID: 11400000, guid: a244a383daf74ad8a8cb4cc127fbbc71, type: 2}
   _colliders: []
   _renderers: []
   _destroyEffect: {fileID: 8146559810055391511, guid: 27701c216c9c44725800e14b2412359d, type: 3}

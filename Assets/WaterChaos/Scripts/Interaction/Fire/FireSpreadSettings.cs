@@ -38,6 +38,9 @@ namespace WaterChaos.Interaction
         [Tooltip("Height of the fire's pivot above the burning point, in meters (m).")]
         [SerializeField, Min(0f)] private float _spawnHeight = 0.5f;
 
+        [Tooltip("Intensity (0..1) of every fire that appears during play (spreading, flamethrowers); fires placed in the scene start full.")]
+        [SerializeField, Range(0.1f, 1f)] private float _spawnIntensity = 0.6f;
+
         [Header("Limits")]
         [Tooltip("No new fire within this distance of an existing one, in meters (m).")]
         [SerializeField, Min(0f)] private float _exclusionRadius = 1.5f;
@@ -57,6 +60,9 @@ namespace WaterChaos.Interaction
 
         [Tooltip("Room volumes (triggers). A fire outdoors never spreads into a room; a fire in a room asks the room.")]
         [SerializeField] private LayerMask _roomMask = 1 << 9;
+
+        /// <summary>Intensity (0..1) of a fire that appears during play.</summary>
+        public float SpawnIntensity => _spawnIntensity;
 
         public FireExtinguishHandler FirePrefab => _firePrefab;
         public float SpreadRadius => _spreadRadius;

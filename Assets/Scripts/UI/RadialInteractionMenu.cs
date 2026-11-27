@@ -22,6 +22,8 @@ namespace WaterChaos.UI
     {
         private const int MaxOptions = 6;
         private const float PromptY = -90f;
+        // Width of an option label, in reference pixels: about the width of a sector at the label radius.
+        private const float LabelWidth = 130f;
         private const float PromptPairX = 110f;
         private const string MenuText = "Дії";
 
@@ -364,8 +366,15 @@ namespace WaterChaos.UI
             }
 
             // Labels after all sectors, so no sector covers a label.
+            // Long labels ("Взяти кінець шланга") wrap onto two lines inside their sector instead of running out of it.
             for (int i = 0; i < MaxOptions; i++)
-                _labels[i] = HudWidgets.CreateText($"Label {i}", _root, Vector2.zero, new Vector2(160f, 30f), 20, TextAnchor.MiddleCenter);
+            {
+                Text label = HudWidgets.CreateText($"Label {i}", _root, Vector2.zero, new Vector2(LabelWidth, 48f), 18, TextAnchor.MiddleCenter);
+                label.horizontalOverflow = HorizontalWrapMode.Wrap;
+                label.verticalOverflow = VerticalWrapMode.Overflow;
+                label.lineSpacing = 0.9f;
+                _labels[i] = label;
+            }
 
             _title = HudWidgets.CreateText("Title", _root, new Vector2(0f, 24f), new Vector2(170f, 30f), 20, TextAnchor.MiddleCenter);
             _title.fontStyle = FontStyle.Bold;

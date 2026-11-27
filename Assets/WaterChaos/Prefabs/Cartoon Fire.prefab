@@ -7417,7 +7417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 026ad7ed118af4457bbb1971cb2dbbd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireExtinguishHandler
-  _coolingPerLiter: 0.033
+  _coolingPerLiter: 0.066
   _extinguishThreshold: 0.05
   _reigniteDelay: 5
 --- !u!114 &3759582445966834499

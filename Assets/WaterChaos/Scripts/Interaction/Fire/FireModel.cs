@@ -105,6 +105,21 @@ namespace WaterChaos.Interaction
                 Intensity = 1f;
         }
 
+        /// <summary>
+        /// Sets a burning fire's intensity (e.g. a weaker start for a fire that has just spread), at most full;
+        /// at or below the extinguish threshold it goes out. An extinguished fire stays out.
+        /// </summary>
+        /// <param name="intensity">New intensity; NaN counts as 0.</param>
+        public void SetIntensity(float intensity)
+        {
+            if (!IsBurning)
+                return;
+
+            Intensity = Math.Min(Sanitize(intensity), FullIntensity);
+            if (Intensity <= _extinguishThreshold)
+                Extinguish();
+        }
+
         /// <summary>Puts the fire out at once, whatever its intensity; the reignite delay starts from now.</summary>
         public void Extinguish()
         {

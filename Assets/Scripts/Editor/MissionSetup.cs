@@ -73,6 +73,10 @@ namespace WaterChaos.EditorTools
         private const string NeutralPumpName = "Pump · Neutralize";
         private const string NeutralHoseName = "Hose · Neutralize";
 
+        // The tank pump feeds the tee, which shares the flow between its three outlets (two teammates and the player):
+        // three times a truck's flow gives every nozzle as much water as the truck does, in liters per second (L/s).
+        private const float TankPumpFlowRate = 30f;
+
         // Objects the setup creates (besides "Mission" and "Mission UI"); removed by Rebuild.
         private const string TeammateNozzleName = "Teammate Nozzle";
         private const string FeedName = "Hydrant → Splitter Feed";
@@ -136,6 +140,7 @@ namespace WaterChaos.EditorTools
             EnsureEquipment(scene);
             Zones zones = BuildZones(scene, root);
             SetUpTeammates(scene);
+            SetUpSoapBubbles();
             BuildSteps(scene, zones, root);
 
             Undo.CollapseUndoOperations(undoGroup);
@@ -436,7 +441,11 @@ namespace WaterChaos.EditorTools
                     continue;
                 }
 
-                TeammateNozzle existing = sprayer.GetComponentInChildren<TeammateNozzle>(true);
+                TeammateNozzle[] own = sprayer.GetComponentsInChildren<TeammateNozzle>(true);
+                if (own.Length > 1)
+                    s_report.Add($"DUPLICATE NOZZLES: {sprayer.transform.root.name} has {own.Length} \"{TeammateNozzleName}\" — delete the extra one "
+                        + "(it takes the tee outlet the player needs at the end).");
+                TeammateNozzle existing = own.FirstOrDefault();
                 GameObject nozzle = existing != null ? existing.gameObject : CreateTeammateNozzle(sprayer.transform, nozzlePrefab);
                 ConfigureTeammateNozzle(nozzle, sprayer, scene.Outlets[i], existing == null);
             }
@@ -663,8 +672,13 @@ namespace WaterChaos.EditorTools
             scene.NeutralHose = ReplaceIfOtherPrefab(scene.NeutralHose, HosePrefabPath);
             if (scene.TankHose == null)
                 scene.TankHose = Spawn<TransferHose>(HosePrefabPath, TankHoseName, parent, tank + new Vector3(-5f, 0f, 4.5f));
-            if (scene.NeutralPump == null)
-                scene.NeutralPump = Spawn<PumpController>(PumpPrefabPath, NeutralPumpName, parent, toxic + new Vector3(6f, 0f, 3f));
+            // Neutralizing reuses the pump already in the toxic tank: an extra pump from an older setup goes away.
+            if (scene.NeutralPump != null)
+            {
+                s_report.Add($"Removed \"{NeutralPumpName}\": the toxic-tank pump is used for neutralizing.");
+                Undo.DestroyObjectImmediate(scene.NeutralPump.gameObject);
+                scene.NeutralPump = null;
+            }
             if (scene.NeutralHose == null)
                 scene.NeutralHose = Spawn<TransferHose>(HosePrefabPath, NeutralHoseName, parent, toxic + new Vector3(7f, 0f, 4.5f));
 
@@ -674,10 +688,10 @@ namespace WaterChaos.EditorTools
             FitHoseLength(scene.TankHose, tank, splitter);
             FitHoseLength(scene.NeutralHose, toxic, tank);
 
+            TuneTankPump(scene.TankPump);
             Report("Pump for the underground tank", scene.TankPump);
-            Report("Pump for neutralizing (toxic tank → gasoline tank)", scene.NeutralPump);
             s_report.Add($"NEW EQUIPMENT: \"{TankPumpName}\", \"{TankHoseName}\" next to the underground tank and "
-                + $"\"{NeutralPumpName}\", \"{NeutralHoseName}\" next to the toxic tank — move them where you want; Rebuild keeps them.");
+                + $"\"{NeutralHoseName}\" next to the toxic tank — move them where you want; Rebuild keeps them.");
         }
 
         /// <summary>An object made from another prefab is swapped for one of <paramref name="prefabPath"/> at the same place.</summary>
@@ -696,6 +710,36 @@ namespace WaterChaos.EditorTools
             }
 
             return replacement;
+        }
+
+        /// <summary>Re-tunes the underground-tank pump without rebuilding the mission.</summary>
+        [MenuItem("Water Chaos/Tune Tank Pump (Mini Village)")]
+        private static void TuneTankPumpOnly()
+        {
+            s_report.Clear();
+            PumpController pump = All<PumpController>().FirstOrDefault(p => p.name == TankPumpName);
+            if (pump == null)
+            {
+                Debug.LogError($"Tune tank pump: \"{TankPumpName}\" not found; run Setup Mission first.");
+                return;
+            }
+
+            TuneTankPump(pump);
+            EditorSceneManager.MarkSceneDirty(pump.gameObject.scene);
+            Debug.Log("Tune tank pump done. Save the scene (Cmd+S).\n- " + string.Join("\n- ", s_report), pump);
+        }
+
+        /// <summary>Enough flow for three nozzles at once; the transfer start ("Увімкнути") runs it at full flow too.</summary>
+        private static void TuneTankPump(PumpController pump)
+        {
+            if (pump == null)
+                return;
+
+            Set(pump, "_maxFlowRate", TankPumpFlowRate);
+            TransferConnectionPoint outlet = pump.GetComponentInChildren<TransferConnectionPoint>(true);
+            if (outlet != null)
+                Set(outlet, "_transferFlowRate", TankPumpFlowRate);
+            s_report.Add($"{pump.name}: {TankPumpFlowRate} L/s, so each of the tee's three outlets gets {TankPumpFlowRate / 3f} L/s like the truck.");
         }
 
         private static T Spawn<T>(string prefabPath, string name, Transform parent, Vector3 near) where T : Component
@@ -826,6 +870,100 @@ namespace WaterChaos.EditorTools
             return null;
         }
 
+        // ───────────── Soap bubbles ─────────────
+
+        /// <summary>
+        /// Soapy water lifts every firefighter and the player, like the teammate set up by the soap setup:
+        /// each gets a CharacterController, a SoapBubbleController and a SoapBubbleReceiver (copied from that teammate),
+        /// and the teammates' streams can hit the player. Safe to run again.
+        /// </summary>
+        [MenuItem("Water Chaos/Setup Soap Bubbles (Mini Village)")]
+        private static void SetUpSoapBubblesOnly()
+        {
+            s_report.Clear();
+            Undo.SetCurrentGroupName("Setup Soap Bubbles");
+            SetUpSoapBubbles();
+            EditorSceneManager.MarkAllScenesDirty();
+            Debug.Log("Soap bubbles done. Save the scene (Cmd+S).\n- " + string.Join("\n- ", s_report));
+        }
+
+        private static void SetUpSoapBubbles()
+        {
+            SoapBubbleController template = All<SoapBubbleController>().FirstOrDefault(c => c.GetComponent<TeammateMotor>() != null);
+            if (template == null)
+            {
+                s_report.Add("NO TEAMMATE WITH A SOAP BUBBLE to copy (run Water Chaos/Setup Soap first): bubbles not added.");
+                return;
+            }
+
+            CharacterController templateBody = template.GetComponent<CharacterController>();
+            TeammateMotor templateMotor = template.GetComponent<TeammateMotor>();
+
+            // Every other firefighter in the scene (the ones with a nozzle).
+            foreach (FirefighterAnimationSwitcher switcher in All<FirefighterAnimationSwitcher>())
+            {
+                GameObject root = PrefabUtility.GetOutermostPrefabInstanceRoot(switcher.gameObject) ?? switcher.gameObject;
+                if (root.GetComponentInChildren<SoapBubbleController>(true) != null || root.GetComponentInParent<PlayerInputHandler>() != null)
+                    continue;
+
+                CharacterController body = AddCopy(root, templateBody);
+                TeammateMotor motor = AddCopy(root, templateMotor);
+                SoapBubbleController controller = AddCopy(root, template);
+                Set(controller, "_anchor", null);
+                SetArray(controller, "_suspendWhileCarried", motor);
+                if (root.GetComponent<SoapBubbleReceiver>() == null)
+                    Undo.AddComponent<SoapBubbleReceiver>(root);
+
+                Undo.RecordObject(root, "Setup Soap Bubbles");
+                root.layer = template.gameObject.layer;
+                s_report.Add($"{root.name}: soapy water now lifts it in a bubble (body {body.height:0.0} m).");
+            }
+
+            // The player: lifted too; walking is off while in the bubble.
+            PlayerInputHandler input = Any<PlayerInputHandler>();
+            if (input != null && input.GetComponent<SoapBubbleController>() == null)
+            {
+                SoapBubbleController controller = AddCopy(input.gameObject, template);
+                Set(controller, "_anchor", null);
+                SetArray(controller, "_suspendWhileCarried", input.GetComponent<PlayerMovement>());
+                if (input.GetComponent<SoapBubbleReceiver>() == null)
+                    Undo.AddComponent<SoapBubbleReceiver>(input.gameObject);
+                s_report.Add("Player: soapy water from the teammates lifts them in a bubble.");
+            }
+
+            // The teammates' streams hit the player (the player's own stream never does: it keeps its mask).
+            int playerLayer = input != null ? input.gameObject.layer : LayerMask.NameToLayer("Player");
+            foreach (TeammateNozzle nozzle in All<TeammateNozzle>())
+            {
+                foreach (WaterStream stream in nozzle.GetComponentsInChildren<WaterStream>(true))
+                {
+                    SerializedObject data = new SerializedObject(stream);
+                    SerializedProperty mask = data.FindProperty("_hitMask");
+                    if (mask == null || playerLayer < 0 || (mask.intValue & (1 << playerLayer)) != 0)
+                        continue;
+
+                    mask.intValue |= 1 << playerLayer;
+                    data.ApplyModifiedProperties();
+                    s_report.Add($"{nozzle.transform.root.name}: its stream can hit the player now.");
+                }
+            }
+        }
+
+        /// <summary>The component on <paramref name="target"/> (added if missing) with the template's settings.</summary>
+        private static T AddCopy<T>(GameObject target, T template) where T : Component
+        {
+            T component = target.GetComponent<T>();
+            if (component == null)
+                component = Undo.AddComponent<T>(target);
+            if (template != null)
+            {
+                Undo.RecordObject(component, "Setup Soap Bubbles");
+                EditorUtility.CopySerialized(template, component);
+            }
+
+            return component;
+        }
+
         // ───────────── Steps ─────────────
 
         private static void BuildSteps(SceneObjects s, Zones z, Transform root)
@@ -842,7 +980,6 @@ namespace WaterChaos.EditorTools
             MissionMarker poolPump = Marker(s.PoolPump, 1f);
             MissionMarker toxicPump = Marker(s.ToxicPump, 1f);
             MissionMarker tankPump = Marker(s.TankPump, 1f);
-            MissionMarker neutralPump = Marker(s.NeutralPump, 1f);
             Marker(s.NeutralHose, 0.8f);
             Marker(s.TankHose, 0.8f);
             Marker(s.Axe, 0.8f);
@@ -913,6 +1050,9 @@ namespace WaterChaos.EditorTools
             CorrodeObjective corrode = Add<CorrodeObjective>(root, Name("Corrode · Grate"),
                 "Розчини металеву решітку токсичною водою", grate);
             Set(corrode, "_target", s.Grate);
+            HintStep wallsTip = Add<HintStep>(root, Name("Hint · Toxic Dissolves Walls"), null);
+            Set(wallsTip, "_text", "Токсична вода розчиняє не лише решітку — нею можна розчиняти й внутрішні стіни.");
+            Set(wallsTip, "_seconds", 7f);
 
             // Stage 7: the teammates run dry.
             EnterZoneObjective reach = Add<EnterZoneObjective>(root, Name("Zone · Reached Teammates"), "Дістанься до напарників", talker);
@@ -964,29 +1104,35 @@ namespace WaterChaos.EditorTools
             Set(back, "_zone", z.TeammatesView);
             Story(root, Name("Story · Gasoline"), Teammate, "Ти що наробив?! Це ж не вода! У нас у шлангах бензин!");
 
-            // Neutralize with its own pump and long hose: toxic tank → gasoline tank, plus soap.
-            PickUp(root, Name("Pick Up · Pump and Hose (Neutralize)"), "Знайди спосіб нейтралізувати бензин: візьми насос і довгий шланг",
-                s.Inventory, Item(s.NeutralPump), Item(s.NeutralHose));
-            PumpInWaterObjective neutralIn = Add<PumpInWaterObjective>(root, Name("Pump · Into Toxic Tank (Neutralize)"),
-                "Встанови насос у резервуар із токсичною водою", toxicTank);
-            SetArray(neutralIn, "_pumps", Deployments(s.NeutralPump, s.ToxicPump));
-            SetArray(neutralIn, "_bodies", s.ToxicBody);
-            Hint(neutralIn, "Встанови насос у резервуар із токсичною водою.", PlayerControl.Drop, z.ToxicTank);
-            TransferHoseObjective neutralHose = Add<TransferHoseObjective>(root, Name("Hose · Toxic to Gasoline Tank"),
-                "Протягни шланг до резервуара з бензином", underground);
-            SetArray(neutralHose, "_hoses", s.NeutralHose, s.PoolHose);
-            SetArray(neutralHose, "_startPoints", TransferPoint(s.NeutralPump), TransferPoint(s.ToxicPump));
+            // Neutralize with the pump that already stands in the toxic tank (stage 6):
+            // the nozzle comes off it, the long hose goes on and down into the gasoline tank.
+            PickUp(root, Name("Pick Up · Long Hose (Neutralize)"), "Знайди спосіб нейтралізувати бензин: візьми довгий шланг",
+                s.Inventory, Item(s.NeutralHose));
+            TransferHoseObjective neutralHose = Add<TransferHoseObjective>(root, Name("Hose · Toxic Pump to Gasoline Tank"),
+                "Переключи насос у токсичному резервуарі на шланг і опусти шланг у підземний резервуар", toxicPump, underground);
+            SetArray(neutralHose, "_hoses", s.NeutralHose, s.PoolHose, s.TankHose);
+            SetArray(neutralHose, "_startPoints", TransferPoint(s.ToxicPump));
             SetArray(neutralHose, "_endBodies", s.UndergroundBody);
+            Hint(neutralHose, "Від'єднай ствол від насоса, під'єднай до насоса шланг і протягни його до підземного резервуара.",
+                PlayerControl.Secondary, z.ToxicTank);
+            PumpRunningObjective toxicOn = Add<PumpRunningObjective>(root, Name("Pump · Start Toxic Pump"),
+                "Увімкни насос у токсичному резервуарі", toxicPump);
+            SetArray(toxicOn, "_pumps", s.ToxicPump);
             NeutralizeObjective neutralize = Add<NeutralizeObjective>(root, Name("Neutralize · Gasoline"),
                 "Нейтралізуй бензин", underground);
             Set(neutralize, "_tank", s.UndergroundBody != null ? s.UndergroundBody.GetComponent<WaterReservoirComponent>() : null);
             Set(neutralize, "_soap", s.Soap);
-            SetArray(neutralize, "_stopPumps", s.NeutralPump, s.ToxicPump);
-            Set(neutralize, "_toxinMarker", neutralPump);
+            SetArray(neutralize, "_stopPumps", s.ToxicPump);
+            Set(neutralize, "_toxinMarker", toxicPump);
             Set(neutralize, "_soapMarker", soap);
-            Hint(neutralize, "Увімкни насос, щоб накачати токсичну воду в резервуар із бензином, і кинь туди мило.", null, null);
+            Hint(neutralize, "Кинь мило в підземний резервуар — разом із токсичною водою воно нейтралізує бензин.", null, null);
 
-            // Stage 10: the final fire.
+            // Stage 10: the final fire, with the soapy water from the tee.
+            NozzleConnectObjective soapy = Add<NozzleConnectObjective>(root, Name("Connect · Nozzle to Tee (Soapy Water)"),
+                "Під'єднай ствол до трійника", splitter);
+            Set(soapy, "_connector", s.Connector);
+            SetArray(soapy, "_points", s.Outlets.Select(o => o.GetComponent<WaterConnectionPoint>()).Where(p => p != null).ToArray());
+            Hint(soapy, "У трійнику тепер мильна вода — під'єднай ствол до вільного виходу.", PlayerControl.Interact, null);
             ExtinguishFiresObjective finalFires = Add<ExtinguishFiresObjective>(root, Name("Extinguish · Teammates"),
                 "Загаси пожежу та допоможи напарникам!");
             SetArray(finalFires, "_zones", z.TeammateFires);

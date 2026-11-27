@@ -110,6 +110,13 @@ namespace WaterChaos.Interaction
             _model.ReduceOverburn(amount);
         }
 
+        /// <summary>Sets the burning fire's intensity (0..1); at or below the threshold it goes out.</summary>
+        public void SetIntensity(float intensity)
+        {
+            _model.SetIntensity(intensity);
+            NotifyIfChanged();
+        }
+
         /// <summary>Puts the fire out at once (e.g. a mission time limit); its area may still re-light it later.</summary>
         public void Extinguish()
         {

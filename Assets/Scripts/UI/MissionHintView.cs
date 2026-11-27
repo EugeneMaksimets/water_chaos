@@ -31,6 +31,10 @@ namespace WaterChaos.UI
         private object _owner;
         private KeyPrompt _shownPrompt;
 
+        // Owner of a hint shown for a while (see ShowFor); any objective's hint replaces it.
+        private readonly object _timedOwner = new object();
+        private float _timedLeft;
+
         private void Awake()
         {
             Canvas canvas = HudWidgets.CreateCanvas(transform, "Mission Hint Canvas", _sortingOrder);
@@ -38,7 +42,10 @@ namespace WaterChaos.UI
             _group = _root.gameObject.AddComponent<CanvasGroup>();
             _group.alpha = 0f;
 
-            _caption = HudWidgets.CreateText("Caption", _root, Vector2.zero, new Vector2(700f, 40f), 24, TextAnchor.MiddleCenter);
+            // Long hints wrap onto a second line instead of running off the screen.
+            _caption = HudWidgets.CreateText("Caption", _root, Vector2.zero, new Vector2(900f, 60f), 24, TextAnchor.MiddleCenter);
+            _caption.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _caption.verticalOverflow = VerticalWrapMode.Overflow;
             _caption.fontStyle = FontStyle.Bold;
             _caption.color = HudWidgets.AccentColor;
             Object.Destroy(_caption.GetComponent<Shadow>());
@@ -68,6 +75,13 @@ namespace WaterChaos.UI
             }
         }
 
+        /// <summary>Shows a hint without a key for <paramref name="seconds"/> (real time), unless an objective's hint replaces it.</summary>
+        public void ShowFor(string text, float seconds)
+        {
+            Show(_timedOwner, text, false, PlayerControl.Interact);
+            _timedLeft = seconds;
+        }
+
         /// <summary>Hides the hint if <paramref name="owner"/> is the one showing it.</summary>
         public void Hide(object owner)
         {
@@ -77,6 +91,13 @@ namespace WaterChaos.UI
 
         private void Update()
         {
+            if (_owner == _timedOwner)
+            {
+                _timedLeft -= Time.unscaledDeltaTime;
+                if (_timedLeft <= 0f)
+                    _owner = null;
+            }
+
             float target = _owner != null ? 1f : 0f;
             _group.alpha = Mathf.MoveTowards(_group.alpha, target, Time.unscaledDeltaTime / _fadeTime);
         }

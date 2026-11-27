@@ -193,5 +193,50 @@ namespace WaterChaos.Tests
 
             Assert.IsFalse(fire.IsBurning);
         }
+
+
+        [Test]
+        public void SetIntensity_Burning_ChangesIntensity()
+        {
+            FireModel fire = CreateFire();
+
+            fire.SetIntensity(0.6f);
+
+            Assert.AreEqual(0.6f, fire.Intensity, 0.0001f);
+            Assert.IsTrue(fire.IsBurning);
+        }
+
+        [Test]
+        public void SetIntensity_AtOrBelowThreshold_PutsTheFireOut()
+        {
+            FireModel fire = CreateFire();
+
+            fire.SetIntensity(Threshold);
+
+            Assert.IsFalse(fire.IsBurning);
+            Assert.AreEqual(0f, fire.Intensity);
+        }
+
+        [Test]
+        public void SetIntensity_ExtinguishedFire_StaysOut()
+        {
+            FireModel fire = CreateFire();
+            fire.Extinguish();
+
+            fire.SetIntensity(0.8f);
+
+            Assert.IsFalse(fire.IsBurning);
+        }
+
+        [TestCase(5f, 1f)]
+        [TestCase(float.NaN, 0f)]
+        public void SetIntensity_IsClampedToFull(float value, float expected)
+        {
+            FireModel fire = CreateFire();
+
+            fire.SetIntensity(value);
+
+            Assert.AreEqual(expected, fire.Intensity, 0.0001f);
+        }
     }
 }
