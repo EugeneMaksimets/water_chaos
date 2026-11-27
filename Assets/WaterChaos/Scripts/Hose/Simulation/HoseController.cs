@@ -7,6 +7,8 @@ namespace WaterChaos.Hose
     /// <summary>
     /// Runs the hose while it is connected: follows the player end, wraps around obstacles,
     /// and tells player movement how far it may go. Does not move the player itself.
+    /// The hose lies on the ground, so its path (and its wrapping) runs a little above the ground below
+    /// the source and the nozzle, not through the air between them: it goes round a car or a post at its foot.
     /// </summary>
     [DefaultExecutionOrder(ExecutionOrder)]
     public sealed class HoseController : MonoBehaviour
@@ -38,6 +40,13 @@ namespace WaterChaos.Hose
         [Tooltip("Wrap points the hose may hold at once.")]
         [SerializeField, Range(1, 64)] private int _maxWrapPoints = 32;
 
+        [Header("Ground")]
+        [Tooltip("Height above the ground where the hose looks for obstacles, in meters (m). Above curbs, below car hoods and railings.")]
+        [SerializeField, Range(0.05f, 1.5f)] private float _sweepHeight = 0.4f;
+
+        [Tooltip("How far below the source and the nozzle the ground is searched, in meters (m). No ground: the path stays at their height.")]
+        [SerializeField, Min(0.1f)] private float _groundProbe = 3f;
+
         private HoseModel _model;
         private HosePathSolver _solver;
         private PhysicsHoseObstacleQuery _query;
@@ -55,8 +64,14 @@ namespace WaterChaos.Hose
         /// <summary>The player tried to go past the full length and has not yet given some hose back.</summary>
         public bool IsLimitReached { get; private set; }
 
-        /// <summary>Current path and length; null until Awake.</summary>
+        /// <summary>Current path and length, laid near the ground (see the class summary); null until Awake.</summary>
         public HoseModel Model => _model;
+
+        /// <summary>Where the hose really starts (the connection point), world space; meaningful while connected.</summary>
+        public Vector3 StartPosition => _anchor != null ? _anchor.position : _model.Anchor;
+
+        /// <summary>Where the hose really ends (e.g. the nozzle), world space.</summary>
+        public Vector3 EndPosition => _endPoint.position;
 
         /// <summary>Water source the hose start is attached to (pump, hydrant); null when disconnected.</summary>
         public IWaterFlowSource Source { get; private set; }
@@ -96,7 +111,7 @@ namespace WaterChaos.Hose
             Transform ignored = sourceBody != null ? sourceBody.transform : source != null ? source.transform : _anchor;
             _query.SetIgnored(ignored, _playerRoot, _owner);
 
-            _model.Reset(_anchor.position, _endPoint.position);
+            _model.Reset(OnGround(_anchor.position), OnGround(_endPoint.position));
             SetLimitReached(false);
         }
 
@@ -107,7 +122,7 @@ namespace WaterChaos.Hose
         public void ResetPath()
         {
             if (IsConnected && _model != null)
-                _model.Reset(_anchor.position, _endPoint.position);
+                _model.Reset(OnGround(_anchor.position), OnGround(_endPoint.position));
         }
 
         public void Disconnect()
@@ -128,7 +143,7 @@ namespace WaterChaos.Hose
                 return delta;
 
             Vector3 allowed = HoseMovementConstraint.Constrain(
-                _model.LastFixedPoint, _model.FreeSegmentLength, _endPoint.position, delta, out bool blocked);
+                _model.LastFixedPoint, _model.FreeSegmentLength, OnGround(_endPoint.position), delta, out bool blocked);
 
             _blockedThisFrame |= blocked;
             return allowed;
@@ -146,8 +161,8 @@ namespace WaterChaos.Hose
                 return;
             }
 
-            _model.SetAnchor(_anchor.position);
-            _solver.Step(_model, _endPoint.position);
+            _model.SetAnchor(OnGround(_anchor.position));
+            _solver.Step(_model, OnGround(_endPoint.position));
 
             if (_blockedThisFrame)
                 SetLimitReached(true);
@@ -155,6 +170,15 @@ namespace WaterChaos.Hose
                 SetLimitReached(false);
 
             _blockedThisFrame = false;
+        }
+
+        /// <summary>The point moved down to the sweep height above the ground below it; unchanged without ground.</summary>
+        private Vector3 OnGround(Vector3 point)
+        {
+            if (_query.Linecast(point, point + Vector3.down * _groundProbe, out Vector3 ground, out _))
+                point.y = Mathf.Min(point.y, ground.y + _sweepHeight);
+
+            return point;
         }
 
         private void SetLimitReached(bool value)

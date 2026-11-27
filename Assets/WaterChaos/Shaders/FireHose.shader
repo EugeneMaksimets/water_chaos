@@ -1,7 +1,7 @@
-// Fire hose drawn on a camera-facing LineRenderer ribbon.
-// U = distance along the hose in meters (LineTextureMode.Tile), from the water source to the nozzle.
-// V = 0..1 across the ribbon. The shader rebuilds a round tube from V, adds a woven jacket,
-// and fakes water inside: the hose swells, and pulses and highlights travel toward the nozzle.
+// Fire hose drawn on a round tube mesh (HoseTubeMesh).
+// U = distance along the hose in meters, from the water source to the nozzle. V = 0..1 around the hose.
+// Adds a woven jacket and fakes water inside: the hose swells (vertices move out along their normals),
+// and pulses and highlights travel toward the nozzle.
 // Water values come from HoseView through a MaterialPropertyBlock (_Hose* properties).
 Shader "WaterChaos/FireHose"
 {
@@ -32,7 +32,6 @@ Shader "WaterChaos/FireHose"
 
         // Set per renderer by HoseView.
         [HideInInspector] _HoseWidth("Hose Width", Float) = 0.05
-        [HideInInspector] _HoseHeadroom("Hose Headroom", Float) = 0.2
         [HideInInspector] _HoseFlowOffset("Hose Flow Offset", Float) = 0
         [HideInInspector] _HoseFullness("Hose Fullness", Float) = 0
     }
@@ -57,7 +56,6 @@ Shader "WaterChaos/FireHose"
         half _PulseSpacing;
         half _WetGloss;
         float _HoseWidth;
-        float _HoseHeadroom;
         float _HoseFlowOffset;
         float _HoseFullness;
     CBUFFER_END
@@ -65,6 +63,7 @@ Shader "WaterChaos/FireHose"
     struct Attributes
     {
         float4 positionOS : POSITION;
+        float3 normalOS : NORMAL;
         float2 uv : TEXCOORD0;
     };
 
@@ -89,29 +88,24 @@ Shader "WaterChaos/FireHose"
         return 1.0 + _HoseFullness * (_SwellAmount + WaterPulse(u) * _PulseAmount);
     }
 
-    // Position across the ribbon in hose-radius units: |x| = 1 is the empty hose edge.
-    float AcrossHose(float v)
+    // World position of a hose vertex, moved out along its normal as water swells the hose.
+    float3 SwollenPositionWS(Attributes input, float3 normalWS)
     {
-        return (v * 2.0 - 1.0) * (1.0 + _HoseHeadroom);
-    }
-
-    // Cuts the ribbon back to the round hose silhouette.
-    void ClipToHose(float2 uv)
-    {
-        clip(HoseRadius(uv.x) - abs(AcrossHose(uv.y)));
+        float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+        return positionWS + normalWS * (_HoseWidth * 0.5 * (HoseRadius(input.uv.x) - 1.0));
     }
     ENDHLSL
 
     SubShader
     {
-        Tags { "RenderType" = "TransparentCutout" "Queue" = "AlphaTest" "RenderPipeline" = "UniversalPipeline" }
+        Tags { "RenderType" = "Opaque" "Queue" = "Geometry" "RenderPipeline" = "UniversalPipeline" }
 
         Pass
         {
             Name "Forward"
             Tags { "LightMode" = "UniversalForward" }
 
-            Cull Off
+            Cull Back
 
             HLSLPROGRAM
             #pragma vertex vert
@@ -126,18 +120,21 @@ Shader "WaterChaos/FireHose"
             {
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD0;
-                float2 uv : TEXCOORD1;
-                float fogFactor : TEXCOORD2;
+                float3 normalWS : TEXCOORD1;
+                float2 uv : TEXCOORD2;
+                float fogFactor : TEXCOORD3;
             };
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                VertexPositionInputs pos = GetVertexPositionInputs(input.positionOS.xyz);
-                output.positionCS = pos.positionCS;
-                output.positionWS = pos.positionWS;
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                float3 positionWS = SwollenPositionWS(input, normalWS);
+                output.positionCS = TransformWorldToHClip(positionWS);
+                output.positionWS = positionWS;
+                output.normalWS = normalWS;
                 output.uv = input.uv;
-                output.fogFactor = ComputeFogFactor(pos.positionCS.z);
+                output.fogFactor = ComputeFogFactor(output.positionCS.z);
                 return output;
             }
 
@@ -158,25 +155,6 @@ Shader "WaterChaos/FireHose"
                 return lerp(lerp(a, b, f.x), lerp(c, d, f.x), f.y);
             }
 
-            // World direction in which V grows (across the ribbon), from screen-space derivatives.
-            float3 AcrossDirection(float3 positionWS, float2 uv, float3 viewDir)
-            {
-                float3 dpdx = ddx(positionWS);
-                float3 dpdy = ddy(positionWS);
-                float2 duvdx = ddx(uv);
-                float2 duvdy = ddy(uv);
-
-                float det = duvdx.x * duvdy.y - duvdy.x * duvdx.y;
-                float3 across = abs(det) > 1e-12
-                    ? dpdx * (-duvdy.x / det) + dpdy * (duvdx.x / det)
-                    : cross(viewDir, float3(0, 1, 0));
-
-                // Keep it perpendicular to the view so the rebuilt normal stays on the visible side.
-                across -= viewDir * dot(across, viewDir);
-                float len = length(across);
-                return len > 1e-6 ? across / len : float3(1, 0, 0);
-            }
-
             // Woven jacket (0..1, 1 = thread top). Fades out when threads get smaller than a pixel.
             float Weave(float alongDiameters, float aroundDiameters)
             {
@@ -194,22 +172,19 @@ Shader "WaterChaos/FireHose"
             half4 frag(Varyings input) : SV_Target
             {
                 float u = input.uv.x;
-                float radius = HoseRadius(u);
-                float x = AcrossHose(input.uv.y);
-                clip(radius - abs(x));
+                float v = input.uv.y;
 
                 float3 viewDir = normalize(GetWorldSpaceViewDir(input.positionWS));
-                float3 across = AcrossDirection(input.positionWS, input.uv, viewDir);
-
-                // Round tube normal rebuilt from the position across the ribbon.
-                float nx = clamp(x / radius, -1.0, 1.0);
-                float nz = sqrt(saturate(1.0 - nx * nx));
-                float3 normal = normalize(across * nx + viewDir * nz);
+                float3 normal = normalize(input.normalWS);
+                float nz = saturate(dot(normal, viewDir));
 
                 // Jacket pattern in hose diameters, so it keeps its shape when the width changes.
+                // Around the hose: a whole number of threads, so the pattern meets itself at the seam.
                 float width = max(_HoseWidth, 0.001);
                 float along = u / width;
-                float around = asin(nx) * 0.5 * radius;
+                float threadsAround = max(round(PI * _WeaveDensity), 1.0);
+                float around = v * threadsAround / max(_WeaveDensity, 0.01);
+                float aroundAngle = v * TWO_PI;
                 float weave = Weave(along, around);
                 float rib = sin(around * _WeaveDensity * 2.0 * TWO_PI) * 0.5 + 0.5;
 
@@ -220,8 +195,8 @@ Shader "WaterChaos/FireHose"
                 albedo *= lerp(1.0, 0.75 + weave * 0.35, weaveStrength);
                 albedo *= lerp(1.0, 0.9 + rib * 0.1, _RibStrength);
 
-                // Wear and dirt along the hose, mostly on the lower half.
-                float dirt = ValueNoise(float2(u * 1.7, around * 3.0)) * ValueNoise(float2(u * 0.35, 7.0));
+                // Wear and dirt along the hose (cos keeps the noise seamless around it).
+                float dirt = ValueNoise(float2(u * 1.7, cos(aroundAngle) * 1.5)) * ValueNoise(float2(u * 0.35, 7.0));
                 dirt = saturate(dirt * 1.6 - 0.2) * _DirtAmount;
                 albedo = lerp(albedo, _DirtColor.rgb, dirt);
 
@@ -235,7 +210,7 @@ Shader "WaterChaos/FireHose"
 
                 // Water inside: pulses travel from the source to the nozzle.
                 float pulse = WaterPulse(u) * fullness;
-                float streak = ValueNoise(float2(WaterCoord(u) * 3.0, around * 6.0)) * fullness;
+                float streak = ValueNoise(float2(WaterCoord(u) * 3.0, cos(aroundAngle) * 3.0)) * fullness;
 
                 // Soft fabric highlight; wetter and moving with the water when charged.
                 float3 halfDir = normalize(light.direction + viewDir);
@@ -259,7 +234,7 @@ Shader "WaterChaos/FireHose"
             Name "ShadowCaster"
             Tags { "LightMode" = "ShadowCaster" }
 
-            Cull Off
+            Cull Back
             ZWrite On
             ColorMask 0
 
@@ -274,14 +249,14 @@ Shader "WaterChaos/FireHose"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
             };
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                positionWS = ApplyShadowBias(positionWS, float3(0, 0, 0), _LightDirection);
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                float3 positionWS = SwollenPositionWS(input, normalWS);
+                positionWS = ApplyShadowBias(positionWS, normalWS, _LightDirection);
                 float4 positionCS = TransformWorldToHClip(positionWS);
                 #if UNITY_REVERSED_Z
                     positionCS.z = min(positionCS.z, UNITY_NEAR_CLIP_VALUE);
@@ -289,13 +264,11 @@ Shader "WaterChaos/FireHose"
                     positionCS.z = max(positionCS.z, UNITY_NEAR_CLIP_VALUE);
                 #endif
                 output.positionCS = positionCS;
-                output.uv = input.uv;
                 return output;
             }
 
             half4 frag(Varyings input) : SV_Target
             {
-                ClipToHose(input.uv);
                 return 0;
             }
             ENDHLSL
@@ -306,7 +279,7 @@ Shader "WaterChaos/FireHose"
             Name "DepthOnly"
             Tags { "LightMode" = "DepthOnly" }
 
-            Cull Off
+            Cull Back
             ZWrite On
             ColorMask R
 
@@ -317,21 +290,63 @@ Shader "WaterChaos/FireHose"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
             };
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.uv = input.uv;
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.positionCS = TransformWorldToHClip(SwollenPositionWS(input, normalWS));
                 return output;
             }
 
             half4 frag(Varyings input) : SV_Target
             {
-                ClipToHose(input.uv);
                 return 0;
+            }
+            ENDHLSL
+        }
+
+        // Normals for screen-space effects (SSAO).
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+
+            Cull Back
+            ZWrite On
+
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fragment _ _GBUFFER_NORMALS_OCT
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float3 normalWS : TEXCOORD0;
+            };
+
+            Varyings vert(Attributes input)
+            {
+                Varyings output;
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.positionCS = TransformWorldToHClip(SwollenPositionWS(input, normalWS));
+                output.normalWS = normalWS;
+                return output;
+            }
+
+            half4 frag(Varyings input) : SV_Target
+            {
+                float3 normalWS = normalize(input.normalWS);
+                #if defined(_GBUFFER_NORMALS_OCT)
+                    float2 octNormalWS = PackNormalOctQuadEncode(normalWS);
+                    float2 remappedOctNormalWS = saturate(octNormalWS * 0.5 + 0.5);
+                    half3 packedNormalWS = PackFloat2To888(remappedOctNormalWS);
+                    return half4(packedNormalWS, 0.0);
+                #else
+                    return half4(normalWS, 0.0);
+                #endif
             }
             ENDHLSL
         }

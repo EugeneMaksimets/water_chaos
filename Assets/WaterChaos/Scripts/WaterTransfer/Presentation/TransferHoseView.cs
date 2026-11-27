@@ -1,24 +1,20 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 using WaterChaos.Hose;
 using WaterChaos.Water;
 
 namespace WaterChaos.WaterTransfer
 {
     /// <summary>
-    /// Draws the transfer hose with a LineRenderer, lying on the ground between its path points,
-    /// and shows the water moving inside it (same shader properties as the fire hose).
+    /// Draws the transfer hose as a round 3D tube lying on the ground between its path points,
+    /// and shows the water moving inside it (same shape and shader as the fire hose).
     /// Look only: reads the hose and the transfer, moves no water.
     /// </summary>
-    [RequireComponent(typeof(LineRenderer))]
     [DefaultExecutionOrder(TransferHose.ExecutionOrder + 20)]
     public sealed class TransferHoseView : MonoBehaviour
     {
-        private const float SwellHeadroom = 0.2f;
         private const float OffsetWrap = 1000f;
 
         private static readonly int WidthId = Shader.PropertyToID("_HoseWidth");
-        private static readonly int HeadroomId = Shader.PropertyToID("_HoseHeadroom");
         private static readonly int FlowOffsetId = Shader.PropertyToID("_HoseFlowOffset");
         private static readonly int FullnessId = Shader.PropertyToID("_HoseFullness");
 
@@ -30,21 +26,27 @@ namespace WaterChaos.WaterTransfer
         [Tooltip("Hose diameter, in meters (m).")]
         [SerializeField, Range(0.02f, 0.25f)] private float _width = 0.1f;
 
-        [Tooltip("Fire hose material (WaterChaos/FireHose shader). Empty keeps the LineRenderer's material.")]
+        [Tooltip("Fire hose material (WaterChaos/FireHose shader). Empty uses the old LineRenderer's material, if any.")]
         [SerializeField] private Material _material;
 
-        [Tooltip("Extra vertices at bends and ends.")]
-        [SerializeField, Range(0, 16)] private int _roundness = 4;
+        [Tooltip("Vertices around the hose.")]
+        [SerializeField, Range(HoseTubeMesh.MinSides, 24)] private int _sides = 10;
 
-        [Header("Ground")]
+        [Header("Shape")]
         [Tooltip("Layers the hose rests on. Leave out Water and Player.")]
         [SerializeField] private LayerMask _groundMask = 1;
 
-        [Tooltip("Distance between ground samples, in meters (m).")]
-        [SerializeField, Range(0.1f, 2f)] private float _sampleSpacing = 0.4f;
+        [Tooltip("Distance between drawn points, in meters (m). Smaller = smoother bends.")]
+        [SerializeField, Range(0.05f, 1f)] private float _pointSpacing = 0.2f;
 
-        [Tooltip("How far below the straight path the hose may sag to reach the ground, in meters (m).")]
+        [Tooltip("How far below its path the hose may hang or drop to reach the ground, in meters (m).")]
         [SerializeField, Min(0f)] private float _maxSag = 2.5f;
+
+        [Tooltip("How far from a corner its rounding starts, in meters (m).")]
+        [SerializeField, Range(0f, 1.5f)] private float _cornerRadius = 0.4f;
+
+        [Tooltip("How sharply a hanging hose bends down under its weight, in 1/m. Lower = stiffer hose, wider arcs.")]
+        [SerializeField, Range(0.3f, 6f)] private float _bendCurvature = 1.5f;
 
         [Header("Water Inside")]
         [Tooltip("Pressure at which the hose looks fully charged, in pascals (Pa).")]
@@ -54,34 +56,37 @@ namespace WaterChaos.WaterTransfer
         [SerializeField, Min(0.01f)] private float _fadeTime = 0.4f;
 
         private readonly HoseGroundDrape _drape = new HoseGroundDrape();
-        private LineRenderer _line;
+        private HoseTubeMesh _tube;
+        private MeshRenderer _renderer;
         private MaterialPropertyBlock _block;
         private float _flowOffset;
         private float _shownFullness;
 
         private void Awake()
         {
-            _line = GetComponent<LineRenderer>();
             _block = new MaterialPropertyBlock();
+            _tube = new HoseTubeMesh();
+            _renderer = _tube.CreateRenderer(transform, _material);
 
             if (_hose == null || _transfer == null)
             {
                 Debug.LogError($"{name}: TransferHoseView needs Hose and Transfer references.", this);
-                _line.enabled = false;
                 enabled = false;
-                return;
             }
+        }
 
-            ApplyLook();
-            _line.enabled = false;
+        private void OnDestroy()
+        {
+            if (_tube != null)
+                Destroy(_tube.Mesh);
         }
 
         private void LateUpdate()
         {
             HoseModel path = _hose.Path;
             bool visible = _hose.Model.IsConnected && path != null;
-            if (_line.enabled != visible)
-                _line.enabled = visible;
+            if (_renderer.enabled != visible)
+                _renderer.enabled = visible;
 
             if (!visible)
             {
@@ -89,10 +94,9 @@ namespace WaterChaos.WaterTransfer
                 return;
             }
 
-            int count = _drape.Build(path, _groundMask, _sampleSpacing, _maxSag, _width * 0.5f);
-            if (_line.positionCount != count)
-                _line.positionCount = count;
-            _line.SetPositions(_drape.Points);
+            float radius = _width * 0.5f;
+            int count = _drape.Build(path, path.Anchor, path.End, _groundMask, _pointSpacing, _maxSag, radius, _cornerRadius, _bendCurvature);
+            _tube.Build(_drape.Points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
 
             UpdateWater(Time.deltaTime);
         }
@@ -107,34 +111,17 @@ namespace WaterChaos.WaterTransfer
             _flowOffset = Mathf.Repeat(_flowOffset + speed * deltaTime, OffsetWrap);
             _shownFullness = Mathf.MoveTowards(_shownFullness, targetFullness, deltaTime / _fadeTime);
 
-            _line.GetPropertyBlock(_block);
+            _renderer.GetPropertyBlock(_block);
             _block.SetFloat(WidthId, _width);
-            _block.SetFloat(HeadroomId, SwellHeadroom);
             _block.SetFloat(FlowOffsetId, _flowOffset);
             _block.SetFloat(FullnessId, _shownFullness);
-            _line.SetPropertyBlock(_block);
+            _renderer.SetPropertyBlock(_block);
         }
 
         /// <summary>Pump output while the hose takes it; no flow otherwise.</summary>
         private void PumpFlow(out WaterFlowData flow)
         {
             flow = _transfer.IsDelivering && _transfer.Source != null ? _transfer.Source.Output : default;
-        }
-
-        private void ApplyLook()
-        {
-            _line.useWorldSpace = true;
-            _line.widthMultiplier = _width * (1f + SwellHeadroom);
-            _line.widthCurve = AnimationCurve.Constant(0f, 1f, 1f);
-            _line.numCornerVertices = _roundness;
-            _line.numCapVertices = _roundness;
-            _line.alignment = LineAlignment.View;
-            _line.textureMode = LineTextureMode.Tile;
-            _line.textureScale = Vector2.one;
-            _line.shadowCastingMode = ShadowCastingMode.On;
-
-            if (_material != null)
-                _line.sharedMaterial = _material;
         }
     }
 }

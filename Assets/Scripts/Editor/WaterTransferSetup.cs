@@ -265,7 +265,6 @@ namespace WaterChaos.EditorTools
                     data.FindProperty("_waterMask").intValue = waterMask;
                 });
 
-                root.AddComponent<LineRenderer>().positionCount = 0;
                 TransferHoseView view = root.AddComponent<TransferHoseView>();
                 Set(view, data =>
                 {
