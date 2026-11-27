@@ -99,6 +99,9 @@ namespace WaterChaos.Interaction
         private void Apply(bool lit)
         {
             _flamesShown = lit;
+            if (_flameRoot == null)
+                return;
+
             if (_flameRoot.activeSelf != lit)
                 _flameRoot.SetActive(lit);
             if (lit)
@@ -112,8 +115,12 @@ namespace WaterChaos.Interaction
             }
         }
 
+        // A source destroyed with the scene (leaving Play Mode) counts as off.
         private bool IsSourceActive()
         {
+            if (_stream == null || (_stream.Source is Object source && source == null))
+                return false;
+
             return !(_stream.Source is IWaterSourceControl control) || control.IsActive;
         }
 

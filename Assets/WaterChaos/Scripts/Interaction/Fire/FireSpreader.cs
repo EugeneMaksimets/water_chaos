@@ -99,11 +99,15 @@ namespace WaterChaos.Interaction
 
         /// <summary>
         /// True if a new fire may appear at <paramref name="firePosition"/>: under the fire limit,
-        /// not in water, and no fire (existing or igniting) within the exclusion radius.
+        /// not in water, not outdoors in a <see cref="NoOutdoorFireZone"/>,
+        /// and no fire (existing or igniting) within the exclusion radius.
         /// </summary>
         public static bool CanBurnAt(Vector3 firePosition, FireSpreadSettings settings)
         {
             if (ActiveCount + s_reserved.Count >= settings.MaxActiveFires)
+                return false;
+
+            if (NoOutdoorFireZone.Covers(firePosition) && FindArea(firePosition, settings) == null)
                 return false;
 
             if (Physics.CheckSphere(firePosition, WaterProbeRadius, settings.WaterMask, QueryTriggerInteraction.Collide))
@@ -148,6 +152,19 @@ namespace WaterChaos.Interaction
                 return false;
 
             if (respectRoomProtection && !AllowsIgnition(FindArea(firePosition, settings), firePosition))
+                return false;
+
+            Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);
+            return true;
+        }
+
+        /// <summary>
+        /// Lights a new fire at once at <paramref name="firePosition"/> whatever the rules (fire limit, water, rooms,
+        /// no-fire zones) — only not where a fire already burns or is igniting. Used by flamethrowers.
+        /// </summary>
+        public static bool StartFireIgnoringRules(Vector3 firePosition, FireSpreadSettings settings)
+        {
+            if (settings == null || settings.FirePrefab == null || IsFireNear(firePosition, settings.ExclusionRadius, settings.FireMask))
                 return false;
 
             Instantiate(settings.FirePrefab, firePosition, Quaternion.identity);

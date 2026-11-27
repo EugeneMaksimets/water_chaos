@@ -57,6 +57,7 @@ namespace WaterChaos.UI
 
         private PlayerSourceControl _sourceControl;
         private KeyPrompt _pressureHint;
+        private KeyPrompt _disconnectHint;
         private Text _needsWaterHint;
 
         private void Awake()
@@ -78,6 +79,7 @@ namespace WaterChaos.UI
             // Same player object; optional, without it there is simply no pressure hint.
             _sourceControl = GetComponent<PlayerSourceControl>();
             _pressureHint = HudWidgets.CreateMousePrompt("Pressure Hint", canvas, false, false, PressureHintPosition);
+            _disconnectHint = HudWidgets.CreateKeyPrompt("Disconnect Hint", canvas, PlayerControl.Secondary, PressureHintPosition);
 
             _needsWaterHint = HudWidgets.CreateText("Pump Needs Water Hint", canvas, PressureHintPosition, new Vector2(700f, 40f), 26, TextAnchor.MiddleCenter);
             _needsWaterHint.text = NeedsWaterText;
@@ -98,10 +100,17 @@ namespace WaterChaos.UI
             if (_needsWaterHint.gameObject.activeSelf != needsWater)
                 _needsWaterHint.gameObject.SetActive(needsWater);
 
-            if (_sourceControl != null && _sourceControl.ShowPressureHint)
+            // One hint at a time in the same place: pressure first, then how to take the hose off (right mouse button).
+            bool showPressure = _sourceControl != null && _sourceControl.ShowPressureHint;
+            if (showPressure)
                 _pressureHint.Show(PressureHintText, PressureHintPosition.x, 1f);
             else
                 _pressureHint.Hide();
+
+            if (!showPressure && !needsWater && _hose.ShowDisconnectHint)
+                _disconnectHint.Show(_hose.DisconnectText, PressureHintPosition.x, 1f);
+            else
+                _disconnectHint.Hide();
         }
 
         private void UpdateBars()

@@ -21,6 +21,9 @@ namespace WaterChaos.Player
         [Header("References")]
         [SerializeField] private Transform _camera;
 
+        [Tooltip("Right mouse button takes the hose off its source. Empty = taken from this object.")]
+        [SerializeField] private PlayerInputHandler _input;
+
         [Header("Settings")]
         [Tooltip("How far the player can reach a connection point, in meters (m).")]
         [SerializeField, Min(0f)] private float _maxDistance = 3f;
@@ -35,6 +38,8 @@ namespace WaterChaos.Player
         private WaterConnectionPoint _target;
         private Action _interactTarget;
         private Action<WaterConnectionPoint> _onAttachmentLost;
+        private Action _onSecondary;
+        private bool _disconnectLearned;
 
         /// <summary>The held hose is at full length and holds the player back; false without a hose.</summary>
         public event Action<bool> LimitReachedChanged;
@@ -53,6 +58,12 @@ namespace WaterChaos.Player
         /// <summary>True when the menu action on the target would detach the hose.</summary>
         public bool TargetIsConnected => _target != null && _target == _connected;
 
+        /// <summary>Menu text of taking the hose off, e.g. "Від'єднати ствол".</summary>
+        public string DisconnectText => _disconnectText;
+
+        /// <summary>The hose is on a source and the player has never taken it off with the right mouse button yet.</summary>
+        public bool ShowDisconnectHint => isActiveAndEnabled && _connected != null && !_disconnectLearned;
+
         /// <summary>The held hose is at full length; false without a hose.</summary>
         public bool IsLimitReached => _hose != null && _hose.IsLimitReached;
 
@@ -60,14 +71,35 @@ namespace WaterChaos.Player
         {
             _interactTarget = InteractTarget;
             _onAttachmentLost = OnAttachmentLost;
+            _onSecondary = OnSecondaryPressed;
+            if (_input == null)
+                _input = GetComponent<PlayerInputHandler>();
 
             // No nozzle in the hands yet.
             enabled = false;
         }
 
+        private void OnEnable()
+        {
+            if (_input != null)
+                _input.SecondaryPressed += _onSecondary;
+        }
+
         private void OnDisable()
         {
             _target = null;
+            if (_input != null)
+                _input.SecondaryPressed -= _onSecondary;
+        }
+
+        /// <summary>Right mouse button: the hose comes off its source wherever the player looks.</summary>
+        private void OnSecondaryPressed()
+        {
+            if (_connected == null)
+                return;
+
+            Disconnect();
+            _disconnectLearned = true;
         }
 
         public void CollectActions(PlayerInteraction player, List<InteractionAction> actions)

@@ -8,11 +8,11 @@ namespace WaterChaos.Interaction
     /// Turns a stream of flammable liquid into a flamethrower (gameplay only, no visuals):
     /// it lights as soon as it reaches a burning fire, whatever the room temperature, and raises <see cref="LitChanged"/>.
     /// While lit the stream is cut to <c>Flame Length</c>, so only the nearest thing in front of the nozzle burns.
-    /// While lit it sets what it hits alight, once per interval per target: flammable objects (also re-lighting
-    /// their extinguished fire at once), flammable ground, and inside a room any surface (a fire hitting a wall
-    /// starts on the floor below). Hitting the outside wall of a room sets the room behind it alight
-    /// (or, if no fire fits there, the foot of the wall outside). The normal fire rules apply (fire limit, exclusion radius, water);
-    /// room cooling protection only if <c>Respect Room Cooling</c> is on.
+    /// While lit it puts a fire in front of it, once per interval per target, wherever no fire burns yet:
+    /// on a flammable object (re-lighting its extinguished fire at once), on any surface it hits (a fire hitting
+    /// a wall starts on the floor below; the outside wall of a room sets the room behind it alight first),
+    /// and, hitting nothing, on the ground under the end of the flame. The fire rules (fire limit, water, rooms,
+    /// no-fire zones) do not stop it; room cooling only if <c>Respect Room Cooling</c> is on.
     /// It goes out at once when the nozzle is switched off, put down, set to zero pressure or runs dry;
     /// switched on again it needs a fire again.
     /// </summary>
@@ -55,10 +55,15 @@ namespace WaterChaos.Interaction
         {
             None,
             Object,
-            Ground,
-            Room,
-            OuterWall,
+            Surface,
+            Air,
         }
+
+        // How far below the end of a flame that hit nothing the ground is looked for, in meters (m).
+        private const float MaxAirDrop = 10f;
+
+        // Stands for "the air in front": one target, so the ignition interval applies to it like to any other.
+        private readonly object _airTarget = new object();
 
         private StreamIgnitionModel _model;
 
@@ -101,6 +106,8 @@ namespace WaterChaos.Interaction
             bool flammableGround = hit != null && fire == null && flammable == null
                 && hit.GetComponentInParent<FlammableSurface>() != null;
 
+            // A lit flamethrower sets alight whatever is in front of it: a flammable object, any surface it hits,
+            // or, hitting nothing, the ground under the end of the flame.
             TargetKind kind = TargetKind.None;
             object target = null;
             if (flammable != null && (flammable.CanIgnite || flammable.CanRekindle))
@@ -108,22 +115,15 @@ namespace WaterChaos.Interaction
                 kind = TargetKind.Object;
                 target = flammable;
             }
-            else if (flammableGround)
+            else if (hit != null && fire == null && (flammableGround || _model.IsLit))
             {
-                kind = TargetKind.Ground;
+                kind = TargetKind.Surface;
                 target = hit;
             }
-            else if (_model.IsLit && hit != null && fire == null && flammable == null && IsInRoom(_stream.HitPoint))
+            else if (hit == null && _model.IsLit && _stream.VisiblePointCount >= 2)
             {
-                // Rooms have no flammable surfaces of their own: inside one, whatever the flame hits can burn.
-                kind = TargetKind.Room;
-                target = hit;
-            }
-            else if (_model.IsLit && hit != null && fire == null && flammable == null && IsOuterWallOfRoom(_stream.HitPoint, _stream.HitNormal))
-            {
-                // A house hit from outside burns inside, behind the wall.
-                kind = TargetKind.OuterWall;
-                target = hit;
+                kind = TargetKind.Air;
+                target = _airTarget;
             }
 
             bool touchingFire = _selfIgniting || (fire != null && fire.IsBurning);
@@ -164,37 +164,49 @@ namespace WaterChaos.Interaction
                 return false;
 
             // Switched off or turned down to zero: the flame goes out at once, not when the pressure has run down.
+            // A source destroyed with the scene (leaving Play Mode) counts as off.
+            if (_stream.Source is UnityEngine.Object source && source == null)
+                return false;
+
             return !(_stream.Source is IWaterSourceControl control) || control.IsActive;
         }
 
+        /// <summary>
+        /// Puts a fire in front of the flame, ignoring the fire rules (limit, water, rooms, no-fire zones):
+        /// only where no fire burns yet. Room cooling stops it only if Respect Room Cooling is on.
+        /// </summary>
         private void Ignite(TargetKind kind, FlammableObject flammable, Vector3 hitPoint, Vector3 hitNormal)
         {
             switch (kind)
             {
                 case TargetKind.Object:
-                    Vector3 firePosition = _settings.GetFirePosition(flammable.IgnitionPosition);
-                    if (!AllowsIgnitionIn(FireSpreader.FindArea(firePosition, _settings), firePosition, _respectRoomCooling))
+                    if (flammable.TryRekindle() || flammable.TryIgnite(_settings))
                         return;
-
-                    if (!flammable.TryRekindle())
-                        flammable.TryIgnite(_settings);
+                    StartFire(flammable.IgnitionPosition);
                     return;
 
-                case TargetKind.Ground:
-                    FireSpreader.TryStartFireAt(_settings.GetFirePosition(hitPoint), _settings, _respectRoomCooling);
+                case TargetKind.Surface:
+                    // The outside wall of a room: the room behind it catches fire first.
+                    if (IsOuterWallOfRoom(hitPoint, hitNormal)
+                        && StartFire(DropToFloor(hitPoint - hitNormal.normalized * WallDepth, hitPoint, _maxDropToFloor)))
+                        return;
+                    StartFire(GetBurnPoint(hitPoint, hitNormal));
                     return;
 
-                case TargetKind.Room:
-                    Vector3 burnPoint = GetBurnPoint(hitPoint, hitNormal);
-                    FireSpreader.TryStartFireAt(_settings.GetFirePosition(burnPoint), _settings, _respectRoomCooling);
-                    return;
-
-                case TargetKind.OuterWall:
-                    Vector3 inside = DropToFloor(hitPoint - hitNormal.normalized * WallDepth, hitPoint);
-                    if (!FireSpreader.TryStartFireAt(_settings.GetFirePosition(inside), _settings, _respectRoomCooling))
-                        FireSpreader.TryStartFireAt(_settings.GetFirePosition(GetBurnPoint(hitPoint, hitNormal)), _settings, _respectRoomCooling);
+                case TargetKind.Air:
+                    Vector3 end = _stream.Points[_stream.VisiblePointCount - 1];
+                    StartFire(DropToFloor(end, end, MaxAirDrop));
                     return;
             }
+        }
+
+        private bool StartFire(Vector3 point)
+        {
+            Vector3 firePosition = _settings.GetFirePosition(point);
+            if (!AllowsIgnitionIn(FireSpreader.FindArea(firePosition, _settings), firePosition, _respectRoomCooling))
+                return false;
+
+            return FireSpreader.StartFireIgnoringRules(firePosition, _settings);
         }
 
         /// <summary>Where a fire from this hit stands: the hit itself on a floor, else the floor below it.</summary>
@@ -203,13 +215,16 @@ namespace WaterChaos.Interaction
             if (IsFloorLike(hitNormal))
                 return hitPoint;
 
-            return DropToFloor(hitPoint + hitNormal.normalized * WallClearance, hitPoint);
+            return DropToFloor(hitPoint + hitNormal.normalized * WallClearance, hitPoint, _maxDropToFloor);
         }
 
-        /// <summary>The floor under <paramref name="from"/>; <paramref name="fallback"/> if none is close enough.</summary>
-        private Vector3 DropToFloor(Vector3 from, Vector3 fallback)
+        /// <summary>
+        /// The first solid surface under <paramref name="from"/> (any layer; triggers such as water are skipped);
+        /// <paramref name="fallback"/> if none is within <paramref name="maxDrop"/> meters.
+        /// </summary>
+        private static Vector3 DropToFloor(Vector3 from, Vector3 fallback, float maxDrop)
         {
-            return Physics.Raycast(from, Vector3.down, out RaycastHit floor, _maxDropToFloor, _settings.TargetMask, QueryTriggerInteraction.Ignore)
+            return Physics.Raycast(from, Vector3.down, out RaycastHit floor, maxDrop, ~0, QueryTriggerInteraction.Ignore)
                 ? floor.point
                 : fallback;
         }

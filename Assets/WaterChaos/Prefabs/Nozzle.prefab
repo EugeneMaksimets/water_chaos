@@ -5283,7 +5283,7 @@ MonoBehaviour:
   _icon: {fileID: 509628020344910026, guid: 4384375b64b004787b6aaec73c902397, type: 3}
   _heldPosition: {x: 0, y: 0, z: 0}
   _heldRotation: {x: 0, y: -90, z: 0}
-  _heldScale: 1.6
+  _heldScale: 1.07
   _disableWhileHeld: []
   _keepUpright: 0
 --- !u!114 &5053214067466336079

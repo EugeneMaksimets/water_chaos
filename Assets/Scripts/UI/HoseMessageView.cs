@@ -18,6 +18,9 @@ namespace WaterChaos.UI
         [Tooltip("Text shown while a hose is at full length; hidden otherwise.")]
         [SerializeField] private Text _message;
 
+        // This view put the label on screen (and so may take it off).
+        private bool _shown;
+
         private void Awake()
         {
             if (_hoseConnector == null || _message == null)
@@ -36,8 +39,9 @@ namespace WaterChaos.UI
 
         private void OnDisable()
         {
-            if (_message != null)
+            if (_message != null && _shown)
                 _message.gameObject.SetActive(false);
+            _shown = false;
         }
 
         // Polled: the transfer hose has no change event, and two flags per frame cost nothing.
@@ -46,12 +50,21 @@ namespace WaterChaos.UI
             bool reached = _hoseConnector.IsLimitReached
                 || (_transferHose != null && _transferHose.IsLimitReached);
 
-            // The label may be shared with other notices (e.g. "Backpack is full!"), so the text is set every time it shows.
-            if (reached && !ReferenceEquals(_message.text, LimitText))
-                _message.text = LimitText;
+            // The label is shared with other notices (the inventory's "backpack is full"):
+            // the text is set every time it shows, and only a label this view showed is hidden again.
+            if (reached)
+            {
+                if (!ReferenceEquals(_message.text, LimitText))
+                    _message.text = LimitText;
+                if (!_message.gameObject.activeSelf)
+                    _message.gameObject.SetActive(true);
+            }
+            else if (_shown)
+            {
+                _message.gameObject.SetActive(false);
+            }
 
-            if (_message.gameObject.activeSelf != reached)
-                _message.gameObject.SetActive(reached);
+            _shown = reached;
         }
     }
 }

@@ -231,22 +231,37 @@ namespace WaterChaos.Tests
             Assert.IsTrue(destination.IsSoapy);
         }
 
-        // ───────────── 7. Other liquids remove the soap ─────────────
+        // ───────────── 7. Soapy water cannot be spoiled ─────────────
 
         [TestCase(LiquidType.Gasoline)]
         [TestCase(LiquidType.Toxic)]
-        public void AnotherLiquidTakingOver_WashesTheSoapOut(LiquidType other)
+        public void OtherLiquid_IntoSoapyWater_StaysSoapyWater(LiquidType other)
         {
             WaterReservoir reservoir = new WaterReservoir(1000f, 500f);
             reservoir.AddSoap();
             PumpModel pump = CreateRunningPump(reservoir);
 
-            reservoir.Add(1f, other);
+            reservoir.Add(100f, other);
             pump.Tick(0.1f);
 
-            Assert.AreEqual(other, reservoir.Liquid);
-            Assert.IsFalse(reservoir.IsSoapy);
-            Assert.IsFalse(pump.Output.IsSoapy);
+            Assert.AreEqual(LiquidType.Water, reservoir.Liquid);
+            Assert.IsTrue(reservoir.IsSoapy);
+            Assert.IsTrue(pump.Output.IsSoapy);
+        }
+
+        [Test]
+        public void SoapyWater_KeepsItsSoap_WhileMoreIsPumpedIn()
+        {
+            WaterReservoir reservoir = new WaterReservoir(1000f, 500f);
+            reservoir.AddSoap();
+
+            reservoir.Add(50f, LiquidType.Toxic);
+            reservoir.Add(50f, LiquidType.Gasoline);
+            reservoir.Add(50f, LiquidType.Water);
+
+            Assert.AreEqual(650f, reservoir.Volume, 0.001f);
+            Assert.AreEqual(LiquidType.Water, reservoir.Liquid);
+            Assert.IsTrue(reservoir.IsSoapy);
         }
 
         [Test]

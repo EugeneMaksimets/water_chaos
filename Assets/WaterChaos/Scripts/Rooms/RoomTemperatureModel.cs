@@ -64,8 +64,20 @@ namespace WaterChaos.Rooms
             IsCoolingActive && ((IsProtected && IsOverheated) || _coolingPerSecond >= FireHeatPerSecond);
         public bool IsOverheated => Temperature > _coolingLimit;
 
-        /// <summary>Fires may spread and re-ignite unless the room is protected by all its coolers.</summary>
-        public bool AllowsFireSpread => !IsProtected;
+        /// <summary>Most fires that may burn in the room at once; 0 = no limit.</summary>
+        public int MaxFires { get; private set; }
+
+        /// <summary>
+        /// Fires may spread and re-ignite unless the room is protected by all its coolers
+        /// or already burns with <see cref="MaxFires"/> fires.
+        /// </summary>
+        public bool AllowsFireSpread => !IsProtected && (MaxFires == 0 || ActiveFires < MaxFires);
+
+        /// <summary>Limits how many fires may burn at once; 0 or less = no limit.</summary>
+        public void SetMaxFires(int maxFires)
+        {
+            MaxFires = Math.Max(0, maxFires);
+        }
 
         /// <param name="startTemperature">Starting temperature (°C).</param>
         /// <param name="minTemperature">Lowest possible temperature (°C).</param>

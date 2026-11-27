@@ -52,6 +52,7 @@ namespace WaterChaos.Mission
         private Quaternion _cameraLocalRotation;
         private bool _skip;
         private readonly List<Renderer> _hiddenBody = new List<Renderer>();
+        private readonly List<Canvas> _hiddenUi = new List<Canvas>();
 
         private void Awake()
         {
@@ -82,6 +83,7 @@ namespace WaterChaos.Mission
             SetPlayerControls(false);
             MovePlayerToExit();
             HidePlayerBody();
+            HideOtherUi();
             _cameraLocalPosition = _camera.localPosition;
             _cameraLocalRotation = _camera.localRotation;
             if (_beacons != null)
@@ -139,6 +141,12 @@ namespace WaterChaos.Mission
 
             foreach (Renderer part in _hiddenBody)
                 part.enabled = true;
+            foreach (Canvas canvas in _hiddenUi)
+            {
+                if (canvas != null)
+                    canvas.enabled = true;
+            }
+            _hiddenUi.Clear();
             SetPlayerControls(true);
             _runner.StartMission();
             enabled = false;
@@ -188,6 +196,19 @@ namespace WaterChaos.Mission
 
                 part.enabled = false;
                 _hiddenBody.Add(part);
+            }
+        }
+
+        // The intro is a clean shot: every other screen canvas (HUD, inventory, objectives) is off until it ends.
+        private void HideOtherUi()
+        {
+            foreach (Canvas canvas in FindObjectsByType<Canvas>(FindObjectsInactive.Exclude))
+            {
+                if (!canvas.isRootCanvas || !canvas.enabled || canvas.transform.IsChildOf(transform))
+                    continue;
+
+                canvas.enabled = false;
+                _hiddenUi.Add(canvas);
             }
         }
 

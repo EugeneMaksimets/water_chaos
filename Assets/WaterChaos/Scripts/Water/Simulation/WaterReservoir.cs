@@ -86,8 +86,8 @@ namespace WaterChaos.Water
         /// <summary>
         /// Puts up to the given volume of <paramref name="liquid"/> into the reservoir (e.g. pumped in from another one).
         /// An empty tank takes the new liquid; otherwise the two mix (<see cref="LiquidTypeExtensions.MixWith"/>).
-        /// Soap survives only while the result is water: soapy water added to water makes it soapy,
-        /// any other liquid that takes over washes the soap out.
+        /// Soapy water cannot be spoiled: whatever is pumped into it (toxic liquid, gasoline) becomes soapy water too.
+        /// Soapy water added to water makes it soapy.
         /// </summary>
         /// <param name="amount">Offered volume in liters (L); negative and NaN are treated as 0.</param>
         /// <param name="isSoapy">The added liquid is soapy water.</param>
@@ -95,8 +95,9 @@ namespace WaterChaos.Water
         public float Add(float amount, LiquidType liquid, bool isSoapy = false)
         {
             bool wasEmpty = IsEmpty;
-            LiquidType mixed = wasEmpty ? liquid : Liquid.MixWith(liquid);
-            bool keepsSoap = !wasEmpty && IsSoapy && Liquid == mixed;
+            // The soap in the tank neutralizes anything added: it stays soapy water.
+            bool keepsSoap = !wasEmpty && IsSoapy;
+            LiquidType mixed = wasEmpty ? liquid : keepsSoap ? LiquidType.Water : Liquid.MixWith(liquid);
             bool addsSoap = isSoapy && liquid.CanBeSoapy();
 
             float accepted = Add(amount);

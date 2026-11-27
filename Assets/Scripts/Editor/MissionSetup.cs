@@ -45,6 +45,21 @@ namespace WaterChaos.EditorTools
         private const float HouseStoreyHeight = 3f;
         // Room box margin past the outer walls, so wall-mounted air conditioners count as inside, in meters (m).
         private const float HouseRoomMargin = 0.3f;
+        // The room starts this far below the ground, so floor-level pivots (fires, fridges) are inside, in meters (m).
+        private const float HouseRoomBelowGround = 0.2f;
+
+        // First house fire: hot from the start, a handful of fires and never more.
+        private const float HouseStartTemperature = 70f;
+        private const int HouseMinFires = 4;
+        private const int HouseMaxFires = 8;
+        // Fires added to reach the minimum stand at these spots (house space, on the ground floor), in meters (m).
+        private static readonly Vector3[] HouseFireSpots =
+        {
+            new Vector3(-3f, 0f, 2.5f), new Vector3(3f, 0f, 2.5f), new Vector3(-3f, 0f, 6f), new Vector3(3f, 0f, 6f),
+            new Vector3(0f, 0f, 4.5f),
+        };
+        // No fire outdoors around the first house, the truck and the player's start (kept on Rebuild).
+        private const string NoOutdoorFireName = "No Outdoor Fire · First Location";
 
         // A teammate's gasoline flame reaches the house from the street, in meters (m).
         private const float TeammateFlameLength = 10f;
@@ -125,10 +140,25 @@ namespace WaterChaos.EditorTools
 
             Undo.CollapseUndoOperations(undoGroup);
             EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
+            LinkIntro(runner);
             Selection.activeGameObject = root.gameObject;
 
             Debug.Log("Mission setup done. Check the choices below, then save the scene (Cmd+S).\n- "
                 + string.Join("\n- ", s_report), root);
+        }
+
+        /// <summary>
+        /// An arrival intro starts the mission itself: it gets the new runner, and the runner waits for it.
+        /// </summary>
+        private static void LinkIntro(MissionRunner runner)
+        {
+            MissionIntro intro = Any<MissionIntro>();
+            if (intro == null)
+                return;
+
+            Set(intro, "_runner", runner);
+            Set(runner, "_startOnPlay", false);
+            s_report.Add($"Intro {intro.name} starts the mission (runner's Start On Play is off).");
         }
 
         // ───────────── Scene objects ─────────────
@@ -499,20 +529,121 @@ namespace WaterChaos.EditorTools
                 return;
             }
 
-            // Ground floor only: a fire spreads only inside its own room, so it never climbs to the upper floor
-            // and never creeps out into the yard.
-            Transform room = scene.HouseRoom.transform;
-            Undo.RecordObject(room, "Setup Mission");
-            room.SetPositionAndRotation(
-                scene.House.TransformPoint(new Vector3(0f, HouseFloorTop + HouseStoreyHeight * 0.5f, HouseDepth * 0.5f)),
-                scene.House.rotation);
-            room.localScale = Vector3.one;
+            ConfigureFirstHouse(scene.House, scene.HouseRoom, scene.Truck.transform, scene.Player);
+        }
+
+        /// <summary>Updates the first house (room, temperature, fires, no outdoor fire) without rebuilding the mission.</summary>
+        [MenuItem("Water Chaos/Update First House (Mini Village)")]
+        private static void UpdateFirstHouse()
+        {
+            s_report.Clear();
+            Transform house = All<Transform>().FirstOrDefault(t => t.name == HouseName);
+            RoomTemperature room = All<RoomTemperature>().FirstOrDefault(r => r.name == HouseRoomName);
+            FireTruckController truck = Any<FireTruckController>();
+            PlayerInputHandler player = Any<PlayerInputHandler>();
+            if (house == null || room == null || truck == null || player == null)
+            {
+                Debug.LogError($"Update first house: \"{HouseName}\", \"{HouseRoomName}\", the truck or the player not found; run Setup Mission first.");
+                return;
+            }
+
+            Undo.SetCurrentGroupName("Update First House");
+            ConfigureFirstHouse(house, room, truck.transform, player.transform);
+            EditorSceneManager.MarkSceneDirty(room.gameObject.scene);
+            Debug.Log("Update first house done. Save the scene (Cmd+S).\n- " + string.Join("\n- ", s_report), room);
+        }
+
+        private static void ConfigureFirstHouse(Transform house, RoomTemperature room, Transform truck, Transform player)
+        {
+            FitHouseRoom(house, room);
+            Set(room, "_startTemperature", HouseStartTemperature);
+            Set(room, "_maxFires", (float)HouseMaxFires);
+            EnsureHouseFires(house, room);
+            EnsureNoOutdoorFire(house, truck, player);
+            s_report.Add($"{HouseRoomName}: ground floor only, starts at {HouseStartTemperature} °C, at most {HouseMaxFires} fires.");
+        }
+
+        /// <summary>At least <see cref="HouseMinFires"/> fires burn in the house at the start: copies of a house fire are added.</summary>
+        private static void EnsureHouseFires(Transform house, RoomTemperature room)
+        {
+            BoxCollider box = room.GetComponent<BoxCollider>();
+            List<FireExtinguishHandler> fires = All<FireExtinguishHandler>()
+                .Where(f => f.gameObject.scene.IsValid() && box.bounds.Contains(f.transform.position)).ToList();
+
+            FireExtinguishHandler template = fires.FirstOrDefault();
+            if (template == null)
+            {
+                s_report.Add("NO FIRE in the first house to copy: put at least one Cartoon Fire inside it.");
+                return;
+            }
+
+            GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(template.gameObject);
+            foreach (Vector3 spot in HouseFireSpots)
+            {
+                if (fires.Count >= HouseMinFires)
+                    break;
+
+                Vector3 position = house.TransformPoint(spot + Vector3.up * HouseFloorTop);
+                if (fires.Any(f => Vector3.Distance(f.transform.position, position) < 2f))
+                    continue;
+
+                GameObject copy = source != null
+                    ? (GameObject)PrefabUtility.InstantiatePrefab(source, template.transform.parent)
+                    : Object.Instantiate(template.gameObject, template.transform.parent);
+                Undo.RegisterCreatedObjectUndo(copy, "Update First House");
+                copy.name = $"Cartoon Fire (House {fires.Count + 1})";
+                copy.transform.SetPositionAndRotation(position, template.transform.rotation);
+                fires.Add(copy.GetComponent<FireExtinguishHandler>());
+                s_report.Add($"Added {copy.name} in the house; move it if it stands inside furniture.");
+            }
+
+            s_report.Add($"Fires in the first house at the start: {fires.Count}.");
+        }
+
+        private static void EnsureNoOutdoorFire(Transform house, Transform truck, Transform player)
+        {
+            if (All<NoOutdoorFireZone>().Any(z => z.name == NoOutdoorFireName))
+            {
+                s_report.Add($"\"{NoOutdoorFireName}\" kept as it is.");
+                return;
+            }
+
+            Bounds area = RendererBounds(house);
+            area.Encapsulate(truck.position);
+            area.Encapsulate(player.position);
+            area.Expand(new Vector3(12f, 20f, 12f));
+
+            GameObject go = new GameObject(NoOutdoorFireName, typeof(BoxCollider));
+            Undo.RegisterCreatedObjectUndo(go, "Update First House");
+            go.layer = 2;
+            go.transform.position = area.center;
+            BoxCollider box = go.GetComponent<BoxCollider>();
+            box.isTrigger = true;
+            box.size = area.size;
+            go.AddComponent<NoOutdoorFireZone>();
+            s_report.Add($"\"{NoOutdoorFireName}\" created around the first house, the truck and the start: no fire outdoors there. "
+                + "Resize it if it reaches the teammates' house.");
+        }
+
+        /// <summary>
+        /// Ground floor only, from just below the ground (fires and fridges stand on the floor, their pivots at floor level)
+        /// up to below the upper floor: a fire spreads only inside its own room, so it never climbs upstairs or into the yard.
+        /// </summary>
+        private static void FitHouseRoom(Transform house, RoomTemperature room)
+        {
+            const float bottom = -HouseRoomBelowGround;
+            float top = HouseFloorTop + HouseStoreyHeight - 0.15f;
+
+            Transform transform = room.transform;
+            Undo.RecordObject(transform, "Fit House Room");
+            transform.SetPositionAndRotation(
+                house.TransformPoint(new Vector3(0f, (bottom + top) * 0.5f, HouseDepth * 0.5f)), house.rotation);
+            transform.localScale = Vector3.one;
 
             BoxCollider box = room.GetComponent<BoxCollider>();
-            Undo.RecordObject(box, "Setup Mission");
+            Undo.RecordObject(box, "Fit House Room");
             box.center = Vector3.zero;
-            box.size = new Vector3(HouseWidth + 2f * HouseRoomMargin, HouseStoreyHeight - 0.1f, HouseDepth + 2f * HouseRoomMargin);
-            s_report.Add($"House temperature room {HouseRoomName}: ground floor of {scene.House.name} only.");
+            box.size = new Vector3(HouseWidth + 2f * HouseRoomMargin, top - bottom, HouseDepth + 2f * HouseRoomMargin);
         }
 
         /// <summary>
@@ -1000,7 +1131,12 @@ namespace WaterChaos.EditorTools
             switch (value)
             {
                 case string text: property.stringValue = text; break;
-                case float number: property.floatValue = number; break;
+                case float number:
+                    if (property.propertyType == SerializedPropertyType.Integer)
+                        property.intValue = Mathf.RoundToInt(number);
+                    else
+                        property.floatValue = number;
+                    break;
                 case bool flag: property.boolValue = flag; break;
                 case Object reference: property.objectReferenceValue = reference; break;
                 case null: property.objectReferenceValue = null; break;

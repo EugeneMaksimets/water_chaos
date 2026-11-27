@@ -17,6 +17,9 @@ namespace WaterChaos.Player
         /// <summary>Put the held item down in front of the player. The only control that takes an item out of the hands.</summary>
         Drop,
 
+        /// <summary>Secondary action (right mouse button): take the nozzle hose off its source.</summary>
+        Secondary,
+
         Slot1,
         Slot2,
         Slot3,
@@ -43,6 +46,7 @@ namespace WaterChaos.Player
                 case PlayerControl.Cancel: return "<Keyboard>/escape";
                 case PlayerControl.Primary: return LeftButton;
                 case PlayerControl.Drop: return "<Keyboard>/f";
+                case PlayerControl.Secondary: return RightButton;
                 case PlayerControl.Slot1: return "<Keyboard>/1";
                 case PlayerControl.Slot2: return "<Keyboard>/2";
                 case PlayerControl.Slot3: return "<Keyboard>/3";

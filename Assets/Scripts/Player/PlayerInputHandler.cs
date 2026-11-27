@@ -34,6 +34,9 @@ namespace WaterChaos.Player
         /// <summary>Left mouse button went down for gameplay: perform the first interaction action. Never drops an item.</summary>
         public event Action PrimaryPressed;
 
+        /// <summary>Right mouse button went down for gameplay: the secondary action (take the nozzle hose off).</summary>
+        public event Action SecondaryPressed;
+
         /// <summary>Left mouse button went up, blocked or not: a click for menus.</summary>
         public event Action PointerReleased;
 
@@ -110,6 +113,9 @@ namespace WaterChaos.Player
 
             if (WasPressed(PlayerControl.Primary))
                 PrimaryPressed?.Invoke();
+
+            if (WasPressed(PlayerControl.Secondary))
+                SecondaryPressed?.Invoke();
         }
 
         private InputAction Get(PlayerControl control) => _actions[(int)control];

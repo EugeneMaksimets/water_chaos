@@ -606,5 +606,46 @@ namespace WaterChaos.Tests
             Assert.IsFalse(RoomTemperatureModel.IsInsideBox(new UnityEngine.Vector3(1f, 0f, 0f), size));
             Assert.IsFalse(RoomTemperatureModel.IsInsideBox(new UnityEngine.Vector3(0f, 0f, 1.5f), size));
         }
+
+
+        [Test]
+        public void NoFireLimit_ByDefault_AllowsSpreadWithManyFires()
+        {
+            RoomTemperatureModel room = CreateHotRoom(20);
+
+            Assert.IsTrue(room.AllowsFireSpread);
+        }
+
+        [Test]
+        public void FireLimit_Reached_StopsSpreading()
+        {
+            RoomTemperatureModel room = CreateHotRoom(3);
+
+            room.SetMaxFires(3);
+
+            Assert.IsFalse(room.AllowsFireSpread);
+        }
+
+        [Test]
+        public void FireLimit_NotReached_AllowsSpreading()
+        {
+            RoomTemperatureModel room = CreateHotRoom(2);
+
+            room.SetMaxFires(3);
+
+            Assert.IsTrue(room.AllowsFireSpread);
+        }
+
+        [TestCase(0)]
+        [TestCase(-5)]
+        public void FireLimit_ZeroOrLess_MeansNoLimit(int max)
+        {
+            RoomTemperatureModel room = CreateHotRoom(10);
+
+            room.SetMaxFires(max);
+
+            Assert.IsTrue(room.AllowsFireSpread);
+            Assert.AreEqual(0, room.MaxFires);
+        }
     }
 }

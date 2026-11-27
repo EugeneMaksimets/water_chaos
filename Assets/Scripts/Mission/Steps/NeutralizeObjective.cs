@@ -11,7 +11,7 @@ namespace WaterChaos.Mission
     /// Toxin counts once the gasoline has been neutralized at least once (gasoline + toxic turn into water,
     /// see <see cref="LiquidTypeExtensions.MixWith"/>); pumping on would turn the water toxic, so it is latched.
     /// Soap counts once the bar lies in the tank or has dissolved there.
-    /// When both are done the listed pumps stop and the tank holds clean water: the teammates' streams follow it,
+    /// When both are done the listed pumps stop and the tank holds soapy water: the teammates' streams follow it,
     /// so the flamethrowers go out by themselves.
     /// </summary>
     public sealed class NeutralizeObjective : ObjectiveStep
@@ -74,11 +74,12 @@ namespace WaterChaos.Mission
                     pump.Stop();
             }
 
-            // Toxin and soap together leave clean water, whatever was pumped in after the gasoline was gone.
+            // Toxin and soap together leave soapy water, whatever was pumped in after the gasoline was gone;
+            // from now on nothing pumped in can spoil it (see WaterReservoir.Add).
             WaterReservoir tank = _tank.Reservoir;
             float volume = tank.Volume;
             tank.Empty();
-            tank.Add(volume, LiquidType.Water);
+            tank.Add(volume, LiquidType.Water, true);
 
             if (_soap != null && !_soap.GetComponent<PickableItem>().IsHeld && _soap.gameObject.activeInHierarchy)
                 Destroy(_soap.gameObject);
