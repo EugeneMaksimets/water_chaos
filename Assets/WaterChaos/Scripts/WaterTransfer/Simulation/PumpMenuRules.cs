@@ -23,15 +23,18 @@ namespace WaterChaos.WaterTransfer
                 actions.Add(PumpMenuAction.PickUp);
         }
 
-        /// <summary>Hose laid out, water at the intake, room at the destination, pump free and off.</summary>
+        /// <summary>
+        /// Hose attached (laid out or its end still carried), water at the intake, pump free and off;
+        /// a laid-out hose also needs room at the destination. Started while carried, the pump waits for the hose to be laid.
+        /// </summary>
         public static bool CanTurnOn(in PumpMenuContext context)
         {
             return context.OutletAttached
-                && context.HoseState == TransferHoseState.Placed
+                && (context.HoseState == TransferHoseState.Carried || context.HoseState == TransferHoseState.Placed)
                 && !context.PumpOn
                 && !context.RegularOutletBusy
                 && context.HasWater
-                && !context.DestinationFull;
+                && !(context.HoseState == TransferHoseState.Placed && context.DestinationFull);
         }
 
         /// <summary>Only a pump the transfer hose runs; a nozzle-driven pump is controlled by the nozzle.</summary>

@@ -84,10 +84,13 @@ namespace WaterChaos.Pump
             ? new WaterFlowData(DemandFlowRate * SupplyRatio, CurrentPressure * SupplyRatio, Liquid, IsSoapy)
             : new WaterFlowData(0f, 0f, Liquid, IsSoapy);
 
-        /// <summary>Turns the motor on; ignored while the pump cannot run (no water or no hose).</summary>
+        /// <summary>
+        /// Turns the motor on; ignored without water. Without a hose it is only armed:
+        /// it draws and delivers nothing until the hose is connected (e.g. a transfer hose laid out), then runs.
+        /// </summary>
         public void Start()
         {
-            if (CanRun)
+            if (HasWater)
                 IsTurnOn = true;
             UpdateState();
         }

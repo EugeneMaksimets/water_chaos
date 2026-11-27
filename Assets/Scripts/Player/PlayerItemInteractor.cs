@@ -77,7 +77,8 @@ namespace WaterChaos.Player
             if (!Physics.Raycast(ray, out RaycastHit hit, _maxDistance, _interactMask, QueryTriggerInteraction.Ignore))
                 return null;
 
-            return hit.collider.GetComponentInParent<IPickableItem>();
+            IPickableItem item = hit.collider.GetComponentInParent<IPickableItem>();
+            return item is PickableItem pickable && pickable.IsLocked ? null : item;
         }
     }
 }

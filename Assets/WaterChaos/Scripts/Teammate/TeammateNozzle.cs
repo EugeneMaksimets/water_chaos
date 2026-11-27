@@ -29,8 +29,11 @@ namespace WaterChaos.Teammate
 
         private WaterConnectionPoint _point;
 
-        /// <summary>The teammate's stream currently carries some flow.</summary>
-        public bool IsSpraying => _stream != null && _stream.Flow.FlowRate > 0f;
+        // Below this the stream is only a trickle (a hydrant running dry), in liters per second (L/s).
+        private const float MinSprayFlow = 0.1f;
+
+        /// <summary>The teammate's stream carries more than a trickle.</summary>
+        public bool IsSpraying => _stream != null && _stream.Flow.FlowRate > MinSprayFlow;
 
         // Start: connection points find their source in Awake.
         private void Start()

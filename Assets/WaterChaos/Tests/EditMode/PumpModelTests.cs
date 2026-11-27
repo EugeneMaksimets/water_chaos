@@ -187,7 +187,7 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void Start_WithoutHose_DoesNotRunOrDrawWater()
+        public void Start_WithoutHose_ArmsTheMotorButDrawsNothing()
         {
             WaterReservoir lake = new WaterReservoir(1000f, 1000f);
             PumpModel pump = CreateBarePump();
@@ -197,10 +197,38 @@ namespace WaterChaos.Tests
             pump.Start();
             pump.Tick(10f);
 
-            Assert.IsFalse(pump.IsTurnOn);
+            Assert.IsTrue(pump.IsTurnOn);
             Assert.AreEqual(0f, pump.Output.FlowRate);
             Assert.AreEqual(1000f, lake.Volume);
             Assert.AreEqual(PumpState.Disconnected, pump.State);
+        }
+
+        [Test]
+        public void ArmedPump_RunsOnceTheHoseIsConnected()
+        {
+            WaterReservoir lake = new WaterReservoir(1000f, 1000f);
+            PumpModel pump = CreateBarePump();
+            pump.SetSource(lake);
+            pump.SetTargetPressure(MaxPressure);
+            pump.Start();
+
+            pump.SetOutletConnected(true);
+            pump.Tick(10f);
+
+            Assert.AreEqual(PumpState.Running, pump.State);
+            Assert.Greater(pump.Output.FlowRate, 0f);
+            Assert.Less(lake.Volume, 1000f);
+        }
+
+        [Test]
+        public void Start_WithoutWater_StaysOff()
+        {
+            PumpModel pump = CreateBarePump();
+            pump.SetOutletConnected(true);
+
+            pump.Start();
+
+            Assert.IsFalse(pump.IsTurnOn);
         }
 
         [Test]

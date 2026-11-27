@@ -398,6 +398,7 @@ GameObject:
   - component: {fileID: 168701613068533488}
   - component: {fileID: 1093136593630839023}
   - component: {fileID: 756280436441967885}
+  - component: {fileID: 3662404542376063089}
   m_Layer: 0
   m_Name: TransferHose_5m
   m_TagString: Untagged
@@ -656,6 +657,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15bc1fa2dda9442f297e5a4aa1ce2c9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Tools.TransferHoseItem
+--- !u!114 &3662404542376063089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8119657458624808995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6d596fc41b4c451dac5546ee9891dab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.WaterTransfer.TransferHoseDripView
+  _hose: {fileID: 9106797368925600106}
+  _material: {fileID: 2100000, guid: 8aec4cb69e13948b0b01e52c0a9dea9f, type: 2}
+  _rate: 30
+  _size: {x: 0.05, y: 0.1}
+  _water: {r: 0.45, g: 0.75, b: 1, a: 0.9}
+  _gasoline: {r: 1, g: 0.7, b: 0.15, a: 0.9}
+  _toxic: {r: 0.45, g: 1, b: 0.15, a: 0.9}
 --- !u!1 &8249457519803513948
 GameObject:
   m_ObjectHideFlags: 0

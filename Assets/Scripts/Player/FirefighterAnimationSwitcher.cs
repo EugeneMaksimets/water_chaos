@@ -14,6 +14,13 @@ namespace WaterChaos.Player
         private Animator _animator;
         private FirefighterAnimation _current;
 
+        /// <summary>Animation to play; changing it cross-fades to the new one.</summary>
+        public FirefighterAnimation Animation
+        {
+            get => _animation;
+            set => _animation = value;
+        }
+
         private void Awake()
         {
             _animator = GetComponent<Animator>();

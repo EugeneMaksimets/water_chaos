@@ -138,7 +138,8 @@ namespace WaterChaos.Interaction
                 if (actions[i].InMenu && !usesMenu)
                     return i;
 
-                if (buttonOnly < 0)
+                // Only an action that is not in the menu counts as button-only.
+                if (!actions[i].InMenu && buttonOnly < 0)
                     buttonOnly = i;
             }
 

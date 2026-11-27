@@ -66,9 +66,15 @@ namespace WaterChaos.Tests
         }
 
         [Test]
-        public void TurnOn_NotOfferedWhileEndIsCarried()
+        public void TurnOn_OfferedWhileEndIsCarried()
         {
-            CollectionAssert.DoesNotContain(Collect(hoseState: TransferHoseState.Carried), PumpMenuAction.TurnOn);
+            CollectionAssert.Contains(Collect(hoseState: TransferHoseState.Carried), PumpMenuAction.TurnOn);
+        }
+
+        [Test]
+        public void TurnOn_WhileCarried_IgnoresDestination()
+        {
+            CollectionAssert.Contains(Collect(hoseState: TransferHoseState.Carried, destinationFull: true), PumpMenuAction.TurnOn);
         }
 
         [Test]

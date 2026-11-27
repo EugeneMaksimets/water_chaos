@@ -40,6 +40,9 @@ namespace WaterChaos.Items
 
         public Sprite Icon => _icon;
 
+        /// <summary>Cannot be picked up now (e.g. the tee while the mission needs it in place).</summary>
+        public bool IsLocked { get; set; }
+
         /// <summary>In the player's hands or stored with them; false once released into the world.</summary>
         public bool IsHeld => _isHeld;
         public float Mass => _body.mass;

@@ -22,8 +22,10 @@ namespace WaterChaos.UI
     {
         private const int MaxOptions = 6;
         private const float PromptY = -90f;
-        // Width of an option label, in reference pixels: about the width of a sector at the label radius.
+        // Widest an option label gets, in reference pixels; narrower when the sectors are (many options).
         private const float LabelWidth = 130f;
+        // Free space between the labels of neighboring sectors, in reference pixels.
+        private const float LabelGap = 10f;
         private const float PromptPairX = 110f;
         private const string MenuText = "Дії";
 
@@ -304,6 +306,8 @@ namespace WaterChaos.UI
 
             float sector = RadialMenuLayout.SectorAngle(_count);
             float labelRadius = (_outerRadius + _innerRadius) * 0.5f;
+            // The distance between neighboring label centers: a wider label would run into the next one.
+            float labelWidth = Mathf.Min(LabelWidth, 2f * labelRadius * Mathf.Sin(sector * 0.5f * Mathf.Deg2Rad) - LabelGap);
 
             for (int i = 0; i < MaxOptions; i++)
             {
@@ -319,6 +323,7 @@ namespace WaterChaos.UI
                 _shown[i] = _interaction.MenuActions[i];
                 _labels[i].text = _shown[i].Label;
                 _labels[i].rectTransform.anchoredPosition = RadialMenuLayout.CenterDirection(i, _count) * labelRadius;
+                _labels[i].rectTransform.sizeDelta = new Vector2(labelWidth, _labels[i].rectTransform.sizeDelta.y);
 
                 // Filled clockwise from the left: rotating clockwise by the sectors before it puts it in place.
                 _sectors[i].fillAmount = Mathf.Max(0f, sector - _gap) / 360f;

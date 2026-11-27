@@ -255,14 +255,50 @@ namespace WaterChaos.EditorTools.MiniVillage
         private static readonly Vector3 TankCenter = new Vector3(8f, 0f, -10f);
         private const float TankFloor = -2.6f;
         private const float TankWaterDepth = 2.3f;
-        // Manhole: 1.4 m square against the north wall (the road side), where the ladder is.
-        private static readonly Rect ManholeHole = new Rect(TankCenter.x - 0.7f, TankCenter.z + 0.6f, 1.4f, 1.4f);
+        // Hatch: 2.6 m square against the north wall (the road side), wide enough to jump down; the ladder is in it.
+        private static readonly Rect ManholeHole = new Rect(TankCenter.x - 1.3f, TankCenter.z - 0.6f, 2.6f, 2.6f);
 
         /// <summary>
         /// Empty underground tank (a water body transfer hoses can fill) in a concrete chamber under a manhole,
         /// with a ladder fixed to the wall so the player can climb down and back up.
         /// </summary>
         private static void BuildUndergroundTank(Transform waterSources, Transform structures, Renderer poolWater)
+        {
+            BuildTankChamber(structures);
+
+            // The tank itself: an empty water body on the Water layer, like the pools.
+            BuildTankWater(waterSources, poolWater);
+        }
+
+        /// <summary>
+        /// Rebuilds only the ground hole and the concrete chamber with the hatch and ladder, keeping the tank water
+        /// (its liquid and volume) and everything else in the scene. Save the scene afterwards.
+        /// </summary>
+        [MenuItem("Tools/Water Chaos/Rebuild Underground Tank Hatch")]
+        private static void RebuildTankHatch()
+        {
+            GameObject chamber = GameObject.Find("UndergroundTank_Chamber");
+            GameObject ground = Object.FindObjectsByType<MeshCollider>(FindObjectsInactive.Include)
+                .Select(c => c.gameObject).FirstOrDefault(g => g.name == "Ground");
+            if (chamber == null || ground == null)
+            {
+                Debug.LogError("Underground tank hatch: \"UndergroundTank_Chamber\" or \"Ground\" not found in the open scene.");
+                return;
+            }
+
+            Transform parent = chamber.transform.parent;
+            Undo.DestroyObjectImmediate(chamber);
+            Undo.RecordObject(ground.GetComponent<MeshFilter>(), "Rebuild Underground Tank Hatch");
+            SetupGround(ground);
+            GameObject rebuilt = BuildTankChamber(parent);
+            Undo.RegisterCreatedObjectUndo(rebuilt, "Rebuild Underground Tank Hatch");
+
+            EditorSceneManager.MarkSceneDirty(rebuilt.scene);
+            Debug.Log($"Underground tank hatch: {ManholeHole.width} × {ManholeHole.height} m opening with the ladder. Save the scene (Cmd+S).", rebuilt);
+        }
+
+        /// <summary>Concrete chamber under the hatch, the ladder with its climbing zone and the light.</summary>
+        private static GameObject BuildTankChamber(Transform structures)
         {
             const float wall = 0.3f;
             const float ceilingBottom = -0.26f;
@@ -329,8 +365,11 @@ namespace WaterChaos.EditorTools.MiniVillage
             light.intensity = 1.2f;
             light.color = new Color(0.8f, 0.9f, 1f);
             light.shadows = LightShadows.None;
+            return chamber;
+        }
 
-            // The tank itself: an empty water body on the Water layer, like the pools.
+        private static void BuildTankWater(Transform waterSources, Renderer poolWater)
+        {
             var tank = new GameObject("UndergroundTank");
             tank.transform.SetParent(waterSources, false);
             tank.transform.position = new Vector3(TankCenter.x, TankFloor, TankCenter.z);

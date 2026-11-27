@@ -160,7 +160,7 @@ namespace WaterChaos.Tests
         [TestCase("Pump", "Pump")]
         [TestCase("TransferHose_20m", "TransferHose_20m")]
         [TestCase("Valve (open)", "Valve (open)")]
-        [TestCase("", "Interact")]
+        [TestCase("", "Дія")]
         public void CleanName_DropsDuplicateSuffixOnly(string objectName, string expected)
         {
             Assert.AreEqual(expected, PlayerInteraction.CleanName(objectName));

@@ -146,6 +146,7 @@ namespace WaterChaos.EditorTools
             Undo.CollapseUndoOperations(undoGroup);
             EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
             LinkIntro(runner);
+            LockTee(runner, scene.Splitter);
             Selection.activeGameObject = root.gameObject;
 
             Debug.Log("Mission setup done. Check the choices below, then save the scene (Cmd+S).\n- "
@@ -164,6 +165,45 @@ namespace WaterChaos.EditorTools
             Set(intro, "_runner", runner);
             Set(runner, "_startOnPlay", false);
             s_report.Add($"Intro {intro.name} starts the mission (runner's Start On Play is off).");
+        }
+
+        /// <summary>The tee feeds the teammates: nobody may pick it up before the mission ends.</summary>
+        private static void LockTee(MissionRunner runner, HoseSplitter splitter)
+        {
+            PickableItem item = splitter != null ? splitter.GetComponentInParent<PickableItem>() : null;
+            if (item == null)
+                return;
+
+            MissionItemLock itemLock = AddCopy<MissionItemLock>(runner.gameObject, null);
+            Set(itemLock, "_runner", runner);
+            SetArray(itemLock, "_items", item);
+            s_report.Add($"{item.name} cannot be picked up until the mission is completed.");
+        }
+
+        /// <summary>Teammate idle/extinguish animations and the tee lock, without rebuilding the mission.</summary>
+        [MenuItem("Water Chaos/Setup Teammate Animations and Tee Lock (Mini Village)")]
+        private static void SetUpAnimationsAndLock()
+        {
+            s_report.Clear();
+            Undo.SetCurrentGroupName("Setup Teammate Animations and Tee Lock");
+            foreach (TeammateNozzle nozzle in All<TeammateNozzle>())
+            {
+                FirefighterAnimationSwitcher teammate = nozzle.GetComponentInParent<FirefighterAnimationSwitcher>(true);
+                if (teammate == null)
+                    continue;
+
+                TeammateSprayAnimation spray = AddCopy<TeammateSprayAnimation>(teammate.gameObject, null);
+                Set(spray, "_nozzle", nozzle);
+                Set(spray, "_animation", teammate);
+                s_report.Add($"{teammate.transform.root.name}: idle without water, extinguishing with it.");
+            }
+
+            MissionRunner runner = Any<MissionRunner>();
+            if (runner != null)
+                LockTee(runner, Any<HoseSplitter>());
+
+            EditorSceneManager.MarkAllScenesDirty();
+            Debug.Log("Done. Save the scene (Cmd+S).\n- " + string.Join("\n- ", s_report));
         }
 
         // ───────────── Scene objects ─────────────
@@ -829,6 +869,11 @@ namespace WaterChaos.EditorTools
                 Set(ignition, "_flameLength", TeammateFlameLength);
             }
 
+            // Idle while the nozzle is dry, extinguishing while it sprays.
+            TeammateSprayAnimation spray = AddCopy<TeammateSprayAnimation>(teammate.gameObject, null);
+            Set(spray, "_nozzle", component);
+            Set(spray, "_animation", teammate);
+
             Transform hand = FindRightHand(teammate.GetComponent<Animator>());
             if (hand != null && nozzle.transform.parent != hand)
             {
@@ -1067,15 +1112,9 @@ namespace WaterChaos.EditorTools
             SetArray(poolIn, "_pumps", Deployments(s.PoolPump, s.ToxicPump, s.TankPump));
             SetArray(poolIn, "_bodies", s.PoolBodies.Take(1).ToArray());
             Hint(poolIn, "Встанови насос у басейн.", PlayerControl.Drop, z.Pool);
-            TransferHoseObjective poolHose = Add<TransferHoseObjective>(root, Name("Hose · Pool to Underground Tank"),
-                "Протягни шланг від насоса до підземного резервуара", underground);
-            SetArray(poolHose, "_hoses", s.PoolHose, s.TankHose);
-            SetArray(poolHose, "_endBodies", s.UndergroundBody);
-            SetArray(poolHose, "_endSockets", s.SplitterInlet);
-            Hint(poolHose, "Підключи шланг до насоса та протягни його до підземного резервуара або перехідника.", null, null);
-            PumpRunningObjective poolOn = Add<PumpRunningObjective>(root, Name("Pump · Start Pool Pump"), "Увімкни насос біля басейну", poolPump);
-            SetArray(poolOn, "_pumps", s.PoolPump, s.ToxicPump, s.TankPump);
-            Hint(poolOn, "Шланг на місці! Тепер увімкни насос біля басейну.", null, null);
+            HoseRun(root, Name, "Pool", new[] { s.PoolHose, s.TankHose }, s.PoolPump, poolPump,
+                "Віднеси кінець шланга до підземного резервуара", underground, new[] { s.UndergroundBody }, null,
+                "Під'єднай шланг до насоса біля басейну.", null, z.Pool);
 
             // Stage 8: the second pump and the tee.
             PickUp(root, Name("Pick Up · Pump and Hose (Tank)"), "Знайди ще один насос та шланг", s.Inventory,
@@ -1085,18 +1124,9 @@ namespace WaterChaos.EditorTools
             SetArray(tankIn, "_pumps", Deployments(s.TankPump, s.ToxicPump, s.PoolPump));
             SetArray(tankIn, "_bodies", s.UndergroundBody);
             Hint(tankIn, "Помісти насос у підземний резервуар.", PlayerControl.Drop, z.UndergroundTank);
-            TransferHoseObjective tankHose = Add<TransferHoseObjective>(root, Name("Hose · Onto Tank Pump"),
-                "Підключи шланг до насоса", tankPump);
-            SetArray(tankHose, "_hoses", s.TankHose, s.PoolHose);
-            SetArray(tankHose, "_startPoints", TransferPoint(s.TankPump));
-            TransferHoseObjective tee = Add<TransferHoseObjective>(root, Name("Hose · Into Tee"),
-                "Знайди трійник та підключи до нього шланг.", splitter);
-            SetArray(tee, "_hoses", s.TankHose, s.PoolHose);
-            SetArray(tee, "_startPoints", TransferPoint(s.TankPump));
-            SetArray(tee, "_endSockets", s.SplitterInlet);
-            PumpRunningObjective tankOn = Add<PumpRunningObjective>(root, Name("Pump · Start Tank Pump"),
-                "Увімкни насос у підземному резервуарі", tankPump);
-            SetArray(tankOn, "_pumps", s.TankPump);
+            HoseRun(root, Name, "Tank", new[] { s.TankHose, s.PoolHose }, s.TankPump, tankPump,
+                "Знайди трійник і під'єднай до нього кінець шланга", splitter, null, new[] { s.SplitterInlet },
+                "Під'єднай шланг до насоса в підземному резервуарі.", null, z.UndergroundTank);
 
             // Stage 9: gasoline instead of water (the tank holds gasoline; the flame streams light by themselves).
             // The player sees the flamethrowers first: the story waits until they are back with the teammates.
@@ -1108,16 +1138,9 @@ namespace WaterChaos.EditorTools
             // the nozzle comes off it, the long hose goes on and down into the gasoline tank.
             PickUp(root, Name("Pick Up · Long Hose (Neutralize)"), "Знайди спосіб нейтралізувати бензин: візьми довгий шланг",
                 s.Inventory, Item(s.NeutralHose));
-            TransferHoseObjective neutralHose = Add<TransferHoseObjective>(root, Name("Hose · Toxic Pump to Gasoline Tank"),
-                "Переключи насос у токсичному резервуарі на шланг і опусти шланг у підземний резервуар", toxicPump, underground);
-            SetArray(neutralHose, "_hoses", s.NeutralHose, s.PoolHose, s.TankHose);
-            SetArray(neutralHose, "_startPoints", TransferPoint(s.ToxicPump));
-            SetArray(neutralHose, "_endBodies", s.UndergroundBody);
-            Hint(neutralHose, "Від'єднай ствол від насоса, під'єднай до насоса шланг і протягни його до підземного резервуара.",
-                PlayerControl.Secondary, z.ToxicTank);
-            PumpRunningObjective toxicOn = Add<PumpRunningObjective>(root, Name("Pump · Start Toxic Pump"),
-                "Увімкни насос у токсичному резервуарі", toxicPump);
-            SetArray(toxicOn, "_pumps", s.ToxicPump);
+            HoseRun(root, Name, "Toxic", new[] { s.NeutralHose, s.PoolHose, s.TankHose }, s.ToxicPump, toxicPump,
+                "Віднеси кінець шланга до підземного резервуара з бензином", underground, new[] { s.UndergroundBody }, null,
+                "Від'єднай ствол від насоса в токсичному резервуарі й під'єднай до насоса шланг.", PlayerControl.Secondary, z.ToxicTank);
             NeutralizeObjective neutralize = Add<NeutralizeObjective>(root, Name("Neutralize · Gasoline"),
                 "Нейтралізуй бензин", underground);
             Set(neutralize, "_tank", s.UndergroundBody != null ? s.UndergroundBody.GetComponent<WaterReservoirComponent>() : null);
@@ -1145,6 +1168,34 @@ namespace WaterChaos.EditorTools
                 SetEnum(tank, "_liquid", (int)LiquidType.Gasoline);
                 s_report.Add($"Underground tank ({tank.name}) now starts with GASOLINE.");
             }
+        }
+
+        /// <summary>
+        /// One hose run in the order that saves walking: connect the hose at the pump, switch the pump on right there
+        /// (it waits until the hose is laid, the end drips meanwhile), then carry the end to the marked place.
+        /// </summary>
+        private static void HoseRun(Transform root, System.Func<string, string> name, string label, TransferHose[] hoses,
+            PumpController pump, MissionMarker pumpMarker, string carryTitle, MissionMarker destination,
+            WaterBody[] endBodies, HoseEndSocket[] endSockets, string connectHint, PlayerControl? connectKey, MissionZone pumpZone)
+        {
+            Object[] hoseObjects = hoses.Where(h => h != null).Cast<Object>().ToArray();
+            TransferConnectionPoint start = TransferPoint(pump);
+
+            TransferHoseObjective connect = Add<TransferHoseObjective>(root, name($"Hose · Onto {label} Pump"),
+                "Під'єднай шланг до насоса", pumpMarker);
+            SetArray(connect, "_hoses", hoseObjects);
+            SetArray(connect, "_startPoints", start);
+            Hint(connect, connectHint, connectKey, pumpZone);
+
+            PumpRunningObjective run = Add<PumpRunningObjective>(root, name($"Pump · Start {label} Pump"), "Увімкни насос", pumpMarker);
+            SetArray(run, "_pumps", pump);
+            Hint(run, "Увімкни насос зараз — він почне качати, щойно ти покладеш кінець шланга.", null, pumpZone);
+
+            TransferHoseObjective carry = Add<TransferHoseObjective>(root, name($"Hose · {label} End to Destination"), carryTitle, destination);
+            SetArray(carry, "_hoses", hoseObjects);
+            SetArray(carry, "_startPoints", start);
+            SetArray(carry, "_endBodies", (endBodies ?? new WaterBody[0]).Where(b => b != null).Cast<Object>().ToArray());
+            SetArray(carry, "_endSockets", (endSockets ?? new HoseEndSocket[0]).Where(e => e != null).Cast<Object>().ToArray());
         }
 
         // ───────────── Step helpers ─────────────
