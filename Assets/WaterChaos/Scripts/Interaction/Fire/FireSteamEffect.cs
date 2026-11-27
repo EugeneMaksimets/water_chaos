@@ -27,6 +27,9 @@ namespace WaterChaos.Interaction
         private float _lastHit = float.NegativeInfinity;
         private float _lastBurning;
 
+        /// <summary>Steam is coming out now (water keeps hitting the fire).</summary>
+        public bool IsSteaming => _steam != null && _steam.isEmitting;
+
         private void Awake()
         {
             _fire = GetComponent<FireExtinguishHandler>();

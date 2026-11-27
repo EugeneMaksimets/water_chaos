@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.UI
 {
@@ -80,6 +81,7 @@ namespace WaterChaos.UI
                 return;
 
             SetPhase(Phase.Completed);
+            Sound.PlayUI(SoundId.ObjectiveComplete);
             _outline.color = HudWidgets.DoneColor;
             _progress.gameObject.SetActive(false);
             _title.color = new Color(1f, 1f, 1f, 0.8f);

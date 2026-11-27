@@ -4816,6 +4816,7 @@ GameObject:
   - component: {fileID: 2233029035384726905}
   - component: {fileID: 3759582445966834499}
   - component: {fileID: 1937176222518221650}
+  - component: {fileID: 3440566542056664378}
   m_Layer: 8
   m_Name: Cartoon Fire
   m_TagString: Fire
@@ -7465,3 +7466,15 @@ MonoBehaviour:
   _steamPrefab: {fileID: 940121394731464956, guid: e601bcad98f7145839d5d155c073e0a2, type: 3}
   _holdTime: 0.15
   _afterOutTime: 0.6
+--- !u!114 &3440566542056664378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940506567032470736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 885b66335a0bb4cad9530efa56ca0d88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.FireSound

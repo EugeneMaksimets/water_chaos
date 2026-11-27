@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using WaterChaos.FireTruck;
 using WaterChaos.UI;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.Mission
 {
@@ -52,6 +53,8 @@ namespace WaterChaos.Mission
         private Quaternion _cameraLocalRotation;
         private bool _skip;
         private readonly List<Renderer> _hiddenBody = new List<Renderer>();
+        private SoundLoop _siren;
+        private bool _sirenOn;
         private readonly List<Canvas> _hiddenUi = new List<Canvas>();
 
         private void Awake()
@@ -73,6 +76,8 @@ namespace WaterChaos.Mission
 
         private void Update()
         {
+            _siren?.Update(_sirenOn);
+
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame))
                 _skip = true;
@@ -88,6 +93,10 @@ namespace WaterChaos.Mission
             _cameraLocalRotation = _camera.localRotation;
             if (_beacons != null)
                 _beacons.Flashing = true;
+
+            _siren = new SoundLoop(_truck.gameObject, SoundId.TruckSiren, 0.8f);
+            _sirenOn = true;
+            Sound.Play(SoundId.TruckBrakes, _truck.position);
 
             // Shot 1: the truck with flashing beacons, a slow dolly in.
             SetFade(1f);
@@ -108,10 +117,12 @@ namespace WaterChaos.Mission
             Quaternion toStep = _truck.rotation * Quaternion.LookRotation(new Vector3(-1f, -0.6f, -0.35f));
             Vector3 door = _truck.TransformPoint(_door);
             _camera.SetPositionAndRotation(door, forward);
+            _sirenOn = false;
 
             yield return Animate(_fadeTime, t => SetFade(1f - t));
             yield return Animate(_lookAtDoorTime, t => _camera.rotation = Quaternion.Slerp(forward, toStep, Smooth(t)));
 
+            Sound.Play(SoundId.TruckDoor, door);
             Transform parent = _camera.parent;
             Vector3 end = parent != null ? parent.TransformPoint(_cameraLocalPosition) : _cameraLocalPosition;
             Quaternion endRotation = parent != null ? parent.rotation * _cameraLocalRotation : _cameraLocalRotation;
@@ -132,6 +143,8 @@ namespace WaterChaos.Mission
         private void Finish()
         {
             StopAllCoroutines();
+            _sirenOn = false;
+            _siren?.Stop();
             _camera.localPosition = _cameraLocalPosition;
             _camera.localRotation = _cameraLocalRotation;
             SetFade(0f);

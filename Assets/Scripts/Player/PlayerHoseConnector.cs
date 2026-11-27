@@ -4,6 +4,7 @@ using UnityEngine;
 using WaterChaos.Hose;
 using WaterChaos.Interaction;
 using WaterChaos.Water;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.Player
 {
@@ -268,6 +269,7 @@ namespace WaterChaos.Player
 
             _connected = point;
             _connected.Attach();
+            Sound.PlayUI(SoundId.HoseConnect);
             _connected.AttachmentLost += _onAttachmentLost;
             _stream.SetSource(point.Source);
 

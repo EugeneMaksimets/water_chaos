@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using WaterChaos.Mission;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.UI
 {
@@ -117,6 +118,7 @@ namespace WaterChaos.UI
 
             _group.alpha = 0f;
             _group.gameObject.SetActive(true);
+            Sound.PlayUI(SoundId.StoryOpen);
 
             if (_pause != null)
                 _pause.Pause();

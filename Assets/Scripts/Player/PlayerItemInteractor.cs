@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using WaterChaos.Interaction;
 using WaterChaos.Items;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.Player
 {
@@ -66,7 +67,10 @@ namespace WaterChaos.Player
                 return;
 
             if (_inventory.Model.TryAdd(item))
+            {
                 item.PickUp();
+                Sound.PlayUI(SoundId.PickUp);
+            }
             else if (_inventory.Model.IsFull)
                 BackpackFull?.Invoke();
         }

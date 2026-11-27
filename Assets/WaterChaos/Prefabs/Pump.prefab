@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 5061514690423981921}
   - component: {fileID: 7107269284256154071}
   - component: {fileID: 8752249818806859486}
+  - component: {fileID: 8714215355551089562}
   m_Layer: 0
   m_Name: Pump
   m_TagString: Untagged
@@ -302,6 +303,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.WaterTransfer.TransferConnectionPoint
   _pump: {fileID: 7140139671822229389}
   _transferFlowRate: 10
+--- !u!114 &8714215355551089562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1574142545680997396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6192ddc00fb40465b88a379998365174, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.PumpSound
 --- !u!1 &2723726955735878507
 GameObject:
   m_ObjectHideFlags: 0

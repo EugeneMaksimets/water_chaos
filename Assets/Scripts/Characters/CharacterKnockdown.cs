@@ -4,6 +4,7 @@ using UnityEngine;
 using WaterChaos.Interaction;
 using WaterChaos.Soap;
 using WaterChaos.Water;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.Characters
 {
@@ -174,6 +175,7 @@ namespace WaterChaos.Characters
             IsDown = true;
             _gettingUp = false;
             _downSince = Time.time;
+            Sound.Play(SoundId.Knockdown, transform.position);
             Suspend(true);
             _sequence?.Kill();
 

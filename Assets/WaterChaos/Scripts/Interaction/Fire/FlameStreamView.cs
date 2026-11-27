@@ -194,6 +194,8 @@ namespace WaterChaos.Interaction
         private static void StripGameplay(GameObject flame)
         {
             DestroyAll<FireSpreader>(flame);
+            DestroyAll<FireSteamEffect>(flame);
+            DestroyAll<WaterChaos.Sounds.FireSound>(flame);
             DestroyAll<FireFuelHandler>(flame);
             DestroyAll<FireView>(flame);
             DestroyAll<FireExtinguishHandler>(flame);

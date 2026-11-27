@@ -10747,6 +10747,8 @@ MonoBehaviour:
   _minForce: 40
   _pushTime: 0.3
   _recoverDelay: 1.5
+  _maxLieTime: 1
+  _immunityTime: 1.5
   _model: {fileID: 201529124}
   _animator: {fileID: 201529125}
   _camera: {fileID: 0}
@@ -13367,6 +13369,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8573830801286647596, guid: 7400154652b044ce3be7d18932524380, type: 3}
   m_PrefabInstance: {fileID: 283437803}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &284278540
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 284278542}
+  - component: {fileID: 284278541}
+  m_Layer: 0
+  m_Name: Ambience
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &284278541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284278540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b463fd54fed439083ecb5c595d863f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.AmbienceSound
+  _sound: 15
+--- !u!4 &284278542
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284278540}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &285986538
 GameObject:
   m_ObjectHideFlags: 0
@@ -60308,6 +60355,8 @@ MonoBehaviour:
   _minForce: 40
   _pushTime: 0.3
   _recoverDelay: 1.5
+  _maxLieTime: 1
+  _immunityTime: 1.5
   _model: {fileID: 1276023543}
   _animator: {fileID: 1276023542}
   _camera: {fileID: 0}
@@ -72035,6 +72084,7 @@ GameObject:
   - component: {fileID: 1633715742}
   - component: {fileID: 1633715745}
   - component: {fileID: 1633715744}
+  - component: {fileID: 1633715746}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -72677,6 +72727,8 @@ MonoBehaviour:
   _minForce: 40
   _pushTime: 0.3
   _recoverDelay: 1.5
+  _maxLieTime: 1
+  _immunityTime: 1.5
   _model: {fileID: 0}
   _animator: {fileID: 0}
   _camera: {fileID: 330585546}
@@ -72685,6 +72737,19 @@ MonoBehaviour:
   - {fileID: 1633715717}
   - {fileID: 1633715723}
   _fireSearchRadius: 30
+--- !u!114 &1633715746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633715716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bcae61b2ad1e4b3487f42c6e9059158, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.FootstepSound
+  _strideLength: 1.6
 --- !u!1001 &1636266194
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86821,6 +86886,8 @@ MonoBehaviour:
   _minForce: 40
   _pushTime: 0.3
   _recoverDelay: 1.5
+  _maxLieTime: 1
+  _immunityTime: 1.5
   _model: {fileID: 1562687006}
   _animator: {fileID: 1562687005}
   _camera: {fileID: 0}
@@ -110428,6 +110495,7 @@ GameObject:
   - component: {fileID: 8406476791936302420}
   - component: {fileID: 7463768355812560140}
   - component: {fileID: 3852322617894951754}
+  - component: {fileID: 9131732080428935863}
   m_Layer: 4
   m_Name: NozzleScripts
   m_TagString: Untagged
@@ -115599,6 +115667,7 @@ GameObject:
   - component: {fileID: 1030099314146089921}
   - component: {fileID: 2123106385815333785}
   - component: {fileID: 5734305835848596959}
+  - component: {fileID: 8807019728052839971}
   m_Layer: 4
   m_Name: NozzleScripts
   m_TagString: Untagged
@@ -132803,6 +132872,7 @@ GameObject:
   - component: {fileID: 3566774466321413450}
   - component: {fileID: 2468770458165216530}
   - component: {fileID: 8115565015814902612}
+  - component: {fileID: 8328115040862437958}
   m_Layer: 4
   m_Name: NozzleScripts
   m_TagString: Untagged
@@ -132810,6 +132880,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8328115040862437958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8328115040862437957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 970aba330c3654abf82d0d075d597d32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.StreamSound
+  _stream: {fileID: 0}
+  _ignition: {fileID: 0}
 --- !u!114 &8394622863223830413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132992,6 +133076,20 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8807019728052839971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5523514472938466510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 970aba330c3654abf82d0d075d597d32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.StreamSound
+  _stream: {fileID: 0}
+  _ignition: {fileID: 0}
 --- !u!114 &8867438705335197421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135237,6 +135335,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _bendSpeed: 3
+--- !u!114 &9131732080428935863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3910563608225466971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 970aba330c3654abf82d0d075d597d32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Sounds.StreamSound
+  _stream: {fileID: 0}
+  _ignition: {fileID: 0}
 --- !u!199 &9166734203517092543
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -135350,3 +135462,4 @@ SceneRoots:
   - {fileID: 1587786264}
   - {fileID: 1984345784}
   - {fileID: 1878279073}
+  - {fileID: 284278542}

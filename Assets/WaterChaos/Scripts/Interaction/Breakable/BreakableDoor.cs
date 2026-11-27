@@ -108,6 +108,7 @@ namespace WaterChaos.Interaction
                 Instantiate(_breakEffect, center, transform.rotation);
 
             ReleaseFragments(direction.sqrMagnitude > 0f ? direction.normalized : transform.forward);
+            WaterChaos.Sounds.Sound.Play(WaterChaos.Sounds.SoundId.DoorBreak, center);
             Broken?.Invoke(this);
         }
 

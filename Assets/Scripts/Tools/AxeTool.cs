@@ -3,6 +3,7 @@ using UnityEngine;
 using WaterChaos.Interaction;
 using WaterChaos.Items;
 using WaterChaos.Player;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.Tools
 {
@@ -96,6 +97,7 @@ namespace WaterChaos.Tools
             if (_owner == null || !_model.TrySwing(Time.time))
                 return;
 
+            Sound.PlayUI(SoundId.AxeSwing);
             Strike();
             if (isActiveAndEnabled)
                 _swing = StartCoroutine(Swing());
@@ -108,6 +110,7 @@ namespace WaterChaos.Tools
                 return;
 
             var blow = new ToolHit(hit.point, view.forward, _damage);
+            Sound.Play(SoundId.AxeHit, hit.point);
             IToolHitReceiver receiver = hit.collider.GetComponentInParent<IToolHitReceiver>();
             if (receiver != null)
             {
