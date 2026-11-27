@@ -179,8 +179,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 3
       minMaxState: 3
-      scalar: 0.07
-      minScalar: 0.03
+      scalar: 0.1
+      minScalar: 0.05
       maxCurve:
         serializedVersion: 2
         m_Curve: []
@@ -4933,7 +4933,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.WaterStreamTubeView
   _stream: {fileID: 2696170886430235844}
-  _radius: 0.08
+  _radius: 0.13
   _tipRadiusScale: 2.79
   _sides: 8
   _sortingOrder: 2
@@ -4961,7 +4961,7 @@ MonoBehaviour:
   _pointCount: 16
   _dropPerRange: 0.2
   _fallExtent: 2
-  _radius: 0.1
+  _radius: 0.14
   _influenceMask:
     serializedVersion: 2
     m_Bits: 64
@@ -5307,8 +5307,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 3
       minMaxState: 3
-      scalar: 0.15300001
-      minScalar: 0.04
+      scalar: 1
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve: []
@@ -7617,7 +7617,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Tools.NozzleController
   _receiver: {fileID: 2696170886430235844}
   _hose: {fileID: 8886715139356573652}
-  _displayName: "\u0441\u0442\u0432\u043E\u043B"
+  _displayName: "\u0431\u0440\u0430\u043D\u0434\u0441\u043F\u043E\u0439\u0442"
 --- !u!1001 &1229219492351727042
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7696,6 +7696,14 @@ PrefabInstance:
     - target: {fileID: 1790010887214514717, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
       propertyPath: m_Name
       value: SoapImpactBubbles
+      objectReference: {fileID: 0}
+    - target: {fileID: 5016645592467375634, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5016645592467375634, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5493382397296736520, guid: ffe83990dfe6e4fec99bc6b0c6bc244e, type: 3}
       propertyPath: m_LocalPosition.x

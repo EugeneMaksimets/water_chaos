@@ -164,7 +164,7 @@ MonoBehaviour:
   _maxWrapPoints: 32
   _groundMask:
     serializedVersion: 2
-    m_Bits: 4294966795
+    m_Bits: 523
   _maxDropHeight: 3
   _restHeight: 0.05
   _dropClearance: 0.8

@@ -25,7 +25,7 @@ namespace WaterChaos.Tools
 
         [Header("Menu")]
         [Tooltip("Name in the menu: \"Connect <name>\" / \"Disconnect <name>\".")]
-        [SerializeField] private string _displayName = "ствол";
+        [SerializeField] private string _displayName = "брандспойт";
 
         private IWaterFlowReceiver _stream;
 

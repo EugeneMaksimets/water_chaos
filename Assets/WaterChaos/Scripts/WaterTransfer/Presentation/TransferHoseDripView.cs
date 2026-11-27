@@ -6,7 +6,8 @@ namespace WaterChaos.WaterTransfer
     /// <summary>
     /// Drops falling from the free end of a transfer hose while it is carried and its pump is already on:
     /// the pump waits for the hose to be laid out, a little liquid still runs out of the end.
-    /// Coloured like the liquid the pump draws. Display only: nothing is drawn or spilled from the reservoirs.
+    /// Coloured like the liquid the pump draws. The drops look like the hose end's splash (its mesh and material),
+    /// so changing that splash changes the drops too. Display only: nothing is drawn or spilled from the reservoirs.
     /// </summary>
     public sealed class TransferHoseDripView : MonoBehaviour
     {
@@ -14,7 +15,7 @@ namespace WaterChaos.WaterTransfer
         [Tooltip("The hose; empty = the one on this object.")]
         [SerializeField] private TransferHose _hose;
 
-        [Tooltip("Particle material for the drops (e.g. the water splash material).")]
+        [Tooltip("Particle material for the drops when the hose end has no splash to copy the look from.")]
         [SerializeField] private Material _material;
 
         [Header("Drops")]
@@ -30,6 +31,9 @@ namespace WaterChaos.WaterTransfer
         [SerializeField] private Color _toxic = new Color(0.45f, 1f, 0.15f, 0.9f);
 
         private ParticleSystem _drops;
+        private ParticleSystemRenderer _dropsRenderer;
+        private MaterialPropertyBlock _block;
+        private LiquidType? _shownLiquid;
         private bool _dripping;
 
         private void Awake()
@@ -43,7 +47,9 @@ namespace WaterChaos.WaterTransfer
                 return;
             }
 
+            _block = new MaterialPropertyBlock();
             _drops = CreateDrops(_hose.End);
+            _dropsRenderer = _drops.GetComponent<ParticleSystemRenderer>();
         }
 
         private void Update()
@@ -52,10 +58,7 @@ namespace WaterChaos.WaterTransfer
             bool drip = _hose.State == TransferHoseState.Carried && point != null && point.IsTurnedOn && point.HasWater;
 
             if (drip)
-            {
-                ParticleSystem.MainModule main = _drops.main;
-                main.startColor = ColorOf(point.Pump != null ? point.Pump.Liquid : LiquidType.Water);
-            }
+                ShowLiquid(point.Pump != null ? point.Pump.Liquid : LiquidType.Water);
 
             if (drip == _dripping)
                 return;
@@ -63,6 +66,16 @@ namespace WaterChaos.WaterTransfer
             _dripping = drip;
             ParticleSystem.EmissionModule emission = _drops.emission;
             emission.enabled = drip;
+        }
+
+        // The colour goes into the material (_BaseColor), not the particle colour, which the material would tint again.
+        private void ShowLiquid(LiquidType liquid)
+        {
+            if (_shownLiquid == liquid)
+                return;
+
+            _shownLiquid = liquid;
+            LiquidStreamTint.Apply(_dropsRenderer, _block, true, ColorOf(liquid));
         }
 
         private Color ColorOf(LiquidType liquid)
@@ -77,6 +90,9 @@ namespace WaterChaos.WaterTransfer
 
         private ParticleSystem CreateDrops(Transform end)
         {
+            TransferDischargeView splash = end.GetComponentInChildren<TransferDischargeView>(true);
+            ParticleSystemRenderer look = splash != null ? splash.GetComponent<ParticleSystemRenderer>() : null;
+
             GameObject go = new GameObject("Drips");
             go.transform.SetParent(end, false);
 
@@ -91,7 +107,7 @@ namespace WaterChaos.WaterTransfer
             main.gravityModifier = 1f;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.maxParticles = 120;
-            main.startColor = _water;
+            main.startColor = Color.white;
 
             ParticleSystem.EmissionModule emission = drops.emission;
             emission.rateOverTime = _rate;
@@ -102,8 +118,17 @@ namespace WaterChaos.WaterTransfer
             shape.radius = 0.04f;
 
             ParticleSystemRenderer renderer = go.GetComponent<ParticleSystemRenderer>();
-            if (_material != null)
+            if (look != null)
+            {
+                renderer.renderMode = look.renderMode;
+                renderer.mesh = look.mesh;
+                renderer.alignment = look.alignment;
+                renderer.sharedMaterial = look.sharedMaterial;
+            }
+            else if (_material != null)
+            {
                 renderer.sharedMaterial = _material;
+            }
 
             drops.Play();
             return drops;

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using WaterChaos.Interaction;
 using WaterChaos.Player;
+using WaterChaos.Sounds;
 
 namespace WaterChaos.UI
 {
@@ -26,6 +27,8 @@ namespace WaterChaos.UI
         private const float LabelWidth = 130f;
         // Free space between the labels of neighboring sectors, in reference pixels.
         private const float LabelGap = 10f;
+        // Two lines of a label; a longer text gets a smaller font instead of running out of its sector.
+        private const float LabelHeight = 46f;
         private const float PromptPairX = 110f;
         private const string MenuText = "Дії";
 
@@ -234,7 +237,8 @@ namespace WaterChaos.UI
                 return;
 
             InteractionAction action = _shown[_hovered];
-            Close();
+            Sound.PlayUI(SoundId.UiClick);
+            Close(false);
             action.Execute();
         }
 
@@ -260,12 +264,22 @@ namespace WaterChaos.UI
 
             Layout();
             _root.gameObject.SetActive(true);
+            Sound.PlayUI(SoundId.MenuOpen);
         }
 
         private void Close()
         {
+            Close(true);
+        }
+
+        /// <param name="withSound">False when an option was picked (its click already sounded).</param>
+        private void Close(bool withSound)
+        {
             if (!IsOpen)
                 return;
+
+            if (withSound)
+                Sound.PlayUI(SoundId.MenuClose);
 
             IsOpen = false;
             _openFocus = null;
@@ -339,6 +353,8 @@ namespace WaterChaos.UI
             if (index == _hovered)
                 return;
 
+            if (index >= 0 && IsOpen)
+                Sound.PlayUI(SoundId.UiHover);
             _hovered = index;
             for (int i = 0; i < _count; i++)
             {
@@ -374,20 +390,32 @@ namespace WaterChaos.UI
             // Long labels ("Взяти кінець шланга") wrap onto two lines inside their sector instead of running out of it.
             for (int i = 0; i < MaxOptions; i++)
             {
-                Text label = HudWidgets.CreateText($"Label {i}", _root, Vector2.zero, new Vector2(LabelWidth, 48f), 18, TextAnchor.MiddleCenter);
-                label.horizontalOverflow = HorizontalWrapMode.Wrap;
-                label.verticalOverflow = VerticalWrapMode.Overflow;
+                Text label = HudWidgets.CreateText($"Label {i}", _root, Vector2.zero, new Vector2(LabelWidth, LabelHeight), 18, TextAnchor.MiddleCenter);
+                FitInside(label, 11);
                 label.lineSpacing = 0.9f;
                 _labels[i] = label;
             }
 
-            _title = HudWidgets.CreateText("Title", _root, new Vector2(0f, 24f), new Vector2(170f, 30f), 20, TextAnchor.MiddleCenter);
+            // Inside the inner half circle: as wide as it is at the title's height.
+            float titleWidth = 2f * Mathf.Sqrt(Mathf.Max(0f, _innerRadius * _innerRadius - 40f * 40f)) - 10f;
+            _title = HudWidgets.CreateText("Title", _root, new Vector2(0f, 24f), new Vector2(titleWidth, 32f), 20, TextAnchor.MiddleCenter);
             _title.fontStyle = FontStyle.Bold;
+            FitInside(_title, 12);
 
             _root.gameObject.SetActive(false);
 
             _prompt = HudWidgets.CreateKeyPrompt("Primary Prompt", _canvas.transform, PlayerControl.Primary, new Vector2(0f, PromptY));
             _menuPrompt = HudWidgets.CreateKeyPrompt("Menu Prompt", _canvas.transform, PlayerControl.Interact, new Vector2(PromptPairX, PromptY));
+        }
+
+        /// <summary>Text wraps inside its box and shrinks (down to <paramref name="minSize"/>) when it still does not fit.</summary>
+        private static void FitInside(Text text, int minSize)
+        {
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            text.verticalOverflow = VerticalWrapMode.Truncate;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = minSize;
+            text.resizeTextMaxSize = text.fontSize;
         }
 
         /// <summary>"Label — Title" prompt text, built again only when the label or title changes (no garbage every frame).</summary>

@@ -1042,7 +1042,7 @@ namespace WaterChaos.EditorTools
                 + "Поки що давай загасимо будинок перед тобою, а потім подумаємо, як дістатися до твоїх друзів.");
 
             // Stage 2: equipment.
-            PickUp(root, Name("Pick Up · Axe and Nozzle"), "Знайди сокиру та пожежний ствол", s.Inventory, s.Axe, s.Nozzle);
+            PickUp(root, Name("Pick Up · Axe and Nozzle"), "Знайди сокиру та брандспойт", s.Inventory, s.Axe, s.Nozzle);
             // Stage 3: the door.
             BreakDoorObjective breakDoor = Add<BreakDoorObjective>(root, Name("Break · Door"),
                 "Розбий двері сокирою, щоб потрапити всередину будинку.", door);
@@ -1050,10 +1050,10 @@ namespace WaterChaos.EditorTools
 
             // Then the nozzle on the truck.
             NozzleConnectObjective connectTruck = Add<NozzleConnectObjective>(root, Name("Connect · Nozzle to Truck"),
-                "Підключи пожежний ствол до машини", truckOutlet);
+                "Підключи брандспойт до машини", truckOutlet);
             Set(connectTruck, "_connector", s.Connector);
             SetArray(connectTruck, "_points", s.TruckOutlet);
-            Hint(connectTruck, "Підключи ствол до машини", PlayerControl.Interact, null);
+            Hint(connectTruck, "Підключи брандспойт до машини", PlayerControl.Interact, null);
 
             // Stage 4: inside the house.
             EnterZoneObjective enterHouse = Add<EnterZoneObjective>(root, Name("Zone · Entered House"), null);
@@ -1088,10 +1088,10 @@ namespace WaterChaos.EditorTools
             SetArray(toxicIn, "_bodies", s.ToxicBody);
             Hint(toxicIn, "Закинь насос у резервуар із токсичною водою.", PlayerControl.Drop, z.ToxicTank);
             NozzleConnectObjective connectToxic = Add<NozzleConnectObjective>(root, Name("Connect · Nozzle to Toxic Pump"),
-                "Підключи пожежний ствол до насоса", toxicPump);
+                "Підключи брандспойт до насоса", toxicPump);
             Set(connectToxic, "_connector", s.Connector);
             SetArray(connectToxic, "_points", Points(s.ToxicPump, s.PoolPump, s.TankPump));
-            Hint(connectToxic, "Підключи пожежний ствол до насоса.", PlayerControl.Interact, z.ToxicTank);
+            Hint(connectToxic, "Підключи брандспойт до насоса.", PlayerControl.Interact, z.ToxicTank);
             CorrodeObjective corrode = Add<CorrodeObjective>(root, Name("Corrode · Grate"),
                 "Розчини металеву решітку токсичною водою", grate);
             Set(corrode, "_target", s.Grate);
@@ -1129,9 +1129,9 @@ namespace WaterChaos.EditorTools
                 "Під'єднай шланг до насоса в підземному резервуарі.", null, z.UndergroundTank);
 
             // Stage 9: gasoline instead of water (the tank holds gasoline; the flame streams light by themselves).
-            // The player sees the flamethrowers first: the story waits until they are back with the teammates.
-            EnterZoneObjective back = Add<EnterZoneObjective>(root, Name("Zone · Back to Teammates"), "Повернись до напарників", talker);
-            Set(back, "_zone", z.TeammatesView);
+            // The player sees the flamethrowers first: the story waits until they have looked at one for a second.
+            SeeFlamethrowersObjective see = Add<SeeFlamethrowersObjective>(root, Name("See · Flamethrowers"), "Повернись до напарників", talker);
+            SetArray(see, "_flamethrowers", TeammateFlamethrowers());
             Story(root, Name("Story · Gasoline"), Teammate, "Ти що наробив?! Це ж не вода! У нас у шлангах бензин!");
 
             // Neutralize with the pump that already stands in the toxic tank (stage 6):
@@ -1140,7 +1140,7 @@ namespace WaterChaos.EditorTools
                 s.Inventory, Item(s.NeutralHose));
             HoseRun(root, Name, "Toxic", new[] { s.NeutralHose, s.PoolHose, s.TankHose }, s.ToxicPump, toxicPump,
                 "Віднеси кінець шланга до підземного резервуара з бензином", underground, new[] { s.UndergroundBody }, null,
-                "Від'єднай ствол від насоса в токсичному резервуарі й під'єднай до насоса шланг.", PlayerControl.Secondary, z.ToxicTank);
+                "Від'єднай брандспойт від насоса в токсичному резервуарі й під'єднай до насоса шланг.", PlayerControl.Secondary, z.ToxicTank);
             NeutralizeObjective neutralize = Add<NeutralizeObjective>(root, Name("Neutralize · Gasoline"),
                 "Нейтралізуй бензин", underground);
             Set(neutralize, "_tank", s.UndergroundBody != null ? s.UndergroundBody.GetComponent<WaterReservoirComponent>() : null);
@@ -1152,10 +1152,10 @@ namespace WaterChaos.EditorTools
 
             // Stage 10: the final fire, with the soapy water from the tee.
             NozzleConnectObjective soapy = Add<NozzleConnectObjective>(root, Name("Connect · Nozzle to Tee (Soapy Water)"),
-                "Під'єднай ствол до трійника", splitter);
+                "Під'єднай брандспойт до трійника", splitter);
             Set(soapy, "_connector", s.Connector);
             SetArray(soapy, "_points", s.Outlets.Select(o => o.GetComponent<WaterConnectionPoint>()).Where(p => p != null).ToArray());
-            Hint(soapy, "У трійнику тепер мильна вода — під'єднай ствол до вільного виходу.", PlayerControl.Interact, null);
+            Hint(soapy, "У трійнику тепер мильна вода — під'єднай брандспойт до вільного виходу.", PlayerControl.Interact, null);
             ExtinguishFiresObjective finalFires = Add<ExtinguishFiresObjective>(root, Name("Extinguish · Teammates"),
                 "Загаси пожежу та допоможи напарникам!");
             SetArray(finalFires, "_zones", z.TeammateFires);
@@ -1196,6 +1196,99 @@ namespace WaterChaos.EditorTools
             SetArray(carry, "_startPoints", start);
             SetArray(carry, "_endBodies", (endBodies ?? new WaterBody[0]).Where(b => b != null).Cast<Object>().ToArray());
             SetArray(carry, "_endSockets", (endSockets ?? new HoseEndSocket[0]).Where(e => e != null).Cast<Object>().ToArray());
+        }
+
+        /// <summary>The flamethrower part of every teammate's nozzle.</summary>
+        private static Object[] TeammateFlamethrowers()
+        {
+            return All<TeammateNozzle>().SelectMany(n => n.GetComponentsInChildren<FuelStreamIgnition>(true)).Cast<Object>().ToArray();
+        }
+
+        /// <summary>
+        /// Updates the built mission in place, keeping everything else: "ствол" becomes "брандспойт" in every text,
+        /// and the "back to the teammates" step waits until the player has seen a flamethrower.
+        /// </summary>
+        [MenuItem("Water Chaos/Update Mission Texts and Flamethrower Story (Mini Village)")]
+        private static void UpdateMissionInPlace()
+        {
+            s_report.Clear();
+            Undo.SetCurrentGroupName("Update Mission");
+            foreach (MissionStep step in All<MissionStep>())
+                ReplaceNozzleWord(step);
+
+            foreach (EnterZoneObjective back in All<EnterZoneObjective>().Where(o => o.name.Contains("Back to Teammates")).ToArray())
+            {
+                GameObject host = back.gameObject;
+                SerializedObject old = new SerializedObject(back);
+                string title = old.FindProperty("_title").stringValue;
+                Object[] markers = Enumerable.Range(0, old.FindProperty("_markers").arraySize)
+                    .Select(i => old.FindProperty("_markers").GetArrayElementAtIndex(i).objectReferenceValue).ToArray();
+
+                Undo.DestroyObjectImmediate(back);
+                SeeFlamethrowersObjective see = Undo.AddComponent<SeeFlamethrowersObjective>(host);
+                Set(see, "_title", title);
+                SetArray(see, "_markers", markers);
+                SetArray(see, "_flamethrowers", TeammateFlamethrowers());
+                host.name = host.name.Replace("Zone · Back to Teammates", "See · Flamethrowers");
+                s_report.Add($"{host.name}: waits until the player has looked at a burning flamethrower for a second.");
+            }
+
+            EditorSceneManager.MarkAllScenesDirty();
+            Debug.Log("Mission updated. Save the scene (Cmd+S).\n- " + string.Join("\n- ", s_report));
+        }
+
+        /// <summary>Batch mode: opens the village, updates the mission and the nozzle prefab, saves.</summary>
+        public static void UpdateMissionInPlaceAndSave()
+        {
+            EditorSceneManager.OpenScene("Assets/WaterChaos/Scenes/WaterChaos_MiniVillage.unity");
+            UpdateMissionInPlace();
+
+            GameObject nozzle = PrefabUtility.LoadPrefabContents(NozzlePrefabPath);
+            try
+            {
+                foreach (NozzleController controller in nozzle.GetComponentsInChildren<NozzleController>(true))
+                {
+                    SerializedObject data = new SerializedObject(controller);
+                    data.FindProperty("_displayName").stringValue = "брандспойт";
+                    data.ApplyModifiedPropertiesWithoutUndo();
+                }
+
+                PrefabUtility.SaveAsPrefabAsset(nozzle, NozzlePrefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(nozzle);
+            }
+
+            EditorSceneManager.SaveOpenScenes();
+            AssetDatabase.SaveAssets();
+        }
+
+        private static void ReplaceNozzleWord(Object target)
+        {
+            SerializedObject data = new SerializedObject(target);
+            SerializedProperty property = data.GetIterator();
+            bool changed = false;
+            while (property.Next(true))
+            {
+                if (property.propertyType != SerializedPropertyType.String)
+                    continue;
+
+                string text = property.stringValue
+                    .Replace("Пожежний ствол", "Брандспойт").Replace("пожежний ствол", "брандспойт")
+                    .Replace("ствола", "брандспойта").Replace("Ствол", "Брандспойт").Replace("ствол", "брандспойт");
+                if (text == property.stringValue)
+                    continue;
+
+                property.stringValue = text;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                data.ApplyModifiedProperties();
+                s_report.Add($"{target.name}: text updated.");
+            }
         }
 
         // ───────────── Step helpers ─────────────

@@ -193,3 +193,51 @@ MonoBehaviour:
     Spatial: 1
     MinDistance: 2
     MaxDistance: 20
+  - Id: 22
+    Clips:
+    - {fileID: 8300000, guid: 128f7c856015549ecb2029b4c939db98, type: 3}
+    Volume: 0.35
+    Pitch: {x: 0.95, y: 1.08}
+    Spatial: 0
+    MinDistance: 1
+    MaxDistance: 10
+  - Id: 23
+    Clips:
+    - {fileID: 8300000, guid: 7266ad229448c42379e82e34f192afee, type: 3}
+    Volume: 0.6
+    Pitch: {x: 0.95, y: 1.05}
+    Spatial: 0
+    MinDistance: 1
+    MaxDistance: 10
+  - Id: 24
+    Clips:
+    - {fileID: 8300000, guid: e197aa7de597045ebbe43d1bef910628, type: 3}
+    Volume: 0.45
+    Pitch: {x: 1, y: 1}
+    Spatial: 0
+    MinDistance: 1
+    MaxDistance: 10
+  - Id: 25
+    Clips:
+    - {fileID: 8300000, guid: 0dfd00175a6a74b4b9943e1542f48e3e, type: 3}
+    Volume: 0.4
+    Pitch: {x: 1, y: 1}
+    Spatial: 0
+    MinDistance: 1
+    MaxDistance: 10
+  - Id: 26
+    Clips:
+    - {fileID: 8300000, guid: 2881173d4ae1e4342b9906527d5f0d90, type: 3}
+    Volume: 0.6
+    Pitch: {x: 1, y: 1}
+    Spatial: 0
+    MinDistance: 1
+    MaxDistance: 10
+  - Id: 27
+    Clips:
+    - {fileID: 8300000, guid: 7ce030fee666841578c232f17812a1eb, type: 3}
+    Volume: 0.45
+    Pitch: {x: 1, y: 1}
+    Spatial: 0
+    MinDistance: 1
+    MaxDistance: 10

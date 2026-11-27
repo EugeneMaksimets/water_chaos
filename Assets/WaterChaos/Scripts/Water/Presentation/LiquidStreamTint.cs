@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WaterChaos.Water
@@ -6,6 +7,8 @@ namespace WaterChaos.Water
     /// <summary>
     /// Colors the stream look by the liquid that flows (e.g. amber for gasoline), so the player sees what they spray.
     /// Liquids without an entry keep the renderers' own material color. Display only.
+    /// The particles of a <see cref="WaterStreamParticleView"/> on the same object (splash, nozzle spray, start burst)
+    /// are tinted too, keeping their material's transparency.
     /// </summary>
     [DefaultExecutionOrder(100)] // after WaterStream.LateUpdate
     public sealed class LiquidStreamTint : MonoBehaviour
@@ -38,12 +41,17 @@ namespace WaterChaos.Water
         [Tooltip("Stream color per liquid; liquids not listed keep the material color.")]
         [SerializeField] private LiquidColor[] _colors =
         {
-            new LiquidColor(LiquidType.Gasoline, new Color(1f, 0.7f, 0.15f, 1f)),
+            new LiquidColor(LiquidType.Gasoline, GasolineStreamColor),
             new LiquidColor(LiquidType.Toxic, ToxicStreamColor),
         };
 
         /// <summary>Bright, slightly over-saturated green so the toxic stream reads as glowing.</summary>
         public static readonly Color ToxicStreamColor = new Color(0.5f, 1f, 0.12f, 1f);
+
+        /// <summary>Amber of a gasoline stream.</summary>
+        public static readonly Color GasolineStreamColor = new Color(1f, 0.7f, 0.15f, 1f);
+
+        private readonly List<Renderer> _targets = new List<Renderer>();
 
         private MaterialPropertyBlock _block;
         private LiquidType _shown;
@@ -56,7 +64,45 @@ namespace WaterChaos.Water
             {
                 Debug.LogError($"{name}: LiquidStreamTint needs a Stream reference.", this);
                 enabled = false;
+                return;
             }
+
+            _targets.AddRange(_renderers);
+            WaterStreamParticleView particles = GetComponent<WaterStreamParticleView>();
+            if (particles != null)
+                _targets.AddRange(particles.Renderers);
+        }
+
+        /// <summary>Default stream color of a liquid; false for liquids that keep the material color (water).</summary>
+        public static bool TryGetDefaultColor(LiquidType liquid, out Color color)
+        {
+            switch (liquid)
+            {
+                case LiquidType.Gasoline: color = GasolineStreamColor; return true;
+                case LiquidType.Toxic: color = ToxicStreamColor; return true;
+                default: color = default; return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets the material color of <paramref name="target"/> through a property block, or clears it (tinted = false).
+        /// Particles keep the alpha of their material, so drops stay see-through.
+        /// </summary>
+        public static void Apply(Renderer target, MaterialPropertyBlock block, bool tinted, Color color)
+        {
+            if (!tinted)
+            {
+                target.SetPropertyBlock(null);
+                return;
+            }
+
+            Material material = target.sharedMaterial;
+            if (target is ParticleSystemRenderer && material != null && material.HasProperty(BaseColorId))
+                color.a = material.GetColor(BaseColorId).a;
+
+            target.GetPropertyBlock(block);
+            block.SetColor(BaseColorId, color);
+            target.SetPropertyBlock(block);
         }
 
         private void LateUpdate()
@@ -69,20 +115,10 @@ namespace WaterChaos.Water
             _applied = true;
             bool tinted = TryGetColor(liquid, out Color color);
 
-            foreach (Renderer target in _renderers)
+            foreach (Renderer target in _targets)
             {
-                if (target == null)
-                    continue;
-
-                if (!tinted)
-                {
-                    target.SetPropertyBlock(null);
-                    continue;
-                }
-
-                target.GetPropertyBlock(_block);
-                _block.SetColor(BaseColorId, color);
-                target.SetPropertyBlock(_block);
+                if (target != null)
+                    Apply(target, _block, tinted, color);
             }
         }
 

@@ -25,5 +25,13 @@ namespace WaterChaos.Sounds
         HoseConnect,
         DoorBreak,
         Knockdown,
+
+        // Menus (new values go at the end: the settings store them by position).
+        UiHover,
+        UiClick,
+        MenuOpen,
+        MenuClose,
+        GameStart,
+        MenuMusic,
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WaterChaos.Water
@@ -26,6 +27,19 @@ namespace WaterChaos.Water
         private ParticleSystem _startBurst;
 
         private bool _wasFlowing;
+
+        /// <summary>Renderers of the splash, the nozzle spray and the start burst (those that are set).</summary>
+        public IEnumerable<Renderer> Renderers
+        {
+            get
+            {
+                foreach (ParticleSystem particles in new[] { _splashParticles, _nozzleSpray, _startBurst })
+                {
+                    if (particles != null)
+                        yield return particles.GetComponent<ParticleSystemRenderer>();
+                }
+            }
+        }
 
         private void OnDisable()
         {

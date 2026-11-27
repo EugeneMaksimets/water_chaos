@@ -16,7 +16,7 @@ namespace WaterChaos.Interaction
         private static readonly Dictionary<string, string> Names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "Axe", "Сокира" },
-            { "Nozzle", "Пожежний ствол" },
+            { "Nozzle", "Брандспойт" },
             { "Pump", "Насос" },
             { "AirPump", "Насос" },
             { "Soap", "Мило" },

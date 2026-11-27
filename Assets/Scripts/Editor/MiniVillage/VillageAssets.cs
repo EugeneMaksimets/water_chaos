@@ -49,6 +49,7 @@ namespace WaterChaos.EditorTools.MiniVillage
         public const string Tall = "Tall";
         public const string Sign = "Sign";
         public const string Door = "Door";
+        public const string Car = "Car";
 
         // Layer for glass shards: the water stream and player raycasts ignore it, physics does not.
         private const int ShardLayer = 2;
@@ -65,14 +66,16 @@ namespace WaterChaos.EditorTools.MiniVillage
             AssetDatabase.Refresh();
 
             // mass kg, linear damping, angular damping, max speed m/s, min force N, force scale.
-            CreateProfile(LightPlastic, 1.5f, 0.4f, 0.4f, 7f, 0f, 0.05f);
-            CreateProfile(SmallDecor, 2.5f, 0.3f, 0.3f, 6f, 10f, 0.08f);
-            CreateProfile(LightFurniture, 6f, 0.3f, 0.3f, 6f, 20f, 0.25f);
-            CreateProfile(Furniture, 18f, 0.3f, 0.3f, 5f, 40f, 1f);
-            CreateProfile(Heavy, 55f, 0.4f, 0.4f, 3f, 110f, 2f);
-            CreateProfile(Tall, 10f, 0.2f, 0.1f, 6f, 25f, 0.45f);
-            CreateProfile(Sign, 15f, 0.2f, 0.1f, 5f, 50f, 0.6f);
-            CreateProfile(Door, 20f, 0.5f, 0.5f, 4f, 5f, 0.5f);
+            CreateProfile(LightPlastic, 1.1f, 0.4f, 0.4f, 7f, 0f, 0.05f);
+            CreateProfile(SmallDecor, 1.9f, 0.3f, 0.3f, 6f, 10f, 0.08f);
+            CreateProfile(LightFurniture, 4.5f, 0.3f, 0.3f, 6f, 20f, 0.25f);
+            CreateProfile(Furniture, 13.5f, 0.3f, 0.3f, 5f, 40f, 1f);
+            CreateProfile(Heavy, 40f, 0.4f, 0.4f, 3f, 110f, 2f);
+            CreateProfile(Tall, 7.5f, 0.2f, 0.1f, 6f, 25f, 0.45f);
+            CreateProfile(Sign, 11f, 0.2f, 0.1f, 5f, 50f, 0.6f);
+            CreateProfile(Door, 15f, 0.5f, 0.5f, 4f, 5f, 0.5f);
+            // Cars: only a strong stream moves them; high angular damping so they slide rather than flip.
+            CreateProfile(Car, 80f, 0.5f, 1.5f, 3f, 120f, 2.5f);
             AssetDatabase.SaveAssets();
         }
 

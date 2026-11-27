@@ -120,7 +120,7 @@ namespace WaterChaos.UI
         {
             switch (status)
             {
-                case TransferStatus.OutletBusy: return "Вихід насоса зайнятий шлангом ствола";
+                case TransferStatus.OutletBusy: return "Вихід насоса зайнятий шлангом брандспойта";
                 case TransferStatus.SourceEmpty: return "Немає води: резервуар-джерело порожній";
                 case TransferStatus.NoWater: return "Немає джерела води: опусти насос у воду";
                 case TransferStatus.DestinationFull: return "Резервуар, куди качаєш, повний";

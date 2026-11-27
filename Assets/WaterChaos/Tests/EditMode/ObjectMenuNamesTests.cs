@@ -6,7 +6,7 @@ namespace WaterChaos.Tests
     public class ObjectMenuNamesTests
     {
         [TestCase("Axe", "Сокира")]
-        [TestCase("Nozzle", "Пожежний ствол")]
+        [TestCase("Nozzle", "Брандспойт")]
         [TestCase("Pump", "Насос")]
         [TestCase("Soap", "Мило")]
         [TestCase("HoseSplitter", "Трійник")]

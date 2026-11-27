@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 2984499921281733451}
   - component: {fileID: 406019232291106945}
   - component: {fileID: 4736715540201805127}
+  - component: {fileID: 3523958863493937475}
+  - component: {fileID: 5948763419057506600}
   m_Layer: 0
   m_Name: PropaneCage
   m_TagString: Untagged
@@ -99,7 +101,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8545092521953252136}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: bc49e183a61fe4bb2add7a32cc1d9371, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -113,3 +115,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2, y: 1.44, z: 0.62}
   m_Center: {x: 0, y: 0.72, z: 0}
+--- !u!54 &3523958863493937475
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8545092521953252136}
+  serializedVersion: 5
+  m_Mass: 40
+  m_LinearDamping: 0.4
+  m_AngularDamping: 0.4
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 3
+--- !u!114 &5948763419057506600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8545092521953252136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b50578bac3b94877be3bf35d44e98f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.WaterPushHandler
+  _profile: {fileID: 11400000, guid: 44f97c5b9ac5041e084eb7e6c8608ebb, type: 2}

@@ -12,6 +12,23 @@ namespace WaterChaos.Sounds
 
         private static AudioSource[] s_pool;
         private static int s_next;
+        private static bool s_quitting;
+
+        // Domain reload on entering Play Mode is off in this project: start each run afresh.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            s_pool = null;
+            s_next = 0;
+            s_quitting = false;
+            Application.quitting -= OnQuitting;
+            Application.quitting += OnQuitting;
+        }
+
+        private static void OnQuitting()
+        {
+            s_quitting = true;
+        }
 
         /// <summary>Plays the sound in the world at <paramref name="position"/> (flat if it is not spatial).</summary>
         public static void Play(SoundId id, Vector3 position, float volumeScale = 1f)
@@ -28,7 +45,8 @@ namespace WaterChaos.Sounds
         private static void Play(SoundId id, Vector3 position, float volumeScale, bool ignorePause)
         {
             // Sounds belong to the game: none in the Editor outside Play Mode (e.g. edit-mode tests).
-            if (!Application.isPlaying)
+            // Nor while the game shuts down: objects destroyed then must not build a new pool.
+            if (!Application.isPlaying || s_quitting)
                 return;
 
             SoundSettings settings = SoundSettings.Instance;

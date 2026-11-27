@@ -17,7 +17,7 @@ namespace WaterChaos.Player
     /// </summary>
     public class PlayerHoseConnector : MonoBehaviour, IInteractionProvider
     {
-        private const string DefaultItemName = "ствол";
+        private const string DefaultItemName = "брандспойт";
 
         [Header("References")]
         [SerializeField] private Transform _camera;
@@ -59,7 +59,7 @@ namespace WaterChaos.Player
         /// <summary>True when the menu action on the target would detach the hose.</summary>
         public bool TargetIsConnected => _target != null && _target == _connected;
 
-        /// <summary>Menu text of taking the hose off, e.g. "Від'єднати ствол".</summary>
+        /// <summary>Menu text of taking the hose off, e.g. "Від'єднати брандспойт".</summary>
         public string DisconnectText => _disconnectText;
 
         /// <summary>The hose is on a source and the player has never taken it off with the right mouse button yet.</summary>

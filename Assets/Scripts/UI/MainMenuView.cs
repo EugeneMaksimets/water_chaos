@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WaterChaos.Sounds;
+using UnityEngine.EventSystems;
 
 namespace WaterChaos.UI
 {
@@ -29,9 +31,18 @@ namespace WaterChaos.UI
         private Image _fade;
         private bool _starting;
 
+        private SoundLoop _music;
+
         private void Awake()
         {
             BuildUi();
+            _music = new SoundLoop(gameObject, SoundId.MenuMusic, _fadeOutTime);
+        }
+
+        // The music fades out with the screen when the game starts.
+        private void Update()
+        {
+            _music.Update(!_starting);
         }
 
         private void Start()
@@ -49,6 +60,7 @@ namespace WaterChaos.UI
                 return;
 
             _starting = true;
+            Sound.PlayUI(SoundId.GameStart);
             StartCoroutine(LoadGame());
         }
 
@@ -119,7 +131,14 @@ namespace WaterChaos.UI
             colors.selectedColor = ButtonColor;
             colors.fadeDuration = 0.08f;
             button.colors = colors;
+            button.onClick.AddListener(() => Sound.PlayUI(SoundId.UiClick));
             button.onClick.AddListener(onClick);
+
+            // A soft blip when the pointer comes over the button.
+            EventTrigger trigger = background.gameObject.AddComponent<EventTrigger>();
+            EventTrigger.Entry enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            enter.callback.AddListener(_ => Sound.PlayUI(SoundId.UiHover));
+            trigger.triggers.Add(enter);
 
             Text text = HudWidgets.CreateText("Label", background.transform, Vector2.zero, new Vector2(380f, 100f), 48, TextAnchor.MiddleCenter);
             text.text = label;

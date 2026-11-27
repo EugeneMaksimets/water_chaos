@@ -51,6 +51,12 @@ namespace WaterChaos.EditorTools
             (SoundId.HoseConnect, new[] { "Hose_Connect" }, 0.6f, false, 1f, 10f, 0.95f, 1.1f),
             (SoundId.DoorBreak, new[] { "Door_Break" }, 1f, true, 2f, 30f, 0.95f, 1.05f),
             (SoundId.Knockdown, new[] { "Knockdown_Thud" }, 0.8f, true, 2f, 20f, 0.9f, 1.1f),
+            (SoundId.UiHover, new[] { "UI_Hover" }, 0.35f, false, 1f, 10f, 0.95f, 1.08f),
+            (SoundId.UiClick, new[] { "UI_Click" }, 0.6f, false, 1f, 10f, 0.95f, 1.05f),
+            (SoundId.MenuOpen, new[] { "UI_MenuOpen" }, 0.45f, false, 1f, 10f, 1f, 1f),
+            (SoundId.MenuClose, new[] { "UI_MenuClose" }, 0.4f, false, 1f, 10f, 1f, 1f),
+            (SoundId.GameStart, new[] { "UI_Start" }, 0.6f, false, 1f, 10f, 1f, 1f),
+            (SoundId.MenuMusic, new[] { "Menu_Music" }, 0.45f, false, 1f, 10f, 1f, 1f),
         };
 
         private static readonly List<string> s_report = new List<string>();

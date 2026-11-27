@@ -450,9 +450,10 @@ namespace WaterChaos.EditorTools.MiniVillage
                 foreach (float z in new[] { -1.3f, 1.3f })
                     Horizontal(model.Mesh, new Vector3(side * 0.82f, 0.34f, z), 0.34f, 0.26f, "Rubber");
             }
-            model.Collider(new Vector3(0f, 0.6f, 0f), new Vector3(1.8f, 0.9f, 4f));
+            // The body collider reaches the ground (wheel bottoms), so the pushable car does not sink.
+            model.Collider(new Vector3(0f, 0.525f, 0f), new Vector3(1.8f, 1.05f, 4f));
             model.Collider(new Vector3(0f, 1.15f, 0.2f), new Vector3(1.6f, 0.55f, 2.1f));
-            Save("Street", name, model, null);
+            Save("Street", name, model, VillageAssets.Car);
         }
 
         // ───────────── Interior ─────────────
@@ -549,7 +550,7 @@ namespace WaterChaos.EditorTools.MiniVillage
             counter.Part(new Vector3(0.6f, 0.92f, -0.02f), new Vector3(0.62f, 0.04f, 0.5f), "Black");
             foreach (Vector2 burner in new[] { new Vector2(0.45f, -0.14f), new Vector2(0.75f, -0.14f), new Vector2(0.45f, 0.1f), new Vector2(0.75f, 0.1f) })
                 counter.Mesh.Cylinder(new Vector3(burner.x, 0.94f, burner.y), 0.08f, 0.08f, 0.01f, 8, "MetalDark");
-            Save("Interior", "KitchenCounter", counter, null);
+            Save("Interior", "KitchenCounter", counter, VillageAssets.Heavy);
 
             var vase = new PropModel();
             vase.Mesh.Cylinder(Vector3.zero, 0.07f, 0.13f, 0.2f, 8, "Ceramic");
@@ -719,12 +720,12 @@ namespace WaterChaos.EditorTools.MiniVillage
                 for (float x = -0.78f; x < 0.75f; x += 0.17f)
                     rack.Part(new Vector3(x, y + 0.13f, 0.02f), new Vector3(0.14f, 0.22f + (float)stock.NextDouble() * 0.06f, 0.3f), goods[stock.Next(goods.Length)]);
             }
-            Save("GasStation", "ShopShelf", rack, null);
+            Save("GasStation", "ShopShelf", rack, VillageAssets.Heavy);
 
             var shopCounter = new PropModel();
             shopCounter.Part(new Vector3(0f, 0.5f, 0f), new Vector3(2.2f, 1f, 0.7f), "GasRed", true);
             shopCounter.Part(new Vector3(0f, 1.02f, 0f), new Vector3(2.3f, 0.05f, 0.8f), "Stone");
-            Save("GasStation", "ShopCounter", shopCounter, null);
+            Save("GasStation", "ShopCounter", shopCounter, VillageAssets.Heavy);
 
             var register = new PropModel();
             register.Part(new Vector3(0f, 0.06f, 0f), new Vector3(0.4f, 0.12f, 0.35f), "MetalDark");
@@ -752,7 +753,7 @@ namespace WaterChaos.EditorTools.MiniVillage
             air.Mesh.SetTransform(new Vector3(0.24f, 0.6f, 0f), Quaternion.Euler(0f, 0f, 90f));
             air.Mesh.Ring(Vector3.zero, 0.16f, 0.03f, 8, "Black");
             air.Mesh.ResetTransform();
-            Save("GasStation", "AirPump", air, null);
+            Save("GasStation", "AirPump", air, VillageAssets.Heavy);
 
             var cage = new PropModel();
             cage.Part(new Vector3(0f, 0.03f, 0f), new Vector3(1.2f, 0.06f, 0.6f), "Metal");
@@ -769,7 +770,7 @@ namespace WaterChaos.EditorTools.MiniVillage
                 cage.Mesh.Sphere(new Vector3(-0.38f + i * 0.38f, 0.61f, 0f), new Vector3(0.15f, 0.08f, 0.15f), 8, 3, "PlasticWhite");
             }
             cage.Collider(new Vector3(0f, 0.72f, 0f), new Vector3(1.2f, 1.44f, 0.62f));
-            Save("GasStation", "PropaneCage", cage, null);
+            Save("GasStation", "PropaneCage", cage, VillageAssets.Heavy);
         }
 
         private static void SnackBox(string name, string color)
