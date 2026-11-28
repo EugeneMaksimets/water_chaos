@@ -142,7 +142,8 @@ namespace WaterChaos.WaterTransfer
             }
 
             _path.SetAnchor(ConnectedPoint.Anchor.position);
-            _solver.Step(_path, NearGround(_end.position));
+            Vector3 hands = _end.position;
+            _solver.Step(_path, HosePathEnd.Choose(_query, _path.LastFixedPoint, hands, NearGround(hands)));
         }
 
         /// <summary>

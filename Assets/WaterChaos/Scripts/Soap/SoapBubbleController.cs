@@ -112,8 +112,8 @@ namespace WaterChaos.Soap
             }
         }
 
-        // Room around the body (m) for the arms and the nozzle when measuring the bubble.
-        private const float BodyMargin = 0.5f;
+        // A single part bigger than the character's own size times this is not part of the character (a hose, a rope).
+        private const float OversizedPartFactor = 2f;
 
         private CharacterController Character => _character != null ? _character : _character = GetComponent<CharacterController>();
 
@@ -313,6 +313,7 @@ namespace WaterChaos.Soap
         {
             bool found = false;
             var bounds = new Bounds(transform.position, Vector3.zero);
+            float maxPartSize = Mathf.Max(Character.bounds.size.magnitude, 1f) * OversizedPartFactor;
 
             foreach (Renderer part in GetComponentsInChildren<Renderer>())
             {
@@ -325,6 +326,9 @@ namespace WaterChaos.Soap
                     || part.GetComponentInParent<WaterChaos.Hose.HoseController>() != null
                     || part.GetComponentInParent<WaterChaos.Fire.FireSway>() != null)
                     continue;
+                // Anything else much bigger than the character itself (a long rope, a hose mesh) must not blow the bubble up.
+                if (part.bounds.size.magnitude > maxPartSize)
+                    continue;
 
                 if (!found)
                     bounds = part.bounds;
@@ -333,25 +337,9 @@ namespace WaterChaos.Soap
                 found = true;
             }
 
-            return found ? ClipToBody(bounds) : Character.bounds;
+            return found ? bounds : Character.bounds;
         }
 
-        // Anything else long hanging off the character (a hose, a rope) must not blow the bubble up:
-        // the measured size never goes past the body plus a margin for the arms and the nozzle.
-        private Bounds ClipToBody(Bounds bounds)
-        {
-            // A switched-off controller reports empty bounds: nothing to clip against.
-            if (!Character.enabled)
-                return bounds;
-
-            Bounds body = Character.bounds;
-            body.Expand(BodyMargin * 2f);
-
-            Vector3 min = Vector3.Max(bounds.min, body.min);
-            Vector3 max = Vector3.Max(min, Vector3.Min(bounds.max, body.max));
-            bounds.SetMinMax(min, max);
-            return bounds;
-        }
 
         /// <summary>
         /// How far the top of the bubble can still go up, in meters (m): a sphere as wide as the capsule

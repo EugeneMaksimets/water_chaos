@@ -139,6 +139,74 @@ namespace WaterChaos.Tests
         }
 
         [Test]
+        public void JumpingOverAFenceWithTheHose_ItLiesOverTheTop_NotThroughIt()
+        {
+            var owner = new GameObject("Rope Owner");
+            _created.Add(owner);
+            var query = new PhysicsHoseObstacleQuery(~0);
+            var solver = new HosePathSolver(query, 0.08f, 32);
+            var rope = new HoseRope();
+            Vector3 start = new Vector3(-4f, 0.05f, 0f);
+            // Up to the fence, over it in a jump, then on along the other side.
+            // A chain-link fence is only 10 cm thick.
+            _wall.size = new Vector3(0.1f, 1f, 4f);
+            Physics.SyncTransforms();
+            // Up to the fence, over it in a jump, then a long walk away (the hose pays out and its nodes are rebuilt).
+            Vector3[] route = { new Vector3(-1f, 1.2f, 0f), new Vector3(-0.3f, 1.9f, 0f), new Vector3(0.4f, 1.9f, 0f), new Vector3(1f, 1.2f, 0f), new Vector3(12f, 1.2f, 0.5f) };
+            var path = new HoseModel(30f);
+            path.Reset(start, Low(route[0]));
+            Vector3 hand = route[0];
+
+            for (int leg = 1; leg < route.Length; leg++)
+            {
+                while ((route[leg] - hand).sqrMagnitude > 1e-4f)
+                {
+                    hand = Vector3.MoveTowards(hand, route[leg], 0.1f);
+                    solver.Step(path, HosePathEnd.Choose(query, path.LastFixedPoint, hand, Low(hand)));
+                    rope.Step(owner.transform, path, start, hand, ~0, c => false, Radius);
+                    AssertDoesNotCrossBelowTop(rope, 0.9f);
+                }
+            }
+
+            for (int i = 0; i < 150; i++)
+            {
+                rope.Step(owner.transform, path, start, hand, ~0, c => false, Radius);
+                AssertDoesNotCrossBelowTop(rope, 0.9f);
+            }
+        }
+
+        private static string NodesNearFence(HoseRope rope)
+        {
+            var simulation = (HoseVerletSimulation)typeof(HoseRope).GetField("_simulation",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(rope);
+            var nodes = (System.Array)typeof(HoseVerletSimulation).GetField("_nodes",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(simulation);
+            var text = new System.Text.StringBuilder($"segments={simulation.Segments} ");
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                object node = nodes.GetValue(i);
+                var position = (Vector3)node.GetType().GetField("Position").GetValue(node);
+                if (Mathf.Abs(position.x) < 0.8f && Mathf.Abs(position.z) < 2f)
+                    text.Append($"[{i}]{position} ");
+            }
+
+            return text.ToString();
+        }
+
+        // A hose lying over the fence's top edge is fine; one crossing the fence line below its top went through it.
+        private static void AssertDoesNotCrossBelowTop(HoseRope rope, float top)
+        {
+            int count = rope.BuildPoints(out Vector3[] points);
+            for (int i = 0; i < count - 1; i++)
+            {
+                bool crosses = Mathf.Sign(points[i].x) != Mathf.Sign(points[i + 1].x)
+                               && Mathf.Abs(points[i].z) < 2f && Mathf.Abs(points[i + 1].z) < 2f;
+                Assert.IsFalse(crosses && Mathf.Min(points[i].y, points[i + 1].y) < top,
+                    $"Piece {i} ({points[i]} -> {points[i + 1]}) passes through the fence. Nodes near it: {NodesNearFence(rope)}");
+            }
+        }
+
+        [Test]
         public void WalkingAroundATreeWithTheHose_NeverCrossesIt_NeverOverStretches()
         {
             // The game in small: the real path solver and physics, the player walks around a tree, 10 cm per physics step.
@@ -180,14 +248,20 @@ namespace WaterChaos.Tests
         // The path finds obstacles low, like the hoses in the game.
         private static Vector3 Low(Vector3 hand) => new Vector3(hand.x, 0.4f, hand.z);
 
+        // Grazing an edge by less than this is not crossing (the drawn tube is thicker), in meters (m).
+        private const float GrazeTolerance = 0.02f;
+
         private static void AssertDoesNotCross(HoseRope rope, Collider obstacle)
         {
+            // The obstacle shrunk by the tolerance on every side: only pieces that really go into it count.
+            Bounds core = obstacle.bounds;
+            core.Expand(-2f * GrazeTolerance);
             int count = rope.BuildPoints(out Vector3[] points);
             for (int i = 0; i < count - 1; i++)
             {
                 float distance = Vector3.Distance(points[i], points[i + 1]);
-                Assert.IsFalse(distance > 1e-4f && obstacle.Raycast(new Ray(points[i], points[i + 1] - points[i]), out _, distance),
-                    $"Piece {i} ({points[i]} -> {points[i + 1]}) passes through {obstacle.name}.");
+                bool crosses = distance > 1e-4f && core.IntersectRay(new Ray(points[i], points[i + 1] - points[i]), out float at) && at <= distance;
+                Assert.IsFalse(crosses, $"Piece {i} ({points[i]} -> {points[i + 1]}) passes through {obstacle.name}.");
             }
         }
 

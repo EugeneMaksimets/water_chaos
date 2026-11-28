@@ -19,6 +19,8 @@ namespace WaterChaos.Hose
         // Shorter segments are noise from repeated hits on one spot, in meters (m).
         private const float MinSegmentLength = 0.02f;
 
+
+
         // The end's move is checked in pieces no longer than this, in meters (m): thinner posts could slip between two checks.
         private const float MaxSweepStep = 0.05f;
 
@@ -36,6 +38,7 @@ namespace WaterChaos.Hose
         private readonly IHoseObstacleQuery _query;
         private readonly float _surfaceOffset;
         private readonly int _maxWrapPoints;
+        private bool _restedThisStep;
 
         /// <param name="surfaceOffset">Gap between a wrap point and the obstacle surface, in meters (m).</param>
         /// <param name="maxWrapPoints">Wrap points the hose may hold at once.</param>
@@ -53,9 +56,10 @@ namespace WaterChaos.Hose
                 return;
 
             Vector3 previousEnd = model.End;
-
+            _restedThisStep = false;
             while (model.WrapCount > 0 && CanUnwrap(model, newEnd))
                 model.RemoveLastWrap();
+
 
             int steps = Mathf.Clamp(Mathf.CeilToInt(Vector3.Distance(previousEnd, newEnd) / MaxSweepStep), 1, MaxSweepSteps);
             Vector3 sweepFrom = previousEnd;
@@ -99,9 +103,15 @@ namespace WaterChaos.Hose
             if (!_query.Linecast(from, newEnd, out Vector3 hitPoint, out Vector3 hitNormal))
                 return false;
 
-            Vector3 wrap = FindCorner(from, previousEnd, newEnd, hitPoint, hitNormal);
+            Vector3 wrap = FindCorner(from, previousEnd, newEnd, hitPoint, hitNormal, out bool rested);
+            // At most one point rested on a surface per step: when the end jumps through a thin fence (e.g. up from low
+            // behind it to the hands above it), every piece of the sweep would otherwise rest another one on the same face.
+            if (rested && _restedThisStep)
+                return false;
             if ((wrap - from).sqrMagnitude < MinSegmentLength * MinSegmentLength)
                 return false;
+
+            _restedThisStep |= rested;
 
             Vector3 bend = Vector3.Cross(wrap - from, newEnd - wrap);
             if (bend.sqrMagnitude < 1e-10f)
@@ -114,10 +124,12 @@ namespace WaterChaos.Hose
         /// Between the last clear end and the blocked one, bisects for the sight line that just
         /// grazes the obstacle; its hit point is the corner. The wrap point sits just outside it.
         /// </summary>
-        private Vector3 FindCorner(Vector3 from, Vector3 previousEnd, Vector3 newEnd, Vector3 hitPoint, Vector3 hitNormal)
+        /// <param name="rested">True when there was no clear reference and the point was only rested on the surface hit.</param>
+        private Vector3 FindCorner(Vector3 from, Vector3 previousEnd, Vector3 newEnd, Vector3 hitPoint, Vector3 hitNormal, out bool rested)
         {
             // No clear reference (first frame, teleport): rest on the surface that was hit.
-            if (_query.Linecast(from, previousEnd, out _, out _))
+            rested = _query.Linecast(from, previousEnd, out _, out _);
+            if (rested)
                 return hitPoint + hitNormal * _surfaceOffset;
 
             float clear = 0f;

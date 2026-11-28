@@ -18,6 +18,12 @@ namespace WaterChaos.Hose
         // Passes that push the middles of the pieces out of obstacles.
         private const int EdgePasses = 2;
 
+        // Times a swept move may slide along a surface it runs into.
+        private const int MaxSlides = 3;
+
+        // Steps of one collision radius a piece's middle may be lifted to get clear of an obstacle (0.05 m x 12 = 0.6 m).
+        private const int MaxClearSteps = 12;
+
         private struct Node
         {
             public Vector3 Position;
@@ -29,6 +35,8 @@ namespace WaterChaos.Hose
         private Vector3[] _beforeConstraints;
 
         private readonly Collider[] _overlaps = new Collider[16];
+        private readonly RaycastHit[] _hits = new RaycastHit[16];
+        private static readonly Vector3[] s_liftCandidates = new Vector3[4];
         private readonly SphereCollider _probe;
         private readonly Func<Collider, bool> _isIgnored;
         private readonly LayerMask _mask;
@@ -145,6 +153,9 @@ namespace WaterChaos.Hose
                 Vector3 b = _nodes[piece].Position;
                 float length = Vector3.Distance(a, b);
                 Vector3 position = length > 1e-5f ? Vector3.Lerp(a, b, Mathf.Clamp01((target - walked) / length)) : a;
+                // A piece lying over an edge cuts its corner; a new node on it must stay on its old node's side of the edge.
+                if (n > 0 && n < segments)
+                    position = StopBeforeObstacle(a, position);
                 resampled[n] = new Node { Position = position, Previous = position };
             }
 
@@ -282,8 +293,7 @@ namespace WaterChaos.Hose
                 return;
 
             Vector3 direction = delta / distance;
-            if (!Physics.SphereCast(from, _collisionRadius, direction, out RaycastHit hit, distance + _skin, _mask, QueryTriggerInteraction.Ignore)
-                || _isIgnored(hit.collider))
+            if (!SphereHit(from, direction, distance + _skin, out RaycastHit hit))
                 return;
 
             Vector3 stop = from + direction * Mathf.Max(0f, hit.distance - _skin);
@@ -316,56 +326,143 @@ namespace WaterChaos.Hose
             _nodes[index] = node;
         }
 
-        // Pushes the middle of the piece between nodes a and a+1 out of any obstacle; both ends move with it
-        // (a pinned end does not, the other takes the whole move).
+        // If the piece between nodes a and a+1 cuts through an obstacle (e.g. over the edge of a thin fence), lifts it
+        // across itself at the crossing until the whole piece is clear. The ends move in proportion to how close the
+        // crossing is to each (a pinned end does not move); each move is swept, so no end jumps a wall.
         private void DepenetrateEdge(int a)
         {
             int b = a + 1;
+            Vector3 start = _nodes[a].Position;
+            Vector3 end = _nodes[b].Position;
+            Vector3 delta = end - start;
+            float length = delta.magnitude;
+            if (length < 1e-4f || !Crosses(start, end, out RaycastHit hit))
+                return;
+
+            Vector3 along = delta / length;
+            float t = Mathf.Clamp01(hit.distance / length);
             int last = _nodes.Length - 1;
-            float weightA = a == 0 ? 0f : 0.5f;
-            float weightB = b == last ? 0f : 0.5f;
+            float weightA = a == 0 ? 0f : 1f - t;
+            float weightB = b == last ? 0f : t;
             float weights = weightA * weightA + weightB * weightB;
-            if (weights <= 0f)
+            if (weights <= 1e-4f)
                 return;
 
-            Vector3 middle = (_nodes[a].Position + _nodes[b].Position) * 0.5f;
-            int count = Physics.OverlapSphereNonAlloc(middle, _collisionRadius, _overlaps, _mask, QueryTriggerInteraction.Ignore);
-            Vector3 push = Vector3.zero;
-            for (int k = 0; k < count; k++)
+            // Moving the ends by these shares moves the crossing point by exactly the offset.
+            float shareA = weightA / weights;
+            float shareB = weightB / weights;
+
+            // Across the piece, whichever way gets it clear soonest: away from the surface, over the top, or around a side.
+            Vector3 side = Vector3.Cross(along, Vector3.up);
+            s_liftCandidates[0] = Vector3.ProjectOnPlane(hit.normal, along);
+            s_liftCandidates[1] = Vector3.ProjectOnPlane(Vector3.up, along);
+            s_liftCandidates[2] = side;
+            s_liftCandidates[3] = -side;
+
+            for (int step = 1; step <= MaxClearSteps; step++)
             {
-                Collider other = _overlaps[k];
-                if (_isIgnored(other))
-                    continue;
+                for (int c = 0; c < s_liftCandidates.Length; c++)
+                {
+                    Vector3 lift = s_liftCandidates[c];
+                    if (lift.sqrMagnitude < 1e-4f)
+                        continue;
 
-                if (Physics.ComputePenetration(_probe, middle + push, Quaternion.identity,
-                        other, other.transform.position, other.transform.rotation, out Vector3 direction, out float depth))
-                    push += direction * (depth + _skin);
+                    Vector3 offset = lift.normalized * (step * _collisionRadius);
+                    if (Crosses(start + offset * shareA, end + offset * shareB, out _))
+                        continue;
+
+                    MoveSwept(a, offset * shareA);
+                    MoveSwept(b, offset * shareB);
+                    return;
+                }
             }
-
-            if (push == Vector3.zero)
-                return;
-
-            // Moving the ends this much moves the middle by exactly the push; each move is swept, so no end jumps a wall.
-            MoveSwept(a, push * (weightA / weights));
-            MoveSwept(b, push * (weightB / weights));
         }
 
-        // Moves a free node, stopping just before any obstacle on the way; its speed is not changed.
+        // The nearest obstacle a node moving this way runs into. Only moving into a surface counts: sliding along a wall
+        // the node already touches (or moving away from it) is free, so a node next to a fence can still be lifted over it.
+        private bool SphereHit(Vector3 from, Vector3 direction, float distance, out RaycastHit nearest)
+        {
+            int count = Physics.SphereCastNonAlloc(from, _collisionRadius, direction, _hits, distance, _mask, QueryTriggerInteraction.Ignore);
+            nearest = default;
+            float best = float.MaxValue;
+            for (int k = 0; k < count; k++)
+            {
+                RaycastHit hit = _hits[k];
+                if (hit.distance >= best || Vector3.Dot(hit.normal, direction) > -0.05f || _isIgnored(hit.collider))
+                    continue;
+
+                best = hit.distance;
+                nearest = hit;
+            }
+
+            return best < float.MaxValue;
+        }
+
+        // The straight line between two points runs into an obstacle.
+        private bool Crosses(Vector3 from, Vector3 to, out RaycastHit hit)
+        {
+            Vector3 delta = to - from;
+            float length = delta.magnitude;
+            hit = default;
+            if (length < 1e-4f)
+                return false;
+
+            int count = Physics.RaycastNonAlloc(from, delta / length, _hits, length, _mask, QueryTriggerInteraction.Ignore);
+            float best = float.MaxValue;
+            for (int k = 0; k < count; k++)
+            {
+                if (_hits[k].distance < best && _hits[k].distance > 0f && !_isIgnored(_hits[k].collider))
+                {
+                    best = _hits[k].distance;
+                    hit = _hits[k];
+                }
+            }
+
+            return best < float.MaxValue;
+        }
+
+        // The point on the way from 'from' to 'to' just before the first obstacle; 'to' if the way is clear.
+        private Vector3 StopBeforeObstacle(Vector3 from, Vector3 to)
+        {
+            Vector3 delta = to - from;
+            float distance = delta.magnitude;
+            if (distance < 1e-5f)
+                return to;
+
+            Vector3 direction = delta / distance;
+            return SphereHit(from, direction, distance + _skin, out RaycastHit hit)
+                ? from + direction * Mathf.Max(0f, hit.distance - _skin)
+                : to;
+        }
+
+        // Moves a free node; at an obstacle on the way it slides along the surface instead of stopping, so a node next to
+        // a fence can still be lifted over it. Its speed is not changed.
         private void MoveSwept(int index, Vector3 move)
         {
             if (index == 0 || index == _nodes.Length - 1)
                 return;
 
-            float distance = move.magnitude;
-            if (distance < 1e-5f)
-                return;
+            for (int slide = 0; slide < MaxSlides; slide++)
+            {
+                float distance = move.magnitude;
+                if (distance < 1e-5f)
+                    return;
 
-            Vector3 direction = move / distance;
-            Vector3 from = _nodes[index].Position;
-            if (Physics.SphereCast(from, _collisionRadius, direction, out RaycastHit hit, distance + _skin, _mask, QueryTriggerInteraction.Ignore)
-                && !_isIgnored(hit.collider))
-                move = direction * Mathf.Max(0f, hit.distance - _skin);
+                Vector3 direction = move / distance;
+                if (!SphereHit(_nodes[index].Position, direction, distance + _skin, out RaycastHit hit))
+                {
+                    Shift(index, move);
+                    return;
+                }
 
+                float free = Mathf.Max(0f, hit.distance - _skin);
+                Shift(index, direction * free);
+                move = Vector3.ProjectOnPlane(direction * (distance - free), hit.normal);
+            }
+        }
+
+        private void Shift(int index, Vector3 move)
+        {
             _nodes[index].Position += move;
             _nodes[index].Previous += move;
         }

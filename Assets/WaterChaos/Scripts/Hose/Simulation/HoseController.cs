@@ -165,7 +165,8 @@ namespace WaterChaos.Hose
             }
 
             _model.SetAnchor(OnGround(_anchor.position));
-            _solver.Step(_model, OnGround(_endPoint.position));
+            Vector3 hands = _endPoint.position;
+            _solver.Step(_model, HosePathEnd.Choose(_query, _model.LastFixedPoint, hands, OnGround(hands)));
 
             if (_blockedThisFrame)
                 SetLimitReached(true);
