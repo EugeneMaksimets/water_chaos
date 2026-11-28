@@ -5,8 +5,8 @@ using WaterChaos.Water;
 namespace WaterChaos.WaterTransfer
 {
     /// <summary>
-    /// Draws the transfer hose as a round 3D tube lying on the ground between its path points,
-    /// and shows the water moving inside it (same shape and shader as the fire hose).
+    /// Draws the transfer hose as a round 3D tube, either lying on the ground between its path points or as a
+    /// physical rope (<see cref="HoseRope"/>), and shows the water moving inside it (same shapes and shader as the fire hose).
     /// Look only: reads the hose and the transfer, moves no water.
     /// </summary>
     [DefaultExecutionOrder(TransferHose.ExecutionOrder + 20)]
@@ -33,7 +33,10 @@ namespace WaterChaos.WaterTransfer
         [SerializeField, Range(HoseTubeMesh.MinSides, 24)] private int _sides = 10;
 
         [Header("Shape")]
-        [Tooltip("Layers the hose rests on. Leave out Water and Player.")]
+        [Tooltip("Drape = laid along the gameplay path; Physics = a simulated rope that falls, slides and collides with fences and walls.")]
+        [SerializeField] private HoseShapeMode _shape = HoseShapeMode.Drape;
+
+        [Tooltip("Layers the hose rests on and (Physics) collides with. Leave out Water and Player.")]
         [SerializeField] private LayerMask _groundMask = 1;
 
         [Tooltip("Distance between drawn points, in meters (m). Smaller = smoother bends.")]
@@ -47,6 +50,10 @@ namespace WaterChaos.WaterTransfer
 
         [Tooltip("How sharply a hanging hose bends down under its weight, in 1/m. Lower = stiffer hose, wider arcs.")]
         [SerializeField, Range(0.3f, 6f)] private float _bendCurvature = 1.5f;
+
+        [Header("Physics Shape")]
+        [Tooltip("Used when Shape is Physics.")]
+        [SerializeField] private HoseRope _rope = new HoseRope();
 
         [Header("End Coupling")]
         [Tooltip("Optional coupling head (a child of the hose end); kept on the tube's last point, pointing along the tube.")]
@@ -83,6 +90,19 @@ namespace WaterChaos.WaterTransfer
         {
             if (_tube != null)
                 Destroy(_tube.Mesh);
+            _rope.Dispose();
+        }
+
+        private void FixedUpdate()
+        {
+            HoseModel path = _hose.Path;
+            if (_shape != HoseShapeMode.Physics || path == null || !_hose.Model.IsConnected)
+            {
+                _rope.Clear();
+                return;
+            }
+
+            _rope.Step(transform, path, path.Anchor, _hose.End.position, _groundMask, _hose.Ignores, _width * 0.5f);
         }
 
         private void LateUpdate()
@@ -99,21 +119,33 @@ namespace WaterChaos.WaterTransfer
             }
 
             float radius = _width * 0.5f;
-            int count = _drape.Build(path, path.Anchor, path.End, _groundMask, _pointSpacing, _maxSag, radius, _cornerRadius, _bendCurvature);
-            _tube.Build(_drape.Points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
-            AlignCoupling(count);
+            Vector3[] points;
+            int count;
+            if (_shape == HoseShapeMode.Physics && _rope.IsLaid)
+            {
+                count = _rope.BuildPoints(out points);
+            }
+            else
+            {
+                // The path end runs low to find obstacles; the drawn hose ends at the real end (in the hands, on the ground).
+                count = _drape.Build(path, path.Anchor, _hose.End.position, _groundMask, _pointSpacing, _maxSag, radius, _cornerRadius, _bendCurvature);
+                points = _drape.Points;
+            }
+
+            _tube.Build(points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
+            AlignCoupling(points, count);
 
             UpdateWater(Time.deltaTime);
         }
 
         // The end itself faces where the player looks (or the discharge direction); the coupling follows the tube instead.
-        private void AlignCoupling(int count)
+        private void AlignCoupling(Vector3[] points, int count)
         {
             if (_coupling == null || count < 2)
                 return;
 
-            Vector3 end = _drape.Points[count - 1];
-            Vector3 direction = end - _drape.Points[count - 2];
+            Vector3 end = points[count - 1];
+            Vector3 direction = end - points[count - 2];
             if (direction.sqrMagnitude < 1e-8f)
                 return;
 

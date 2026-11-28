@@ -70,6 +70,9 @@ namespace WaterChaos.Hose
         /// <summary>Where the hose really starts (the connection point), world space; meaningful while connected.</summary>
         public Vector3 StartPosition => _anchor != null ? _anchor.position : _model.Anchor;
 
+        /// <summary>True if the collider belongs to the source, the player or the nozzle: it never blocks this hose.</summary>
+        public bool Ignores(Collider collider) => _query != null && _query.IsIgnored(collider);
+
         /// <summary>Where the hose really ends (e.g. the nozzle), world space.</summary>
         public Vector3 EndPosition => _endPoint.position;
 

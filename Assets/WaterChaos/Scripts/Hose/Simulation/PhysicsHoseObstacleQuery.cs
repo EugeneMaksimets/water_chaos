@@ -81,6 +81,12 @@ namespace WaterChaos.Hose
             return best < float.MaxValue;
         }
 
+        /// <summary>True if this collider belongs to something the hose is attached to (it never blocks the hose).</summary>
+        public bool IsIgnored(Collider collider)
+        {
+            return collider != null && IsIgnored(collider.transform);
+        }
+
         private bool IsIgnored(Transform target)
         {
             return (_ignoredA != null && target.IsChildOf(_ignoredA))

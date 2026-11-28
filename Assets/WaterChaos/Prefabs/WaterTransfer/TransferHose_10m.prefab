@@ -2864,6 +2864,7 @@ MonoBehaviour:
   _width: 0.1
   _material: {fileID: 2100000, guid: 09479acf728e46e493451902ff93c8ae, type: 2}
   _roundness: 4
+  _shape: 1
   _groundMask:
     serializedVersion: 2
     m_Bits: 523

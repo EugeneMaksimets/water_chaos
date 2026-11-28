@@ -43,6 +43,10 @@ namespace WaterChaos.WaterTransfer
         [Tooltip("Wrap points the hose may hold at once.")]
         [SerializeField, Range(1, 64)] private int _maxWrapPoints = 32;
 
+        [Tooltip("Height above the ground where the hose looks for obstacles, in meters (m): the path runs this low, " +
+                 "so it catches fences and walls instead of passing over them at hand height.")]
+        [SerializeField, Range(0.05f, 1.5f)] private float _sweepHeight = 0.4f;
+
         [Header("Placement")]
         [Tooltip("Layers the free end can rest on. Leave out Water and Player.")]
         [SerializeField] private LayerMask _groundMask = 1;
@@ -138,7 +142,7 @@ namespace WaterChaos.WaterTransfer
             }
 
             _path.SetAnchor(ConnectedPoint.Anchor.position);
-            _solver.Step(_path, _end.position);
+            _solver.Step(_path, NearGround(_end.position));
         }
 
         /// <summary>
@@ -146,6 +150,19 @@ namespace WaterChaos.WaterTransfer
         /// the free end follows <paramref name="carrier"/> until it is placed.
         /// </summary>
         /// <param name="playerRoot">The carrying player; its colliders never block the hose.</param>
+        /// <summary>True if the collider belongs to the pump, the player or the socket: it never blocks this hose.</summary>
+        public bool Ignores(Collider collider) => _query != null && _query.IsIgnored(collider);
+
+        // The path end moved down to the sweep height above the ground below it (like the nozzle hose); unchanged without ground.
+        // The real end stays in the hands: only the path that finds obstacles runs low.
+        private Vector3 NearGround(Vector3 point)
+        {
+            if (FindGround(point, out Vector3 ground))
+                point.y = Mathf.Min(point.y, ground.y - _restHeight + _sweepHeight);
+
+            return point;
+        }
+
         /// <summary>"Hose" and the length in meters (m), e.g. "Hose 12.5m".</summary>
         public static string FormatDisplayName(float meters)
         {

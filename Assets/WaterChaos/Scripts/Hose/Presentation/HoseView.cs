@@ -4,13 +4,15 @@ using WaterChaos.Water;
 namespace WaterChaos.Hose
 {
     /// <summary>
-    /// Draws the hose as a round 3D tube (<see cref="HoseTubeMesh"/>) lying on the ground like every hose
-    /// (<see cref="HoseGroundDrape"/>), and shows the water inside it.
+    /// Draws the hose as a round 3D tube (<see cref="HoseTubeMesh"/>) and shows the water inside it.
+    /// Its shape is either laid on the ground along the gameplay path (<see cref="HoseGroundDrape"/>) or simulated
+    /// as a physical rope (<see cref="HoseVerletSimulation"/>) whose length follows the gameplay path.
     /// Only reads the hose and its water source; owns no gameplay rules and moves no water.
     /// </summary>
     [DefaultExecutionOrder(HoseController.ExecutionOrder + 1)]
     public sealed class HoseView : MonoBehaviour
     {
+
         /// <summary>Scroll offset wraps here, in meters (m), so it never loses float precision.</summary>
         private const float OffsetWrap = 1000f;
 
@@ -32,6 +34,9 @@ namespace WaterChaos.Hose
         [SerializeField, Range(HoseTubeMesh.MinSides, 24)] private int _sides = 12;
 
         [Header("Shape")]
+        [Tooltip("Drape = laid along the gameplay path; Physics = a simulated rope (more alive, a bit more expensive).")]
+        [SerializeField] private HoseShapeMode _shape = HoseShapeMode.Drape;
+
         [Tooltip("Layers the hose rests on. Leave out Water and Player.")]
         [SerializeField] private LayerMask _groundMask = 1;
 
@@ -46,6 +51,10 @@ namespace WaterChaos.Hose
 
         [Tooltip("How sharply a hanging hose bends down under its weight, in 1/m. Lower = stiffer hose, wider arcs.")]
         [SerializeField, Range(0.3f, 6f)] private float _bendCurvature = 1.5f;
+
+        [Header("Physics Shape")]
+        [Tooltip("Used when Shape is Physics.")]
+        [SerializeField] private HoseRope _rope = new HoseRope();
 
         [Header("Water Inside")]
         [Tooltip("Show water moving inside the hose while the source gives flow.")]
@@ -87,6 +96,19 @@ namespace WaterChaos.Hose
         {
             if (_tube != null)
                 Destroy(_tube.Mesh);
+            _rope.Dispose();
+        }
+
+        private void FixedUpdate()
+        {
+            HoseModel model = _hose.Model;
+            if (_shape != HoseShapeMode.Physics || !_hose.IsConnected || model == null)
+            {
+                _rope.Clear();
+                return;
+            }
+
+            _rope.Step(transform, model, _hose.StartPosition, _hose.EndPosition, _groundMask, _hose.Ignores, _width * 0.5f);
         }
 
         private void LateUpdate()
@@ -103,8 +125,16 @@ namespace WaterChaos.Hose
             }
 
             float radius = _width * 0.5f;
-            int count = _drape.Build(model, _hose.StartPosition, _hose.EndPosition, _groundMask, _pointSpacing, _maxSag, radius, _cornerRadius, _bendCurvature);
-            _tube.Build(_drape.Points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
+            if (_shape == HoseShapeMode.Physics && _rope.IsLaid)
+            {
+                int count = _rope.BuildPoints(out Vector3[] points);
+                _tube.Build(points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
+            }
+            else
+            {
+                int count = _drape.Build(model, _hose.StartPosition, _hose.EndPosition, _groundMask, _pointSpacing, _maxSag, radius, _cornerRadius, _bendCurvature);
+                _tube.Build(_drape.Points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
+            }
 
             UpdateWater(Time.deltaTime);
         }
