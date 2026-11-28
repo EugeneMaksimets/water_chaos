@@ -81,6 +81,12 @@ namespace WaterChaos.Characters
             Ignite();
         }
 
+        /// <summary>Sets the teammate on fire as if a flame hit it (e.g. a mission event: gasoline reached them).</summary>
+        public void SetOnFire()
+        {
+            Ignite();
+        }
+
         public void ReceiveImpact(in WaterImpact impact)
         {
             if (IsBurning && impact.Liquid.ExtinguishingPower() > 0f)
@@ -210,6 +216,9 @@ namespace WaterChaos.Characters
             DestroyAll<FireFuelHandler>(_flames);
             DestroyAll<FireSteamEffect>(_flames);
             DestroyAll<FireView>(_flames);
+            // Dependents go before what they require, or Unity refuses to remove it: view → reaction → extinguish handler.
+            DestroyAll<WaterChaos.ToxicReaction.FireToxicReactionView>(_flames);
+            DestroyAll<WaterChaos.ToxicReaction.FireToxicReaction>(_flames);
             DestroyAll<FireExtinguishHandler>(_flames);
             DestroyAll<Collider>(_flames);
             DestroyAll<Rigidbody>(_flames);

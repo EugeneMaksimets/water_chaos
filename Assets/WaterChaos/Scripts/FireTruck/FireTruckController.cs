@@ -12,11 +12,14 @@ namespace WaterChaos.FireTruck
     public sealed class FireTruckController : MonoBehaviour, IWaterFlowSource, IWaterSourceControl
     {
         [Header("Pump")]
-        [Tooltip("Outlet pressure, always the maximum, in pascals (Pa).")]
+        [Tooltip("Highest outlet pressure, in pascals (Pa); the truck starts at it.")]
         [SerializeField, Min(0f)] private float _pressure = 500_000f;
 
         [Tooltip("Flow at that pressure with the valve fully open, in liters per second (L/s).")]
         [SerializeField, Min(0f)] private float _flowRate = 10f;
+
+        [Tooltip("Pressure change per mouse wheel notch, in pascals (Pa).")]
+        [SerializeField, Min(0f)] private float _pressureStep = 50_000f;
 
         [Header("Valve")]
         [Tooltip("Open-ratio per second (1/s): 2 = opens fully in 0.5 s.")]
@@ -46,10 +49,9 @@ namespace WaterChaos.FireTruck
 
         public void Toggle() => Model.Toggle();
 
-        /// <summary>The truck always works at full pressure; the wheel does nothing.</summary>
-        public void AdjustPressure(int direction)
-        {
-        }
+        /// <summary>The mouse wheel raises or lowers the pump pressure one step.</summary>
+        public void AdjustPressure(int direction) =>
+            Model.SetTargetPressure(Model.TargetPressure + direction * _pressureStep);
 
         public void Stop() => Model.Close();
     }

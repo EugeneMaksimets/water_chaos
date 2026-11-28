@@ -27,8 +27,11 @@ namespace WaterChaos.Teammate
         [Tooltip("How much more a difference in height counts than the same distance sideways.")]
         [SerializeField, Min(1f)] private float _heightWeight = 2f;
 
-        [Tooltip("Seconds (s) between choosing a fire.")]
+        [Tooltip("Seconds (s) between checks of the chosen fire (still burning, still in range).")]
         [SerializeField, Min(0.05f)] private float _retargetInterval = 0.5f;
+
+        [Tooltip("A random fire in range is chosen and kept this long (or until it goes out), then a new random one, in seconds (s).")]
+        [SerializeField, Min(0.5f)] private float _switchInterval = 30f;
 
         [Header("Aim")]
         [Tooltip("How fast the body turns, in degrees per second (°/s).")]
@@ -51,10 +54,37 @@ namespace WaterChaos.Teammate
         private Quaternion _aim = Quaternion.identity;
         private FireExtinguishHandler _target;
         private float _nextRetarget;
+        private float _switchAt;
         private float _raise;
+        private Transform _forced;
+        private float _forcedUntil;
 
         /// <summary>The fire aimed at now; null when none is in range.</summary>
         public FireExtinguishHandler Target => _target;
+
+        /// <summary>Aims at a forced target (e.g. whoever hit the teammate) instead of fires.</summary>
+        public bool IsForced => _forced != null && Time.time < _forcedUntil;
+
+        /// <summary>Aims at <paramref name="target"/> instead of fires for <paramref name="seconds"/> (s).</summary>
+        public void ForceTarget(Transform target, float seconds)
+        {
+            _forced = target;
+            _forcedUntil = Time.time + Mathf.Max(0f, seconds);
+            _raise = 0f;
+        }
+
+        // Where the nozzle points: the forced target, else the fire; false when there is nothing to aim at.
+        private bool TryGetAimTarget(out Vector3 position)
+        {
+            if (IsForced)
+            {
+                position = _forced.position;
+                return true;
+            }
+
+            position = _target != null ? _target.transform.position : default;
+            return _target != null;
+        }
 
         private void Awake()
         {
@@ -88,10 +118,10 @@ namespace WaterChaos.Teammate
                 return;
 
             Quaternion wanted = Quaternion.identity;
-            if (_target != null && _nozzle.IsSpraying)
+            if (TryGetAimTarget(out Vector3 targetPosition) && _nozzle.IsSpraying)
             {
-                CorrectHeight(stream, spout);
-                Vector3 aimPoint = _target.transform.position + Vector3.up * _raise;
+                CorrectHeight(stream, spout, targetPosition);
+                Vector3 aimPoint = targetPosition + Vector3.up * _raise;
                 wanted = Quaternion.FromToRotation(spout.forward, aimPoint - spout.position);
                 wanted = Quaternion.RotateTowards(Quaternion.identity, wanted, _maxNozzleAngle);
             }
@@ -104,8 +134,15 @@ namespace WaterChaos.Teammate
             transform.rotation = _aim * transform.rotation;
         }
 
+        // Keeps the chosen fire while it burns, stays in range and its time is not up; otherwise picks a random one in range.
         private void Retarget()
         {
+            Vector3 from = _nozzle.Stream != null && _nozzle.Stream.Nozzle != null ? _nozzle.Stream.Nozzle.position : transform.position;
+            bool keep = _target != null && _target.IsBurning && Time.time < _switchAt
+                && FireTargeting.IsInRange(from, _target.transform.position, _range, _heightWeight);
+            if (keep)
+                return;
+
             _fires.Clear();
             _positions.Clear();
             foreach (FireExtinguishHandler fire in FireExtinguishHandler.All)
@@ -117,12 +154,12 @@ namespace WaterChaos.Teammate
                 }
             }
 
-            Vector3 from = _nozzle.Stream != null && _nozzle.Stream.Nozzle != null ? _nozzle.Stream.Nozzle.position : transform.position;
-            int index = FireTargeting.Pick(from, _positions, _range, _heightWeight);
+            int index = FireTargeting.PickRandom(from, _positions, _range, _heightWeight, Random.value);
             FireExtinguishHandler target = index >= 0 ? _fires[index] : null;
             if (target != _target)
                 _raise = 0f;
             _target = target;
+            _switchAt = Time.time + _switchInterval;
         }
 
         /// <summary>Turns the body toward the fire around the vertical axis, or back to its first facing.</summary>
@@ -132,9 +169,9 @@ namespace WaterChaos.Teammate
                 return;
 
             Quaternion wanted = _restBody;
-            if (_target != null)
+            if (TryGetAimTarget(out Vector3 targetPosition))
             {
-                Vector3 toFire = _target.transform.position - _body.position;
+                Vector3 toFire = targetPosition - _body.position;
                 toFire.y = 0f;
                 if (toFire.sqrMagnitude > 0.01f)
                     wanted = Quaternion.LookRotation(toFire, Vector3.up);
@@ -144,9 +181,8 @@ namespace WaterChaos.Teammate
         }
 
         /// <summary>Raises the aim while the stream falls short of the fire, lowers it while it lands high above.</summary>
-        private void CorrectHeight(WaterStream stream, Transform spout)
+        private void CorrectHeight(WaterStream stream, Transform spout, Vector3 fire)
         {
-            Vector3 fire = _target.transform.position;
             float step = _correctionSpeed * Time.deltaTime;
             if (!stream.HasHit)
             {

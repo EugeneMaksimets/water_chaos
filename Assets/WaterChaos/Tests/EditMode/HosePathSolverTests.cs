@@ -16,15 +16,33 @@ namespace WaterChaos.Tests
         private static readonly Vector3 EastOfBox = new Vector3(3f, 0f, 3f);
         private static readonly Vector3 NorthOfBox = new Vector3(0f, 0f, 3f);
 
-        /// <summary>Exact segment test against one box, standing in for physics.</summary>
+        /// <summary>Exact segment test against one box, standing in for physics. The box can be removed.</summary>
         private sealed class BoxQuery : IHoseObstacleQuery
         {
+            private readonly Bounds _box;
+
+            public BoxQuery() : this(Box) { }
+
+            public BoxQuery(Bounds box)
+            {
+                _box = box;
+            }
+
+            public bool Exists { get; set; } = true;
+
             public bool Linecast(Vector3 from, Vector3 to, out Vector3 point, out Vector3 normal)
-                => Intersect(Box, from, to, out point, out normal);
+            {
+                point = default;
+                normal = default;
+                return Exists && Intersect(_box, from, to, out point, out normal);
+            }
 
             public bool IsClear(Vector3 from, Vector3 to, float radius)
             {
-                Bounds grown = Box;
+                if (!Exists)
+                    return true;
+
+                Bounds grown = _box;
                 grown.Expand(radius * 2f);
                 return !Intersect(grown, from, to, out _, out _);
             }
@@ -164,6 +182,41 @@ namespace WaterChaos.Tests
                 solver.Step(hose, NorthOfBox);
 
             Assert.AreEqual(wraps, hose.WrapCount);
+        }
+
+        [Test]
+        public void ThinPost_SweptPastInOneBigStep_IsStillWrappedAround()
+        {
+            // A 10 cm post between the anchor and the end; the end jumps from its left to its right in one step,
+            // so neither the old nor the new straight line touches it.
+            Bounds post = new Bounds(Vector3.zero, new Vector3(0.1f, 2f, 0.1f));
+            BoxQuery query = new BoxQuery(post);
+            HosePathSolver solver = new HosePathSolver(query, SurfaceOffset, 32);
+            HoseModel hose = new HoseModel(15f);
+            hose.Reset(Anchor, new Vector3(-2f, 0f, 2f));
+
+            solver.Step(hose, new Vector3(2f, 0f, 2f));
+
+            Assert.Greater(hose.WrapCount, 0);
+            for (int i = 0; i < hose.PointCount - 1; i++)
+                Assert.IsFalse(query.Linecast(hose.GetPoint(i), hose.GetPoint(i + 1), out _, out _), $"Segment {i} passes through the post.");
+        }
+
+        [Test]
+        public void ObstacleGone_WrapIsReleased_EvenIfTheHoseStillBendsTheSameWay()
+        {
+            BoxQuery query = new BoxQuery();
+            HosePathSolver solver = new HosePathSolver(query, SurfaceOffset, 32);
+            HoseModel hose = new HoseModel(15f);
+            hose.Reset(Anchor, EastOfBox);
+            Walk(solver, hose, NorthOfBox);
+            Assert.Greater(hose.WrapCount, 0);
+
+            query.Exists = false;
+            solver.Step(hose, NorthOfBox);
+
+            Assert.AreEqual(0, hose.WrapCount);
+            Assert.AreEqual(Vector3.Distance(Anchor, NorthOfBox), hose.Length, Tolerance);
         }
 
         [Test]

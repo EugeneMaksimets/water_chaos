@@ -39,5 +39,30 @@ namespace WaterChaos.Tests
             Assert.Greater(FireTargeting.Score(Vector3.zero, new Vector3(0f, 3f, 0f), 2f),
                 FireTargeting.Score(Vector3.zero, new Vector3(3f, 0f, 0f), 2f));
         }
+
+        [Test]
+        public void PickRandom_ChoosesAmongFiresInRange_ByTheRoll()
+        {
+            var fires = new List<Vector3> { new Vector3(2f, 0f, 0f), new Vector3(50f, 0f, 0f), new Vector3(0f, 0f, 3f) };
+
+            Assert.AreEqual(0, FireTargeting.PickRandom(Vector3.zero, fires, 10f, 2f, 0f));
+            Assert.AreEqual(2, FireTargeting.PickRandom(Vector3.zero, fires, 10f, 2f, 0.6f));
+            Assert.AreEqual(2, FireTargeting.PickRandom(Vector3.zero, fires, 10f, 2f, 1f));
+        }
+
+        [Test]
+        public void PickRandom_NothingInRange_PicksNothing()
+        {
+            var fires = new List<Vector3> { new Vector3(50f, 0f, 0f) };
+
+            Assert.AreEqual(-1, FireTargeting.PickRandom(Vector3.zero, fires, 10f, 2f, 0.5f));
+        }
+
+        [Test]
+        public void IsInRange_UsesTheWeightedDistance()
+        {
+            Assert.IsTrue(FireTargeting.IsInRange(Vector3.zero, new Vector3(5f, 0f, 0f), 10f, 2f));
+            Assert.IsFalse(FireTargeting.IsInRange(Vector3.zero, new Vector3(0f, 6f, 0f), 10f, 2f));
+        }
     }
 }

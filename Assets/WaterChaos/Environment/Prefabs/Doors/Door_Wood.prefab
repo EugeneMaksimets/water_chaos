@@ -1564,6 +1564,6 @@ MonoBehaviour:
   - {fileID: 8526735681713277386}
   - {fileID: 4185898970873259911}
   _fragmentImpulse: 6
-  _fragmentLifetime: 8
-  _shrinkTime: 0.8
+  _fragmentLifetime: 0.6
+  _shrinkTime: 0.4
   _breakEffect: {fileID: 2994352312627101877, guid: 133f020e0805b49118337d9ab26c574e, type: 3}

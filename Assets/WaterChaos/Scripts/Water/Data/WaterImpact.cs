@@ -42,6 +42,9 @@ namespace WaterChaos.Water
         /// </summary>
         public bool IsSnow { get; }
 
+        /// <summary>The stream the liquid came from (its object), so a target knows who hit it; null when unknown.</summary>
+        public Transform Source { get; }
+
         public WaterImpact(Vector3 point, 
             Vector3 normal, 
             Vector3 direction,
@@ -49,8 +52,10 @@ namespace WaterChaos.Water
             float force,
             LiquidType liquid = LiquidType.Water,
             bool isSoapy = false,
-            bool isSnow = false)
+            bool isSnow = false,
+            Transform source = null)
         {
+            Source = source;
             Liquid = liquid;
             IsSoapy = isSoapy && liquid.CanBeSoapy();
             IsSnow = isSnow && liquid.CanFreeze();

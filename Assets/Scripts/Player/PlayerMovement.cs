@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using WaterChaos.Characters;
 using WaterChaos.Environment;
 using WaterChaos.Surfaces;
 
@@ -20,30 +21,24 @@ namespace WaterChaos.Player
         [Tooltip("Optional: stops moving farther while the held hose is fully extended.")]
         [SerializeField] private PlayerHoseConnector _hoseConnector;
 
+        [Tooltip("Optional: makes the player fall when slipping on ice; the one on this object otherwise.")]
+        [SerializeField] private CharacterKnockdown _knockdown;
+
         [Header("Ice")]
-        [Tooltip("How fast input speeds up a slide on ice, in meters per second squared (m/s²).")]
-        [SerializeField, Range(0f, 30f)] private float _iceAcceleration = 6f;
-
-        [Tooltip("Fastest slide on ice, in meters per second (m/s).")]
-        [SerializeField, Range(0f, 20f)] private float _iceMaxSpeed = 9f;
-
-        [Tooltip("Braking on normal ground, in m/s²; on ice it is scaled by the ice friction, so slides run out slowly.")]
-        [SerializeField, Range(0f, 100f)] private float _iceGroundDeceleration = 20f;
-
-        [Tooltip("How fast a slide turns toward where the player faces, in degrees per second (°/s).")]
-        [SerializeField, Range(0f, 720f)] private float _iceTurnSpeed = 120f;
+        [Tooltip("Chance (0..1) to slip and fall each time the player walks onto ice.")]
+        [SerializeField, Range(0f, 1f)] private float _slipChance = 0.3f;
 
         private readonly Collider[] _ladderHits = new Collider[8];
-        private IceSlideModel _ice;
-        // Horizontal velocity of the last frame, carried onto ice (m/s).
-        private Vector3 _lastHorizontal;
+        private IceSlipModel _ice;
         private CharacterController _characterController;
         private Vector3 _velocity;
 
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
-            _ice = new IceSlideModel(new IceSlideConfig(_iceAcceleration, _iceMaxSpeed, _iceGroundDeceleration, _iceTurnSpeed));
+            _ice = new IceSlipModel(_slipChance);
+            if (_knockdown == null)
+                _knockdown = GetComponent<CharacterKnockdown>();
         }
 
         private void Update()
@@ -74,7 +69,6 @@ namespace WaterChaos.Player
 
             if (TryGetLadder(out Ladder ladder))
             {
-                _ice.Exit();
                 Climb(input, ladder);
                 return;
             }
@@ -90,8 +84,7 @@ namespace WaterChaos.Player
                 : _moveSpeed;
 
             Vector3 movement = direction * speed;
-            movement = ApplyIce(movement, direction);
-            _lastHorizontal = new Vector3(movement.x, 0f, movement.z);
+            CheckIceSlip(direction);
 
             if (_characterController.isGrounded && _velocity.y < 0f)
             {
@@ -115,30 +108,14 @@ namespace WaterChaos.Player
             _characterController.Move(step);
         }
 
-        /// <summary>
-        /// On ice the slide (<see cref="IceSlideModel"/>) replaces the horizontal movement: it heads where the camera
-        /// faces and slowly runs out without input. Off the ice the normal movement comes back at once.
-        /// In the air the slide keeps its momentum. The movement settings above are never changed.
-        /// </summary>
-        private Vector3 ApplyIce(Vector3 movement, Vector3 direction)
+        /// <summary>Walking onto ice may make the player slip and fall (see <see cref="IceSlipModel"/>).</summary>
+        private void CheckIceSlip(Vector3 direction)
         {
-            bool grounded = _characterController.isGrounded;
-            if (!grounded)
-                return _ice.IsSliding ? _ice.Velocity : movement;
+            bool onIce = _characterController.isGrounded && LiquidSurfaceController.TryGetIceAt(FeetPosition(), out _);
+            bool moving = direction.sqrMagnitude > 0.01f;
 
-            if (!LiquidSurfaceController.TryGetIceAt(FeetPosition(), out float friction))
-            {
-                if (_ice.IsSliding)
-                    _ice.Exit();
-                return movement;
-            }
-
-            if (!_ice.IsSliding)
-                _ice.Enter(_lastHorizontal);
-
-            Vector3 facing = _cameraTransform.forward;
-            facing.y = 0f;
-            return _ice.Step(direction, facing, friction, Time.deltaTime);
+            if (_ice.Step(onIce, moving, Random.value) && _knockdown != null)
+                _knockdown.Slip(direction);
         }
 
         private Vector3 FeetPosition()

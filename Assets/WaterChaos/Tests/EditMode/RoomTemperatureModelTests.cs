@@ -664,6 +664,89 @@ namespace WaterChaos.Tests
             Assert.AreEqual(0, room.MaxFires);
         }
 
+        private const float FireFloor = 40f;
+        private const float FloorRise = 2f;
+
+        /// <summary>Room with one cooler switched off, fires 1..<paramref name="fires"/> burning and the fire floor set.</summary>
+        private static RoomTemperatureModel CreateRoomWithCoolersOff(int fires)
+        {
+            RoomTemperatureModel room = CreateHotRoom(fires, heatPerInterval: 0f);
+            room.SetCooling(1, 0, 0f);
+            room.SetFireFloor(FireFloor, FloorRise);
+            return room;
+        }
+
+        [Test]
+        public void FireFloor_CoolersOffAndFireBurning_RisesGraduallyToTheFloor()
+        {
+            RoomTemperatureModel room = CreateRoomWithCoolersOff(1); // 25 + 5 = 30 °C
+
+            room.Tick(1f, _ready);
+            Assert.AreEqual(32f, room.Temperature, Tolerance);
+
+            room.Tick(100f, _ready);
+            Assert.AreEqual(FireFloor, room.Temperature, Tolerance);
+        }
+
+        [Test]
+        public void FireFloor_ExtinguishingAndCooling_NeverGoBelowIt_WhileAFireBurns()
+        {
+            RoomTemperatureModel room = CreateRoomWithCoolersOff(3);
+            room.AddHeat(20f); // 25 + 15 + 20 = 60 °C
+
+            room.RemoveFire(1);
+            room.RemoveHeat(50f);
+
+            Assert.AreEqual(FireFloor, room.Temperature, Tolerance);
+        }
+
+        [Test]
+        public void FireFloor_FiresStillHeatAboveIt()
+        {
+            RoomTemperatureModel room = CreateHotRoom(1);
+            room.SetCooling(1, 0, 0f);
+            room.SetFireFloor(FireFloor, FloorRise);
+            room.AddHeat(20f); // 50 °C
+
+            room.Tick(HeatInterval, _ready);
+
+            Assert.AreEqual(51f, room.Temperature, Tolerance);
+        }
+
+        [Test]
+        public void FireFloor_LastFireOut_RoomMayCoolBelowIt()
+        {
+            RoomTemperatureModel room = CreateRoomWithCoolersOff(1);
+            room.Tick(100f, _ready);
+
+            room.RemoveFire(1);
+
+            Assert.AreEqual(FireFloor - InitialFireHeat, room.Temperature, Tolerance);
+        }
+
+        [Test]
+        public void FireFloor_InactiveWhileACoolerWorks()
+        {
+            RoomTemperatureModel room = CreateHotRoom(1, heatPerInterval: 0f);
+            room.SetCooling(2, 1, 0f);
+            room.SetFireFloor(FireFloor, FloorRise);
+
+            room.Tick(100f, _ready);
+
+            Assert.AreEqual(Start + InitialFireHeat, room.Temperature, Tolerance);
+        }
+
+        [Test]
+        public void FireFloor_InactiveInRoomsWithoutCoolers()
+        {
+            RoomTemperatureModel room = CreateHotRoom(1, heatPerInterval: 0f);
+            room.SetFireFloor(FireFloor, FloorRise);
+
+            room.Tick(100f, _ready);
+
+            Assert.AreEqual(Start + InitialFireHeat, room.Temperature, Tolerance);
+        }
+
         [Test]
         public void MaxTemperature_FiresNeverHeatAboveIt()
         {

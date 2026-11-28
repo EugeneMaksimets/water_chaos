@@ -14,8 +14,6 @@ namespace WaterChaos.Interaction
     public sealed class CorrosionView : MonoBehaviour
     {
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-        private static readonly int ShadeColorId = Shader.PropertyToID("_ShadeColor");
-        private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
 
         [Header("Stain")]
         [Tooltip("Color the surface turns toward as it corrodes.")]
@@ -170,26 +168,10 @@ namespace WaterChaos.Interaction
             renderer.renderMode = ParticleSystemRenderMode.Stretch;
             renderer.velocityScale = 0.12f;
             renderer.lengthScale = 2f;
-            TintDrips(renderer);
+            LiquidStreamTint.Apply(renderer, new MaterialPropertyBlock(), true, _dripColor);
 
             _drips.Add(drips);
             _dripAreas.Add(FaceArea(worldSize));
-        }
-
-        // The toon water shader colors the lit side (_BaseColor), the shadow side (_ShadeColor) and the rim (_RimColor),
-        // so all three are tinted: otherwise the shadow side keeps the material's blue.
-        private void TintDrips(ParticleSystemRenderer renderer)
-        {
-            LiquidStreamTint.Apply(renderer, _block, true, _dripColor);
-
-            renderer.GetPropertyBlock(_block);
-            Color shade = _dripColor * 0.6f;
-            Color rim = Color.Lerp(_dripColor, Color.white, 0.5f);
-            shade.a = rim.a = _dripColor.a;
-            _block.SetColor(ShadeColorId, shade);
-            _block.SetColor(RimColorId, rim);
-            renderer.SetPropertyBlock(_block);
-            _block.Clear();
         }
 
         // Area (m2) of the biggest face of a box: the two largest sides.

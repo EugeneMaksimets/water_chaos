@@ -14,6 +14,8 @@ namespace WaterChaos.Water
     public sealed class LiquidStreamTint : MonoBehaviour
     {
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int ShadeColorId = Shader.PropertyToID("_ShadeColor");
+        private static readonly int RimColorId = Shader.PropertyToID("_RimColor");
 
         [Serializable]
         private struct LiquidColor
@@ -86,7 +88,8 @@ namespace WaterChaos.Water
 
         /// <summary>
         /// Sets the material color of <paramref name="target"/> through a property block, or clears it (tinted = false).
-        /// Particles keep the alpha of their material, so drops stay see-through.
+        /// Particles keep the alpha of their material, so drops stay see-through. Toon water materials also get their
+        /// shadow side (_ShadeColor) and rim (_RimColor) tinted, or the shadow side would keep the water's blue.
         /// </summary>
         public static void Apply(Renderer target, MaterialPropertyBlock block, bool tinted, Color color)
         {
@@ -102,6 +105,20 @@ namespace WaterChaos.Water
 
             target.GetPropertyBlock(block);
             block.SetColor(BaseColorId, color);
+            if (material != null && material.HasProperty(ShadeColorId))
+            {
+                Color shade = color * 0.6f;
+                shade.a = color.a;
+                block.SetColor(ShadeColorId, shade);
+            }
+
+            if (material != null && material.HasProperty(RimColorId))
+            {
+                Color rim = Color.Lerp(color, Color.white, 0.5f);
+                rim.a = color.a;
+                block.SetColor(RimColorId, rim);
+            }
+
             target.SetPropertyBlock(block);
         }
 

@@ -18,6 +18,32 @@ namespace WaterChaos.Tests
         }
 
         [Test]
+        public void LowerTargetPressure_GivesLessPressureAndFlow()
+        {
+            var tank = new WaterReservoir(1000f, 1000f);
+            FireTruckModel truck = CreateTruck(tank);
+            truck.Toggle();
+
+            truck.SetTargetPressure(MaxPressure * 0.5f);
+            truck.Tick(Step);
+            truck.Tick(Step);
+
+            Assert.AreEqual(MaxPressure * 0.5f, truck.Output.Pressure, Tolerance);
+            Assert.AreEqual(MaxFlow * 0.5f, truck.Output.FlowRate, Tolerance);
+        }
+
+        [TestCase(900_000f, MaxPressure)]
+        [TestCase(-1f, 0f)]
+        public void TargetPressure_IsClampedToZeroAndMax(float requested, float expected)
+        {
+            FireTruckModel truck = CreateTruck(new WaterReservoir(1000f, 1000f));
+
+            truck.SetTargetPressure(requested);
+
+            Assert.AreEqual(expected, truck.TargetPressure, Tolerance);
+        }
+
+        [Test]
         public void ClosedValve_GivesNothingAndKeepsWater()
         {
             var tank = new WaterReservoir(1000f, 1000f);

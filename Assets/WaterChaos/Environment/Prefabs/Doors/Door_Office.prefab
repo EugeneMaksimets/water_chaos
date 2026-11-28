@@ -1015,8 +1015,8 @@ MonoBehaviour:
   - {fileID: 5488531337827815218}
   - {fileID: 3227102073307526173}
   _fragmentImpulse: 6
-  _fragmentLifetime: 8
-  _shrinkTime: 0.8
+  _fragmentLifetime: 0.6
+  _shrinkTime: 0.4
   _breakEffect: {fileID: 2994352312627101877, guid: 133f020e0805b49118337d9ab26c574e, type: 3}
 --- !u!1 &4868368299543449057
 GameObject:

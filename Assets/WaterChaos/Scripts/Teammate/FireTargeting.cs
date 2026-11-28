@@ -4,8 +4,9 @@ using UnityEngine;
 namespace WaterChaos.Teammate
 {
     /// <summary>
-    /// Which fire a teammate aims at: the closest one in range, where a difference in height counts more than the same
-    /// distance sideways. So a teammate lifted to the roof picks the roof fires, and one on the ground the fires around them.
+    /// Which fire a teammate aims at: the closest one in range (<see cref="Pick"/>) or a random one in range
+    /// (<see cref="PickRandom"/>). Range is a distance where a difference in height counts more than the same distance
+    /// sideways, so a teammate lifted to the roof reaches the roof fires, and one on the ground the fires around them.
     /// </summary>
     public static class FireTargeting
     {
@@ -33,6 +34,41 @@ namespace WaterChaos.Teammate
             }
 
             return best;
+        }
+
+        /// <summary>True if <paramref name="fire"/> is within <paramref name="range"/> (weighted, see <see cref="Score"/>).</summary>
+        public static bool IsInRange(Vector3 from, Vector3 fire, float range, float heightWeight)
+        {
+            return Score(from, fire, heightWeight) <= range;
+        }
+
+        /// <summary>
+        /// Index of a random fire within <paramref name="range"/> (weighted), or -1 when none is.
+        /// </summary>
+        /// <param name="roll">Random value in 0..1 that chooses among the fires in range.</param>
+        public static int PickRandom(Vector3 from, IReadOnlyList<Vector3> fires, float range, float heightWeight, float roll)
+        {
+            int inRange = 0;
+            for (int i = 0; i < fires.Count; i++)
+            {
+                if (IsInRange(from, fires[i], range, heightWeight))
+                    inRange++;
+            }
+
+            if (inRange == 0)
+                return -1;
+
+            int chosen = Mathf.Min(Mathf.FloorToInt(Mathf.Clamp01(roll) * inRange), inRange - 1);
+            for (int i = 0; i < fires.Count; i++)
+            {
+                if (!IsInRange(from, fires[i], range, heightWeight))
+                    continue;
+                if (chosen == 0)
+                    return i;
+                chosen--;
+            }
+
+            return -1;
         }
     }
 }

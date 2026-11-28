@@ -348,7 +348,8 @@ namespace WaterChaos.Water
                 _tuning.GetImpactForce(flow.FlowRate),
                 flow.Liquid,
                 flow.IsSoapy,
-                IsSnow);
+                IsSnow,
+                transform);
 
             hit.collider.GetComponents(_receivers);
             for(int i = 0; i < _receivers.Count; i++)

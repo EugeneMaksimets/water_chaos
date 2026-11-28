@@ -5,7 +5,7 @@ using WaterChaos.Water;
 namespace WaterChaos.FireTruck
 {
     /// <summary>
-    /// Pure model of a fire truck's water outlet: its pump always runs at full pressure behind a valve
+    /// Pure model of a fire truck's water outlet: its pump runs at an adjustable pressure (full by default) behind a valve
     /// that opens smoothly, and every litre comes out of the truck's own tank.
     /// When the tank cannot give the full stream, flow and pressure drop in proportion; an empty tank gives nothing.
     /// </summary>
@@ -26,6 +26,12 @@ namespace WaterChaos.FireTruck
         }
 
         public bool IsOpen => _valve.IsOpen;
+
+        /// <summary>Pressure the pump delivers with the valve fully open, in pascals (Pa); 0..max, full at start.</summary>
+        public float TargetPressure => _valve.TargetPressure;
+
+        /// <summary>Sets the pump pressure, clamped to 0..max, in pascals (Pa); flow follows it.</summary>
+        public void SetTargetPressure(float pressure) => _valve.SetTargetPressure(pressure);
 
         /// <summary>Valve open with a target pressure above zero.</summary>
         public bool IsActive => _valve.IsOpen && _valve.TargetPressure > 0f;

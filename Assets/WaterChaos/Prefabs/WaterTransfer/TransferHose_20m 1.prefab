@@ -2790,6 +2790,7 @@ GameObject:
   - component: {fileID: 106751407916194830}
   - component: {fileID: 6473187469787547825}
   - component: {fileID: 5628591585543740824}
+  - component: {fileID: 5628849884183536894}
   m_Layer: 0
   m_Name: Discharge
   m_TagString: Untagged
@@ -3626,3 +3627,18 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5628849884183536894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8417524686959310171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80802d05a2c042cdb02455246911dad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Water.LiquidStreamTint
+  _stream: {fileID: 6473187469787547825}
+  _renderers:
+  - {fileID: 106751407916194830}

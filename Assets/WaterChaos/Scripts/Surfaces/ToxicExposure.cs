@@ -34,10 +34,17 @@ namespace WaterChaos.Surfaces
 
         private ToxicExposureModel _model;
         private CharacterController _body;
+        private float _exposedUntil;
         private float _nextCheck;
 
         /// <summary>Exposed by any source right now (never while protected, e.g. by a gas mask).</summary>
-        public bool IsExposed => !IsProtected && _model != null && _model.IsExposed(Time.time);
+        public bool IsExposed => !IsProtected && _model != null && (_model.IsExposed(Time.time) || Time.time < _exposedUntil);
+
+        /// <summary>Keeps the character exposed (fumes, screen effect) for at least <paramref name="seconds"/> (s), e.g. after a toxic hit stuns it.</summary>
+        public void ExposeFor(float seconds)
+        {
+            _exposedUntil = Mathf.Max(_exposedUntil, Time.time + seconds);
+        }
 
         /// <summary>Protected from every toxic source (wears a gas mask).</summary>
         public bool IsProtected { get; private set; }

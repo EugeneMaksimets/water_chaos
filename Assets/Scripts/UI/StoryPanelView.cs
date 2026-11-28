@@ -49,7 +49,7 @@ namespace WaterChaos.UI
         [SerializeField, Min(1f)] private float _lettersPerSecond = 45f;
 
         [Tooltip("How long the typed card stays before it slides away, in seconds (s). The Esc ring fills over this time.")]
-        [SerializeField, Min(0.5f)] private float _holdTime = 15f;
+        [SerializeField, Min(0.5f)] private float _holdTime = 5f;
 
         [Tooltip("Slide in/out time, in seconds (s).")]
         [SerializeField, Min(0.01f)] private float _slideTime = 0.35f;

@@ -118,7 +118,9 @@ namespace WaterChaos.Mission
 
         private void UpdateHint(bool active)
         {
-            bool show = active && !string.IsNullOrWhiteSpace(_hint)
+            // A hint that only repeats the objective title adds nothing; one with a key prompt still explains the key.
+            bool repeatsTitle = !_showHintKey && MissionText.HintRepeatsTitle(_title, _hint);
+            bool show = active && !string.IsNullOrWhiteSpace(_hint) && !repeatsTitle
                 && (_hintZone == null || _hintZone.Contains(Runner.Player.position));
 
             if (show == _hintShown)

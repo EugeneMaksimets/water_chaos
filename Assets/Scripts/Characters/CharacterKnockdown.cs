@@ -156,6 +156,16 @@ namespace WaterChaos.Characters
                 KnockDown(impact.Direction);
         }
 
+        /// <summary>Slips (e.g. on ice): falls at once, toward <paramref name="direction"/>, and gets up as after a push.</summary>
+        public void Slip(Vector3 direction)
+        {
+            if (IsDown || Time.time < _immuneUntil || (_bubble != null && _bubble.IsCarrying))
+                return;
+
+            _lastPushTime = Time.time;
+            KnockDown(direction);
+        }
+
         private void Update()
         {
             if (!IsDown)

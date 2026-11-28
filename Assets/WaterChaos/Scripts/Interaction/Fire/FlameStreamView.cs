@@ -190,9 +190,12 @@ namespace WaterChaos.Interaction
             }
         }
 
-        // Dependents first: FireSpreader and FireFuelHandler require FireExtinguishHandler.
+        // Dependents first: FireSpreader, FireFuelHandler and the toxic reaction require FireExtinguishHandler,
+        // and the reaction's view requires the reaction.
         private static void StripGameplay(GameObject flame)
         {
+            DestroyAll<WaterChaos.ToxicReaction.FireToxicReactionView>(flame);
+            DestroyAll<WaterChaos.ToxicReaction.FireToxicReaction>(flame);
             DestroyAll<FireSpreader>(flame);
             DestroyAll<FireSteamEffect>(flame);
             DestroyAll<WaterChaos.Sounds.FireSound>(flame);

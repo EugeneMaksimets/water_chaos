@@ -12,6 +12,8 @@ namespace WaterChaos.Rooms
     /// Only when every cooler in the room works is the room protected: fires cannot heat it above
     /// the cooling limit, it cools down to the limit faster, and fires neither spread nor re-ignite.
     /// Also keeps the re-ignition timers of extinguished fires, keyed by an id the caller chooses.
+    /// With a fire floor set, a room whose coolers are all switched off never cools below it while a fire burns
+    /// (not even by putting fires out), and climbs up to it gradually if it was colder.
     /// </summary>
     public sealed class RoomTemperatureModel
     {
@@ -32,6 +34,8 @@ namespace WaterChaos.Rooms
         private readonly List<int> _timerKeys = new List<int>();
 
         private float _coolingPerSecond;
+        private float _fireFloor = float.NegativeInfinity;
+        private float _fireFloorRise;
 
         /// <summary>Current temperature (°C), never below the minimum.</summary>
         public float Temperature { get; private set; }
@@ -91,6 +95,20 @@ namespace WaterChaos.Rooms
             MaxTemperature = maxTemperature > 0f ? maxTemperature : float.PositiveInfinity;
             Temperature = Math.Min(Temperature, MaxTemperature);
         }
+
+        /// <summary>
+        /// While the room has coolers but none works and a fire burns, the temperature never drops below
+        /// <paramref name="floor"/> (°C) and climbs to it at <paramref name="risePerSecond"/> (°C/s) if colder.
+        /// NaN floor = no floor.
+        /// </summary>
+        public void SetFireFloor(float floor, float risePerSecond)
+        {
+            _fireFloor = float.IsNaN(floor) ? float.NegativeInfinity : floor;
+            _fireFloorRise = Sanitize(risePerSecond);
+        }
+
+        /// <summary>The fire floor holds now: coolers exist, all are off, and a fire burns.</summary>
+        public bool IsFireFloorActive => TotalCoolers > 0 && ActiveCoolers == 0 && ActiveFires > 0;
 
         /// <param name="startTemperature">Starting temperature (°C).</param>
         /// <param name="minTemperature">Lowest possible temperature (°C).</param>
@@ -162,7 +180,7 @@ namespace WaterChaos.Rooms
             if (!(degrees > 0f))
                 return;
 
-            Temperature = Math.Max(Temperature - degrees, _minTemperature);
+            Temperature = Math.Max(Temperature - degrees, CoolingFloor());
         }
 
         /// <summary>
@@ -174,7 +192,7 @@ namespace WaterChaos.Rooms
             if (!_fireHeatTimers.Remove(fireId))
                 return false;
 
-            Temperature = Math.Max(Temperature - _extinguishHeatLoss, _minTemperature);
+            Temperature = Math.Max(Temperature - _extinguishHeatLoss, CoolingFloor());
             return true;
         }
 
@@ -219,6 +237,7 @@ namespace WaterChaos.Rooms
                 return;
 
             TickFireHeat(deltaTime);
+            RiseToFireFloor(deltaTime);
 
             if (IsCoolingActive)
                 Cool(deltaTime);
@@ -245,6 +264,25 @@ namespace WaterChaos.Rooms
             return offset.x >= -half.x && offset.x < half.x
                 && offset.y >= -half.y && offset.y < half.y
                 && offset.z >= -half.z && offset.z < half.z;
+        }
+
+        // Lowest temperature cooling may bring the room to now: the minimum, or the fire floor while it holds
+        // (never above the current temperature, so cooling never warms the room up).
+        private float CoolingFloor()
+        {
+            if (!IsFireFloorActive)
+                return _minTemperature;
+
+            return Math.Max(_minTemperature, Math.Min(Temperature, _fireFloor));
+        }
+
+        private void RiseToFireFloor(float deltaTime)
+        {
+            if (!IsFireFloorActive || Temperature >= _fireFloor)
+                return;
+
+            float target = Math.Min(_fireFloor, MaxTemperature);
+            Temperature = Math.Max(Temperature, Math.Min(target, Temperature + _fireFloorRise * deltaTime));
         }
 
         private void Cool(float deltaTime)

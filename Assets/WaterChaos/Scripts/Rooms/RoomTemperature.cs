@@ -60,6 +60,20 @@ namespace WaterChaos.Rooms
         [Tooltip("Highest temperature the room can ever reach (°C). 0 = no cap.")]
         [SerializeField, Min(0f)] private float _maxTemperature;
 
+        [Header("Coolers Off")]
+        [Tooltip("While the room's coolers are all off and a fire burns, it never cools below the floor and climbs back to it.")]
+        [SerializeField] private bool _useFireFloor = true;
+
+        [Tooltip("Lowest temperature while the coolers are off and a fire burns (°C).")]
+        [SerializeField] private float _fireFloor = 40f;
+
+        [Tooltip("How fast a colder room climbs to the floor, in degrees per second (°C/s).")]
+        [SerializeField, Min(0f)] private float _fireFloorRise = 1f;
+
+        [Header("Outdoor Fires")]
+        [Tooltip("A fire counts for the room only with a ceiling within this height above it, in meters (m): fires under the open sky never heat it. 0 = no check.")]
+        [SerializeField, Min(0f)] private float _ceilingCheck = 8f;
+
         // Everything seen by the trigger; owned only while its pivot is inside the box.
         private readonly HashSet<Component> _candidates = new HashSet<Component>();
         private readonly HashSet<Component> _owned = new HashSet<Component>();
@@ -109,6 +123,8 @@ namespace WaterChaos.Rooms
                 _coolingLimit, _initialFireHeat, _extinguishHeatLoss, _heatInterval, _heatPerInterval, _overheatCooling, _reigniteDelay);
             _model.SetMaxFires(_maxFires);
             _model.SetMaxTemperature(_maxTemperature);
+            if (_useFireFloor)
+                _model.SetFireFloor(_fireFloor, _fireFloorRise);
 
             _onFireChanged = OnFireChanged;
             _onApplianceChanged = OnApplianceChanged;
@@ -185,6 +201,13 @@ namespace WaterChaos.Rooms
             return RoomTemperatureModel.IsInsideBox(offset, _box.size);
         }
 
+        // A ray straight up hits a ceiling or roof indoors; under the open sky it finds nothing.
+        private bool IsUnderCeiling(Vector3 position)
+        {
+            return _ceilingCheck <= 0f
+                || Physics.Raycast(position, Vector3.up, _ceilingCheck, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+        }
+
         /// <summary>Fire, cooler or visitor a collider belongs to; child colliders map to the same object.</summary>
         private static Component Resolve(Collider other)
         {
@@ -215,7 +238,8 @@ namespace WaterChaos.Rooms
                     continue;
                 }
 
-                bool present = ((Behaviour)member).isActiveAndEnabled && Contains(member.transform.position);
+                bool present = ((Behaviour)member).isActiveAndEnabled && Contains(member.transform.position)
+                    && (!(member is FireExtinguishHandler) || IsUnderCeiling(member.transform.position));
                 SetOwned(member, present);
             }
         }

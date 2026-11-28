@@ -63,6 +63,7 @@ namespace WaterChaos.UI
             KeyPrompt prompt = CreateKeyPrompt(name, parent, string.Empty, position, out RectTransform root);
             Sprite mouse = CreateMouseSprite(leftLit, rightLit);
             CreateImage("Mouse Icon", root, Vector2.zero, new Vector2(MouseIconWidth, MouseIconHeight), mouse, Color.white);
+            root.gameObject.AddComponent<UiPulse>();
             return prompt;
         }
 

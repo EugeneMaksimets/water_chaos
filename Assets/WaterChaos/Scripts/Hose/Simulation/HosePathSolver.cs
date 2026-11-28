@@ -6,6 +6,7 @@ namespace WaterChaos.Hose
     /// Moves the hose end and keeps the path out of obstacles:
     /// adds wrap points at corners the hose catches on, removes them when the hose swings back off.
     /// Only the end moves, so only the last wrap point can come free.
+    /// The end's move is checked in short pieces, so a thin post the hose swept past within one frame still catches it.
     /// </summary>
     public sealed class HosePathSolver
     {
@@ -17,6 +18,16 @@ namespace WaterChaos.Hose
 
         // Shorter segments are noise from repeated hits on one spot, in meters (m).
         private const float MinSegmentLength = 0.02f;
+
+        // The end's move is checked in pieces no longer than this, in meters (m): thinner posts could slip between two checks.
+        private const float MaxSweepStep = 0.05f;
+
+        // Upper limit of pieces per step (a teleport is not swept further).
+        private const int MaxSweepSteps = 64;
+
+        // A wrap point is dropped even if the hose still bends the same way there, once a tube this many surface offsets
+        // wide passes it freely: the corner no longer holds the hose (the obstacle moved or is gone).
+        private const float FreeShortcutShare = 2f;
 
         // Unwrapping needs a tube this share of the surface offset to be clear, while wrapping
         // reacts to a thin line: the gap between the two stops wrap/unwrap flickering.
@@ -46,29 +57,40 @@ namespace WaterChaos.Hose
             while (model.WrapCount > 0 && CanUnwrap(model, newEnd))
                 model.RemoveLastWrap();
 
-            for (int i = 0; i < MaxWrapsPerStep && model.WrapCount < _maxWrapPoints; i++)
+            int steps = Mathf.Clamp(Mathf.CeilToInt(Vector3.Distance(previousEnd, newEnd) / MaxSweepStep), 1, MaxSweepSteps);
+            Vector3 sweepFrom = previousEnd;
+            for (int step = 1; step <= steps; step++)
             {
-                if (!TryWrap(model, previousEnd, newEnd))
-                    break;
+                Vector3 sweepTo = Vector3.Lerp(previousEnd, newEnd, (float)step / steps);
+                for (int i = 0; i < MaxWrapsPerStep && model.WrapCount < _maxWrapPoints; i++)
+                {
+                    if (!TryWrap(model, sweepFrom, sweepTo))
+                        break;
+                }
+
+                sweepFrom = sweepTo;
             }
 
             model.SetEnd(newEnd);
         }
 
         /// <summary>
-        /// The last wrap point is released when the hose bends the other way there
-        /// (it swung off the corner) and the shortcut past it is clear.
+        /// The last wrap point is released when the shortcut past it is clear and either the hose bends the other way
+        /// there (it swung off the corner) or the shortcut is clear by a wide margin (nothing holds the hose there any more).
         /// </summary>
         private bool CanUnwrap(HoseModel model, Vector3 newEnd)
         {
             Vector3 wrap = model.LastFixedPoint;
             Vector3 before = model.GetPoint(model.PointCount - 3);
 
-            Vector3 bend = Vector3.Cross(wrap - before, newEnd - wrap);
-            if (Vector3.Dot(bend, model.LastBendNormal) > 0f)
+            if (!_query.IsClear(before, newEnd, _surfaceOffset * UnwrapClearanceShare))
                 return false;
 
-            return _query.IsClear(before, newEnd, _surfaceOffset * UnwrapClearanceShare);
+            Vector3 bend = Vector3.Cross(wrap - before, newEnd - wrap);
+            if (Vector3.Dot(bend, model.LastBendNormal) <= 0f)
+                return true;
+
+            return _query.IsClear(before, newEnd, _surfaceOffset * FreeShortcutShare);
         }
 
         private bool TryWrap(HoseModel model, Vector3 previousEnd, Vector3 newEnd)
