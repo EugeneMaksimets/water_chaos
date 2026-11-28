@@ -7,7 +7,7 @@ namespace WaterChaos.Mission
     /// <summary>
     /// Runs the mission: its steps are the child objects, started one after another in hierarchy order.
     /// The next step starts only when the current one is done, so no stage can be skipped;
-    /// nothing advances while a story panel is open. Steps reach the UI through this runner,
+    /// nothing advances while a story card is still being typed out. Steps reach the UI through this runner,
     /// so game objects (doors, pumps, fires) never know about the mission or its UI.
     /// </summary>
     public sealed class MissionRunner : MonoBehaviour
@@ -72,7 +72,7 @@ namespace WaterChaos.Mission
 
         private void Update()
         {
-            if (!IsStarted || IsCompleted || _story.IsOpen)
+            if (!IsStarted || IsCompleted || _story.IsReading)
                 return;
 
             MissionStep step = _steps[_index];
@@ -99,7 +99,7 @@ namespace WaterChaos.Mission
                 Log($"step {_index + 1}/{_steps.Length}: {step.name} ({step.GetType().Name})");
                 step.Begin(this);
 
-                if (!step.IsDone || _story.IsOpen)
+                if (!step.IsDone || _story.IsReading)
                     return;
             }
         }

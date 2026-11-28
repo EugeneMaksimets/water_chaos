@@ -112,6 +112,9 @@ namespace WaterChaos.Soap
             }
         }
 
+        // Room around the body (m) for the arms and the nozzle when measuring the bubble.
+        private const float BodyMargin = 0.5f;
+
         private CharacterController Character => _character != null ? _character : _character = GetComponent<CharacterController>();
 
         private void OnDisable()
@@ -317,8 +320,9 @@ namespace WaterChaos.Soap
                     continue;
                 if (_bubble != null && part.transform.IsChildOf(_bubble.transform))
                     continue;
-                // Only the character: never the water stream (its tube mesh reaches far) or flames on the body.
+                // Only the character: never the water stream (its tube mesh reaches far), the hose or flames on the body.
                 if (part.GetComponentInParent<WaterChaos.Water.WaterStream>() != null
+                    || part.GetComponentInParent<WaterChaos.Hose.HoseController>() != null
                     || part.GetComponentInParent<WaterChaos.Fire.FireSway>() != null)
                     continue;
 
@@ -329,7 +333,24 @@ namespace WaterChaos.Soap
                 found = true;
             }
 
-            return found ? bounds : Character.bounds;
+            return found ? ClipToBody(bounds) : Character.bounds;
+        }
+
+        // Anything else long hanging off the character (a hose, a rope) must not blow the bubble up:
+        // the measured size never goes past the body plus a margin for the arms and the nozzle.
+        private Bounds ClipToBody(Bounds bounds)
+        {
+            // A switched-off controller reports empty bounds: nothing to clip against.
+            if (!Character.enabled)
+                return bounds;
+
+            Bounds body = Character.bounds;
+            body.Expand(BodyMargin * 2f);
+
+            Vector3 min = Vector3.Max(bounds.min, body.min);
+            Vector3 max = Vector3.Max(min, Vector3.Min(bounds.max, body.max));
+            bounds.SetMinMax(min, max);
+            return bounds;
         }
 
         /// <summary>

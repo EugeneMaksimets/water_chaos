@@ -734,7 +734,7 @@ GameObject:
   - component: {fileID: 8971687}
   - component: {fileID: 8971688}
   m_Layer: 0
-  m_Name: "27 \xB7 Pump \xB7 Start Tank Pump"
+  m_Name: "26 \xB7 Pump \xB7 Start Tank Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6779,7 +6779,7 @@ GameObject:
   - component: {fileID: 101978757}
   - component: {fileID: 101978758}
   m_Layer: 0
-  m_Name: "43 \xB7 Pick Up \xB7 Cat"
+  m_Name: "42 \xB7 Pick Up \xB7 Cat"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6979,7 +6979,7 @@ GameObject:
   - component: {fileID: 106715145}
   - component: {fileID: 106715146}
   m_Layer: 0
-  m_Name: "33 \xB7 Hose \xB7 Onto Toxic Pump"
+  m_Name: "32 \xB7 Hose \xB7 Onto Toxic Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7683,7 +7683,7 @@ GameObject:
   - component: {fileID: 124072459}
   - component: {fileID: 124072460}
   m_Layer: 0
-  m_Name: "51 \xB7 Lift \xB7 Teammate in Bubble"
+  m_Name: "50 \xB7 Lift \xB7 Teammate in Bubble"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9530,7 +9530,7 @@ GameObject:
   - component: {fileID: 168720660}
   - component: {fileID: 168720661}
   m_Layer: 0
-  m_Name: "40 \xB7 Story \xB7 Cat"
+  m_Name: "39 \xB7 Story \xB7 Cat"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11174,6 +11174,10 @@ MonoBehaviour:
   _holdTime: 0.8
   _puddleCheckInterval: 0.1
   _feet: {fileID: 0}
+  _liquidMask:
+    serializedVersion: 2
+    m_Bits: 16
+  _touchRadius: 0.3
 --- !u!1001 &203130061
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11309,7 +11313,7 @@ GameObject:
   - component: {fileID: 204533664}
   - component: {fileID: 204533665}
   m_Layer: 0
-  m_Name: "45 \xB7 Event \xB7 Toxic Air Clears"
+  m_Name: "44 \xB7 Event \xB7 Toxic Air Clears"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11784,7 +11788,7 @@ GameObject:
   - component: {fileID: 223566287}
   - component: {fileID: 223566288}
   m_Layer: 0
-  m_Name: "42 \xB7 Wear \xB7 Gas Mask"
+  m_Name: "41 \xB7 Wear \xB7 Gas Mask"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13257,7 +13261,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7120761177821653056, guid: 87751243da6894abebdedd987d44da66, type: 3}
       propertyPath: m_Name
-      value: TrafficCone
+      value: TrafficCone(test)
       objectReference: {fileID: 0}
     - target: {fileID: 8608112844366340170, guid: 87751243da6894abebdedd987d44da66, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13340,8 +13344,6 @@ Transform:
   m_Children:
   - {fileID: 233466670}
   - {fileID: 1191704733}
-  - {fileID: 460965919}
-  - {fileID: 1306817795}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &276502510
@@ -13843,14 +13845,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282487639}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -0.22597122, z: 0, w: 0.974134}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1474541478}
   m_Father: {fileID: 1274992063}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -26.12, z: 0}
 --- !u!114 &282487641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13898,7 +13900,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6, y: 0.6, z: 6}
+  m_Size: {x: 5.41, y: 0.6, z: 4.24}
   m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!114 &282487644
 MonoBehaviour:
@@ -18062,7 +18064,7 @@ GameObject:
   - component: {fileID: 324592286}
   - component: {fileID: 324592287}
   m_Layer: 0
-  m_Name: "24 \xB7 Pick Up \xB7 Pump and Hose (Tank)"
+  m_Name: "23 \xB7 Pick Up \xB7 Pump and Hose (Tank)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19431,7 +19433,7 @@ GameObject:
   - component: {fileID: 373989849}
   - component: {fileID: 373989850}
   m_Layer: 0
-  m_Name: "22 \xB7 Pump \xB7 Start Pool Pump"
+  m_Name: "21 \xB7 Pump \xB7 Start Pool Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19681,7 +19683,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 8.85, y: 10.247576, z: 7.5600014}
+  m_Size: {x: 8.85, y: 4, z: 7.5600014}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &382777454
 Transform:
@@ -19692,7 +19694,7 @@ Transform:
   m_GameObject: {fileID: 382777451}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.96, y: 6.573788, z: 16.1}
+  m_LocalPosition: {x: -13.96, y: 8, z: 16.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20240,7 +20242,7 @@ GameObject:
   - component: {fileID: 401807875}
   - component: {fileID: 401807876}
   m_Layer: 0
-  m_Name: "52 \xB7 Extinguish \xB7 Roof"
+  m_Name: "52 \xB7 Hint \xB7 Soapy Water Lifts Teammates"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20270,9 +20272,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 401807874}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17effded6e3384b338d46dc9d4519c90, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d19acb9a902b4cc2b33d0e1f969109e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.ExtinguishFiresObjective
+  m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.Mission.HintStep
   _optional: 0
   _started:
     m_PersistentCalls:
@@ -20280,16 +20282,8 @@ MonoBehaviour:
   _completed:
     m_PersistentCalls:
       m_Calls: []
-  _title: "\u0417\u0430\u0433\u0430\u0441\u0438 \u0432\u043E\u0433\u043E\u043D\u044C \u043D\u0430 \u0434\u0430\u0445\u0443"
-  _markers: []
-  _hint: 
-  _showHintKey: 0
-  _hintKey: 3
-  _hintZone: {fileID: 0}
-  _zones:
-  - {fileID: 382777452}
-  _timeLimit: 0
-  _settleRooms: []
+  _text: "\u041C\u0438\u043B\u044C\u043D\u0430 \u0432\u043E\u0434\u0430 \u043E\u0433\u043E\u0440\u0442\u0430\u0454 \u043D\u0430\u043F\u0430\u0440\u043D\u0438\u043A\u0456\u0432 \u0431\u0443\u043B\u044C\u0431\u0430\u0448\u043A\u043E\u044E \u0439 \u043F\u0456\u0434\u043D\u0456\u043C\u0430\u0454 \u0457\u0445 \u0443 \u043F\u043E\u0432\u0456\u0442\u0440\u044F \u2014 \u0442\u0430\u043A \u0432\u043E\u043D\u0438 \u0434\u0456\u0441\u0442\u0430\u043D\u0443\u0442\u044C \u0432\u043E\u0433\u043E\u043D\u044C \u0442\u0430\u043C, \u043A\u0443\u0434\u0438 \u0437\u043D\u0438\u0437\u0443 \u043D\u0435 \u0434\u043E\u0442\u044F\u0433\u043D\u0443\u0442\u0438\u0441\u044F."
+  _seconds: 8
 --- !u!1001 &405466818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22340,7 +22334,7 @@ GameObject:
   - component: {fileID: 445681846}
   - component: {fileID: 445681847}
   m_Layer: 0
-  m_Name: "46 \xB7 Story \xB7 Cat Saved"
+  m_Name: "45 \xB7 Story \xB7 Cat Saved"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22926,68 +22920,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5073055906872273980, guid: 0b1317b1141e94a94b90b1ed887002e7, type: 3}
   m_PrefabInstance: {fileID: 458137613}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &460965918
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 275917334}
-    m_Modifications:
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -16.1725
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 7.450776
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 18.368
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_Name
-      value: Roof Fire 3
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
---- !u!4 &460965919 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-  m_PrefabInstance: {fileID: 460965918}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &463106133
 PrefabInstance:
@@ -23926,7 +23858,7 @@ GameObject:
   - component: {fileID: 490334901}
   - component: {fileID: 490334902}
   m_Layer: 0
-  m_Name: "20 \xB7 Pump \xB7 Into Pool"
+  m_Name: "19 \xB7 Pump \xB7 Into Pool"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27954,7 +27886,7 @@ GameObject:
   - component: {fileID: 538907105}
   - component: {fileID: 538907106}
   m_Layer: 0
-  m_Name: "26 \xB7 Hose \xB7 Onto Tank Pump"
+  m_Name: "25 \xB7 Hose \xB7 Onto Tank Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28757,7 +28689,8 @@ MonoBehaviour:
   _heatPerInterval: 1
   _overheatCooling: 2.5
   _reigniteDelay: 15
-  _maxFires: 20
+  _maxFires: 0
+  _maxTemperature: 304
 --- !u!54 &563359817
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -29126,7 +29059,7 @@ GameObject:
   - component: {fileID: 576833102}
   - component: {fileID: 576833103}
   m_Layer: 0
-  m_Name: "36 \xB7 Neutralize \xB7 Gasoline"
+  m_Name: "35 \xB7 Neutralize \xB7 Gasoline"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30345,7 +30278,7 @@ GameObject:
   - component: {fileID: 601459130}
   - component: {fileID: 601459131}
   m_Layer: 0
-  m_Name: "50 \xB7 Connect \xB7 Nozzle to Tee (Soapy Water)"
+  m_Name: "49 \xB7 Connect \xB7 Nozzle to Tee (Soapy Water)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34225,7 +34158,7 @@ GameObject:
   - component: {fileID: 659285543}
   - component: {fileID: 659285544}
   m_Layer: 0
-  m_Name: "48 \xB7 Event \xB7 Roof Fires"
+  m_Name: "47 \xB7 Event \xB7 Roof Fires"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35278,7 +35211,7 @@ GameObject:
   - component: {fileID: 686283315}
   - component: {fileID: 686283316}
   m_Layer: 0
-  m_Name: "49 \xB7 Story \xB7 Roof"
+  m_Name: "48 \xB7 Story \xB7 Roof"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36957,7 +36890,7 @@ GameObject:
   - component: {fileID: 749259493}
   - component: {fileID: 749259494}
   m_Layer: 0
-  m_Name: "38 \xB7 Event \xB7 House Turns Toxic"
+  m_Name: "37 \xB7 Event \xB7 House Turns Toxic"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45065,7 +44998,7 @@ GameObject:
   - component: {fileID: 885723461}
   - component: {fileID: 885723462}
   m_Layer: 0
-  m_Name: "47 \xB7 Neutralize \xB7 Soap"
+  m_Name: "46 \xB7 Neutralize \xB7 Soap"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50304,6 +50237,7 @@ MonoBehaviour:
   _overheatCooling: 2.5
   _reigniteDelay: 15
   _maxFires: 8
+  _maxTemperature: 0
 --- !u!54 &1024051717
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -56284,7 +56218,7 @@ GameObject:
   - component: {fileID: 1118527210}
   - component: {fileID: 1118527211}
   m_Layer: 0
-  m_Name: "21 \xB7 Hose \xB7 Onto Pool Pump"
+  m_Name: "20 \xB7 Hose \xB7 Onto Pool Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56925,6 +56859,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3733654603972043425, guid: 00e94cad52c264940b16ba3a888706c4, type: 3}
   m_PrefabInstance: {fileID: 1132930196}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1134869276 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7120761177821653056, guid: 87751243da6894abebdedd987d44da66, type: 3}
+  m_PrefabInstance: {fileID: 1333542723}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1136386688
 PrefabInstance:
@@ -58111,7 +58050,7 @@ GameObject:
   - component: {fileID: 1163423229}
   - component: {fileID: 1163423230}
   m_Layer: 0
-  m_Name: "34 \xB7 Pump \xB7 Start Toxic Pump"
+  m_Name: "33 \xB7 Pump \xB7 Start Toxic Pump"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62538,6 +62477,10 @@ MonoBehaviour:
   _holdTime: 0.8
   _puddleCheckInterval: 0.1
   _feet: {fileID: 0}
+  _liquidMask:
+    serializedVersion: 2
+    m_Bits: 16
+  _touchRadius: 0.3
 --- !u!1001 &1276422033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63533,68 +63476,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5073055906872273980, guid: 0b1317b1141e94a94b90b1ed887002e7, type: 3}
   m_PrefabInstance: {fileID: 1306500677}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1306817794
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 275917334}
-    m_Modifications:
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -11.304999
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 7.450776
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 18.368
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7940506567032470736, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-      propertyPath: m_Name
-      value: Roof Fire 4
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
---- !u!4 &1306817795 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1252699591611053445, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
-  m_PrefabInstance: {fileID: 1306817794}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1309968316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63730,7 +63611,7 @@ GameObject:
   - component: {fileID: 1317157370}
   - component: {fileID: 1317157371}
   m_Layer: 0
-  m_Name: "23 \xB7 Hose \xB7 Pool End to Destination"
+  m_Name: "22 \xB7 Hose \xB7 Pool End to Destination"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64498,13 +64379,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7120761177821653056, guid: 87751243da6894abebdedd987d44da66, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1333542730}
   m_SourcePrefab: {fileID: 100100000, guid: 87751243da6894abebdedd987d44da66, type: 3}
 --- !u!4 &1333542724 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8608112844366340170, guid: 87751243da6894abebdedd987d44da66, type: 3}
   m_PrefabInstance: {fileID: 1333542723}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1333542730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134869276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c9171e668104aaab3e0f25feeb3b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.WaterTransfer.Rope
 --- !u!1001 &1335104647
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -67048,7 +66944,7 @@ GameObject:
   - component: {fileID: 1413122154}
   - component: {fileID: 1413122155}
   m_Layer: 0
-  m_Name: "25 \xB7 Pump \xB7 Into Underground Tank"
+  m_Name: "24 \xB7 Pump \xB7 Into Underground Tank"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69602,7 +69498,7 @@ GameObject:
   - component: {fileID: 1482092631}
   - component: {fileID: 1482092632}
   m_Layer: 0
-  m_Name: "31 \xB7 Story \xB7 Gasoline"
+  m_Name: "30 \xB7 Story \xB7 Gasoline"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70695,6 +70591,7 @@ MonoBehaviour:
   _overheatCooling: 2.5
   _reigniteDelay: 15
   _maxFires: 0
+  _maxTemperature: 0
 --- !u!54 &1509458785
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -72939,7 +72836,7 @@ GameObject:
   - component: {fileID: 1580980544}
   - component: {fileID: 1580980545}
   m_Layer: 0
-  m_Name: "37 \xB7 Check \xB7 Toxic Reaches Teammates"
+  m_Name: "36 \xB7 Check \xB7 Toxic Reaches Teammates"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73001,7 +72898,7 @@ GameObject:
   - component: {fileID: 1583829484}
   - component: {fileID: 1583829485}
   m_Layer: 0
-  m_Name: "32 \xB7 Pick Up \xB7 Long Hose (Neutralize)"
+  m_Name: "31 \xB7 Pick Up \xB7 Long Hose (Neutralize)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73427,7 +73324,7 @@ GameObject:
   - component: {fileID: 1589566635}
   - component: {fileID: 1589566636}
   m_Layer: 0
-  m_Name: "19 \xB7 Pick Up \xB7 Pump and Hose (Pool)"
+  m_Name: "18 \xB7 Pick Up \xB7 Pump and Hose (Pool)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73892,7 +73789,7 @@ GameObject:
   - component: {fileID: 1611409178}
   - component: {fileID: 1611409179}
   m_Layer: 0
-  m_Name: "18 \xB7 Cooling \xB7 Teammates House"
+  m_Name: "51 \xB7 Cooling \xB7 Teammates House"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75264,6 +75161,10 @@ MonoBehaviour:
   _holdTime: 0.8
   _puddleCheckInterval: 0.1
   _feet: {fileID: 0}
+  _liquidMask:
+    serializedVersion: 2
+    m_Bits: 16
+  _touchRadius: 0.3
 --- !u!114 &1633715749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80720,7 +80621,7 @@ GameObject:
   - component: {fileID: 1804662680}
   - component: {fileID: 1804662681}
   m_Layer: 0
-  m_Name: "41 \xB7 Pick Up \xB7 Gas Mask"
+  m_Name: "40 \xB7 Pick Up \xB7 Gas Mask"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82596,7 +82497,7 @@ GameObject:
   - component: {fileID: 1865641047}
   - component: {fileID: 1865641048}
   m_Layer: 0
-  m_Name: "28 \xB7 Hose \xB7 Tank End to Destination"
+  m_Name: "27 \xB7 Hose \xB7 Tank End to Destination"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82662,7 +82563,7 @@ GameObject:
   - component: {fileID: 1866929452}
   - component: {fileID: 1866929453}
   m_Layer: 0
-  m_Name: "30 \xB7 See \xB7 Flamethrowers"
+  m_Name: "29 \xB7 See \xB7 Flamethrowers"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83116,7 +83017,6 @@ Transform:
   - {fileID: 447484935}
   - {fileID: 1217543147}
   - {fileID: 1356233488}
-  - {fileID: 1611409178}
   - {fileID: 1589566635}
   - {fileID: 490334901}
   - {fileID: 1118527210}
@@ -83150,6 +83050,7 @@ Transform:
   - {fileID: 686283315}
   - {fileID: 601459130}
   - {fileID: 124072459}
+  - {fileID: 1611409178}
   - {fileID: 401807875}
   - {fileID: 575597051}
   - {fileID: 1365908094}
@@ -86031,6 +85932,7 @@ MonoBehaviour:
   _overheatCooling: 2.5
   _reigniteDelay: 15
   _maxFires: 0
+  _maxTemperature: 0
 --- !u!54 &1945864688
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -86186,7 +86088,7 @@ GameObject:
   - component: {fileID: 1949455082}
   - component: {fileID: 1949455083}
   m_Layer: 0
-  m_Name: "44 \xB7 Rescue \xB7 Cat"
+  m_Name: "43 \xB7 Rescue \xB7 Cat"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86802,7 +86704,7 @@ GameObject:
   - component: {fileID: 1972057936}
   - component: {fileID: 1972057937}
   m_Layer: 0
-  m_Name: "39 \xB7 Event \xB7 Cat Appears"
+  m_Name: "38 \xB7 Event \xB7 Cat Appears"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87443,13 +87345,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 448f6d0a16c78412d9061e28d44b878d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterChaos.UI.StoryPanelView
-  _pause: {fileID: 1984345781}
   _width: 880
-  _dimAlpha: 0.45
+  _position: {x: 40, y: 120}
   _sortingOrder: 100
-  _continueText: "\u041F\u0440\u043E\u0434\u043E\u0432\u0436\u0438\u0442\u0438"
-  _fadeTime: 0.25
-  _minShowTime: 0.6
+  _closeText: "\u0417\u0430\u043A\u0440\u0438\u0442\u0438"
+  _lettersPerSecond: 45
+  _holdTime: 15
+  _slideTime: 0.35
+  _minReadTime: 3
 --- !u!114 &1984345781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88039,7 +87942,7 @@ GameObject:
   - component: {fileID: 2000026307}
   - component: {fileID: 2000026308}
   m_Layer: 0
-  m_Name: "35 \xB7 Hose \xB7 Toxic End to Destination"
+  m_Name: "34 \xB7 Hose \xB7 Toxic End to Destination"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90154,6 +90057,10 @@ MonoBehaviour:
   _holdTime: 0.8
   _puddleCheckInterval: 0.1
   _feet: {fileID: 0}
+  _liquidMask:
+    serializedVersion: 2
+    m_Bits: 16
+  _touchRadius: 0.3
 --- !u!1001 &2052509862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93222,7 +93129,7 @@ GameObject:
   - component: {fileID: 2126621831}
   - component: {fileID: 2126621832}
   m_Layer: 0
-  m_Name: "29 \xB7 Check \xB7 Gasoline Reaches Teammates"
+  m_Name: "28 \xB7 Check \xB7 Gasoline Reaches Teammates"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93905,6 +93812,8 @@ MonoBehaviour:
     m_Bits: 111
   _surfaceOffset: 0.08
   _maxWrapPoints: 32
+  _sweepHeight: 0.4
+  _groundProbe: 3
 --- !u!1 &175069864458846941
 GameObject:
   m_ObjectHideFlags: 0
@@ -101785,6 +101694,8 @@ MonoBehaviour:
     m_Bits: 111
   _surfaceOffset: 0.08
   _maxWrapPoints: 32
+  _sweepHeight: 0.4
+  _groundProbe: 3
 --- !u!114 &2351649899305000086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128711,6 +128622,8 @@ MonoBehaviour:
     m_Bits: 111
   _surfaceOffset: 0.08
   _maxWrapPoints: 32
+  _sweepHeight: 0.4
+  _groundProbe: 3
 --- !u!1 &6596108609516402076
 GameObject:
   m_ObjectHideFlags: 0
@@ -131246,6 +131159,8 @@ MonoBehaviour:
     m_Bits: 111
   _surfaceOffset: 0.08
   _maxWrapPoints: 32
+  _sweepHeight: 0.4
+  _groundProbe: 3
 --- !u!33 &7342371690374610678
 MeshFilter:
   m_ObjectHideFlags: 0

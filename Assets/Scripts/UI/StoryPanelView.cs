@@ -2,20 +2,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using WaterChaos.Mission;
 using WaterChaos.Sounds;
 
 namespace WaterChaos.UI
 {
     /// <summary>
-    /// Story panel in the middle of the screen: the game pauses while it is open and goes on when the player
-    /// closes it with Esc. Messages queue up, so two panels never show at once. Same cartoon card look as the HUD;
-    /// animates on real time, since the game time is frozen while it is open.
+    /// Story card at the side of the screen; the game keeps running. The card slides in, its text is typed out,
+    /// then it stays for a while (a ring around the Esc key fills meanwhile) and slides away by itself.
+    /// Esc closes it early, but only once the text is fully typed. Messages queue up, so two cards never show at once.
     /// </summary>
     public sealed class StoryPanelView : MonoBehaviour
     {
-        private const float BodyWidthInset = 90f;
-        private const float MinHeight = 200f;
+        private const float TextInset = 36f;
+        private const float FooterHeight = 70f;
+        private const float MinHeight = 150f;
+
+        private enum Phase
+        {
+            Typing,
+            Holding,
+            Closing,
+        }
 
         private struct Message
         {
@@ -23,58 +30,64 @@ namespace WaterChaos.UI
             public string Text;
         }
 
-        [Header("References")]
-        [Tooltip("Pauses the game while a panel is open.")]
-        [SerializeField] private GamePause _pause;
-
         [Header("Layout")]
         [Tooltip("Card width, in reference pixels (1920x1080).")]
-        [SerializeField, Min(300f)] private float _width = 880f;
+        [SerializeField, Min(300f)] private float _width = 600f;
 
-        [Tooltip("Darkening of the game behind the panel (0..1).")]
-        [SerializeField, Range(0f, 1f)] private float _dimAlpha = 0.45f;
+        [Tooltip("Card position from the right edge (x) and above the screen middle (y), in reference pixels.")]
+        [SerializeField] private Vector2 _position = new Vector2(40f, 120f);
 
-        [Tooltip("Draw order of the panel canvas; above the rest of the HUD.")]
+        [Tooltip("Draw order of the card canvas; above the rest of the HUD.")]
         [SerializeField] private int _sortingOrder = 100;
 
         [Header("Text")]
         [Tooltip("Caption next to the Esc key.")]
-        [SerializeField] private string _continueText = "Продовжити";
+        [SerializeField] private string _closeText = "Закрити";
 
         [Header("Timing")]
-        [Tooltip("Fade in/out time, in seconds (s).")]
-        [SerializeField, Min(0.01f)] private float _fadeTime = 0.25f;
+        [Tooltip("Letters typed per second (1/s).")]
+        [SerializeField, Min(1f)] private float _lettersPerSecond = 45f;
 
-        [Tooltip("Esc is ignored for this long after a panel opens, so it is not skipped by accident, in seconds (s).")]
-        [SerializeField, Min(0f)] private float _minShowTime = 0.6f;
+        [Tooltip("How long the typed card stays before it slides away, in seconds (s). The Esc ring fills over this time.")]
+        [SerializeField, Min(0.5f)] private float _holdTime = 15f;
+
+        [Tooltip("Slide in/out time, in seconds (s).")]
+        [SerializeField, Min(0.01f)] private float _slideTime = 0.35f;
+
+        [Tooltip("A waiting card replaces a typed one after it was shown at least this long, in seconds (s).")]
+        [SerializeField, Min(0f)] private float _minReadTime = 3f;
 
         private readonly Queue<Message> _queue = new Queue<Message>();
         private CanvasGroup _group;
         private RectTransform _card;
         private Text _speaker;
         private Text _body;
-        private RectTransform _footer;
+        private Image _progress;
+        private CanvasGroup _footer;
 
         private bool _hasCurrent;
-        private bool _closing;
-        private float _shownTime;
+        private Phase _phase;
+        private string _fullText = string.Empty;
+        private float _typed;
+        private float _held;
+        private float _slide;
 
-        /// <summary>A panel is shown or waiting; the mission does not advance meanwhile.</summary>
+        /// <summary>A card is shown or waiting.</summary>
         public bool IsOpen => _hasCurrent || _queue.Count > 0;
+
+        /// <summary>A card is still being typed or waits to be shown; the mission waits until it has been read out.</summary>
+        public bool IsReading => (_hasCurrent && _phase == Phase.Typing) || _queue.Count > 0;
 
         private void Awake()
         {
-            if (_pause == null)
-                Debug.LogError($"{name}: StoryPanelView needs a Pause reference; the game will not stop under the panel.", this);
-
             Build();
             _group.gameObject.SetActive(false);
         }
 
-        /// <summary>Queues a story panel; it opens (and the game pauses) as soon as no other panel is open.</summary>
+        /// <summary>Queues a story card; it slides in as soon as no other card is shown.</summary>
         public void Show(string speaker, string text)
         {
-            _queue.Enqueue(new Message { Speaker = speaker, Text = text });
+            _queue.Enqueue(new Message { Speaker = speaker, Text = text ?? string.Empty });
             if (!_hasCurrent)
                 OpenNext();
         }
@@ -84,44 +97,85 @@ namespace WaterChaos.UI
             if (!_hasCurrent)
                 return;
 
-            float deltaTime = Time.unscaledDeltaTime;
-            _shownTime += deltaTime;
-
-            float target = _closing ? 0f : 1f;
-            _group.alpha = Mathf.MoveTowards(_group.alpha, target, deltaTime / _fadeTime);
-            _card.localScale = Vector3.one * Mathf.Lerp(0.92f, 1f, _group.alpha);
-
-            if (_closing)
+            float deltaTime = Time.deltaTime;
+            switch (_phase)
             {
-                if (_group.alpha <= 0f)
-                    FinishClosing();
-                return;
+                case Phase.Typing:
+                    Type(deltaTime);
+                    break;
+                case Phase.Holding:
+                    Hold(deltaTime);
+                    break;
             }
 
+            Slide(deltaTime);
+        }
+
+        private void Type(float deltaTime)
+        {
+            _typed += _lettersPerSecond * deltaTime;
+            int shown = Mathf.Min(_fullText.Length, Mathf.FloorToInt(_typed));
+            _body.text = _fullText.Substring(0, shown);
+
+            if (shown < _fullText.Length)
+                return;
+
+            _phase = Phase.Holding;
+            _held = 0f;
+            _footer.alpha = 1f;
+        }
+
+        private void Hold(float deltaTime)
+        {
+            _held += deltaTime;
+            _progress.fillAmount = Mathf.Clamp01(_held / _holdTime);
+
             Keyboard keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame && _shownTime >= _minShowTime)
-                _closing = true;
+            bool closePressed = keyboard != null && keyboard.escapeKey.wasPressedThisFrame;
+            bool nextWaiting = _queue.Count > 0 && _held >= _minReadTime;
+
+            if (closePressed || nextWaiting || _held >= _holdTime)
+                _phase = Phase.Closing;
+        }
+
+        // Eases in from beyond the right edge and back out; the next card opens once this one is gone.
+        private void Slide(float deltaTime)
+        {
+            float target = _phase == Phase.Closing ? 0f : 1f;
+            _slide = Mathf.MoveTowards(_slide, target, deltaTime / _slideTime);
+
+            float eased = 1f - (1f - _slide) * (1f - _slide);
+            float hiddenX = _width + _position.x + 40f;
+            _card.anchoredPosition = new Vector2(Mathf.Lerp(hiddenX, -_position.x, eased), _position.y);
+            _group.alpha = eased;
+
+            if (_phase == Phase.Closing && _slide <= 0f)
+                FinishClosing();
         }
 
         private void OpenNext()
         {
             Message message = _queue.Dequeue();
             _hasCurrent = true;
-            _closing = false;
-            _shownTime = 0f;
+            _phase = Phase.Typing;
+            _typed = 0f;
+            _held = 0f;
+            _slide = 0f;
 
             bool hasSpeaker = !string.IsNullOrWhiteSpace(message.Speaker);
             _speaker.gameObject.SetActive(hasSpeaker);
             _speaker.text = hasSpeaker ? message.Speaker : string.Empty;
-            _body.text = message.Text;
-            Layout(hasSpeaker);
 
-            _group.alpha = 0f;
+            // Sized for the whole text up front, so the card does not grow while typing.
+            _fullText = message.Text;
+            _body.text = _fullText;
+            Layout(hasSpeaker);
+            _body.text = string.Empty;
+
+            _progress.fillAmount = 0f;
+            _footer.alpha = 0.35f;
             _group.gameObject.SetActive(true);
             Sound.PlayUI(SoundId.StoryOpen);
-
-            if (_pause != null)
-                _pause.Pause();
         }
 
         private void FinishClosing()
@@ -135,21 +189,18 @@ namespace WaterChaos.UI
             }
 
             _group.gameObject.SetActive(false);
-            if (_pause != null)
-                _pause.Resume();
         }
 
         // The card grows with the text: speaker on top, body, then the Esc prompt at the bottom.
         private void Layout(bool hasSpeaker)
         {
-            float top = hasSpeaker ? 82f : 40f;
+            float top = hasSpeaker ? 64f : 28f;
             float bodyHeight = Mathf.Max(30f, _body.preferredHeight);
-            float height = Mathf.Max(MinHeight, top + bodyHeight + 100f);
+            float height = Mathf.Max(MinHeight, top + bodyHeight + FooterHeight);
 
             _card.sizeDelta = new Vector2(_width, height);
-            _speaker.rectTransform.anchoredPosition = new Vector2(0f, -34f);
-            _body.rectTransform.anchoredPosition = new Vector2(0f, -top);
-            _footer.anchoredPosition = new Vector2(0f, 46f);
+            _speaker.rectTransform.anchoredPosition = new Vector2(TextInset, -24f);
+            _body.rectTransform.anchoredPosition = new Vector2(TextInset, -top);
         }
 
         private void Build()
@@ -164,46 +215,61 @@ namespace WaterChaos.UI
             _group.blocksRaycasts = false;
             _group.interactable = false;
 
-            Image dim = root.gameObject.AddComponent<Image>();
-            dim.color = new Color(0f, 0f, 0f, _dimAlpha);
-            dim.raycastTarget = false;
-
             Sprite rounded = HudWidgets.CreateRoundedSprite(64, 22);
             _card = HudWidgets.CreateRect("Card", root, Vector2.zero, new Vector2(_width, MinHeight));
+            _card.anchorMin = _card.anchorMax = _card.pivot = new Vector2(1f, 0.5f);
             Fill(HudWidgets.CreateImage("Shadow", _card, Vector2.zero, Vector2.zero, rounded, HudWidgets.CardShadowColor), 0f, new Vector2(8f, -8f));
             Fill(HudWidgets.CreateImage("Outline", _card, Vector2.zero, Vector2.zero, rounded, HudWidgets.AccentColor), 0f, Vector2.zero);
             Fill(HudWidgets.CreateImage("Inner", _card, Vector2.zero, Vector2.zero, rounded, HudWidgets.CardInnerColor), 6f, Vector2.zero);
 
-            _speaker = CreateTopText("Speaker", 28, HudWidgets.AccentColor, TextAnchor.UpperCenter);
-            _body = CreateTopText("Body", 25, Color.white, TextAnchor.UpperCenter);
+            _speaker = CreateTopText("Speaker", 26, HudWidgets.AccentColor);
+            _body = CreateTopText("Body", 23, Color.white);
             _body.fontStyle = FontStyle.Normal;
             _body.lineSpacing = 1.1f;
 
-            _footer = HudWidgets.CreateRect("Footer", _card, Vector2.zero, new Vector2(300f, 48f));
-            _footer.anchorMin = _footer.anchorMax = new Vector2(0.5f, 0f);
+            BuildFooter();
+        }
+
+        // Esc key in the bottom right corner with a ring around it that fills while the card stays.
+        private void BuildFooter()
+        {
+            RectTransform footer = HudWidgets.CreateRect("Footer", _card, Vector2.zero, new Vector2(240f, 56f));
+            footer.anchorMin = footer.anchorMax = footer.pivot = new Vector2(1f, 0f);
+            footer.anchoredPosition = new Vector2(-24f, 16f);
+            _footer = footer.gameObject.AddComponent<CanvasGroup>();
+
             Sprite disc = HudWidgets.CreateCircleSprite(128, 0f);
-            Sprite ring = HudWidgets.CreateCircleSprite(128, 0.84f);
-            // Key on the left, caption to its right with a gap: they never overlap.
-            Vector2 keySize = new Vector2(48f, 48f);
-            Vector2 keyPosition = new Vector2(-80f, 0f);
-            HudWidgets.CreateImage("Key Background", _footer, keyPosition, keySize, disc, HudWidgets.PanelColor);
-            HudWidgets.CreateImage("Key Ring", _footer, keyPosition, keySize, ring, Color.white);
-            Text key = HudWidgets.CreateText("Key", _footer, keyPosition, keySize, 15, TextAnchor.MiddleCenter);
+            Sprite ring = HudWidgets.CreateCircleSprite(128, 0.8f);
+            Vector2 keySize = new Vector2(52f, 52f);
+            Vector2 keyPosition = new Vector2(120f - keySize.x * 0.5f, 0f);
+
+            HudWidgets.CreateImage("Key Background", footer, keyPosition, keySize, disc, HudWidgets.PanelColor);
+            HudWidgets.CreateImage("Key Track", footer, keyPosition, keySize, ring, HudWidgets.TrackColor);
+
+            _progress = HudWidgets.CreateImage("Key Progress", footer, keyPosition, keySize, ring, HudWidgets.AccentColor);
+            _progress.type = Image.Type.Filled;
+            _progress.fillMethod = Image.FillMethod.Radial360;
+            _progress.fillOrigin = (int)Image.Origin360.Top;
+            _progress.fillClockwise = true;
+            _progress.fillAmount = 0f;
+
+            Text key = HudWidgets.CreateText("Key", footer, keyPosition, keySize, 15, TextAnchor.MiddleCenter);
             key.text = "Esc";
             key.fontStyle = FontStyle.Bold;
 
-            Text caption = HudWidgets.CreateText("Caption", _footer, new Vector2(40f, 0f), new Vector2(160f, 30f), 20, TextAnchor.MiddleLeft);
-            caption.text = _continueText;
+            Text caption = HudWidgets.CreateText("Caption", footer, new Vector2(keyPosition.x - keySize.x * 0.5f - 70f, 0f),
+                new Vector2(130f, 30f), 20, TextAnchor.MiddleRight);
+            caption.text = _closeText;
             caption.fontStyle = FontStyle.Bold;
             Object.Destroy(caption.GetComponent<Shadow>());
             HudWidgets.AddOutline(caption);
         }
 
-        private Text CreateTopText(string name, int fontSize, Color color, TextAnchor alignment)
+        private Text CreateTopText(string name, int fontSize, Color color)
         {
-            Text text = HudWidgets.CreateText(name, _card, Vector2.zero, new Vector2(_width - BodyWidthInset, 30f), fontSize, alignment);
+            Text text = HudWidgets.CreateText(name, _card, Vector2.zero, new Vector2(_width - TextInset * 2f, 30f), fontSize, TextAnchor.UpperLeft);
             RectTransform rect = text.rectTransform;
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 1f);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Overflow;
             text.fontStyle = FontStyle.Bold;

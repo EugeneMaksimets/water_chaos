@@ -5,7 +5,7 @@ using WaterChaos.Water;
 namespace WaterChaos.Surfaces
 {
     /// <summary>
-    /// The one place that knows whether a character is exposed to toxic liquid: it stands in a toxic puddle, breathes
+    /// The one place that knows whether a character is exposed to toxic liquid: it stands in a toxic puddle or touches toxic liquid in a reservoir, breathes
     /// toxic air (<see cref="ToxicHazards"/>, e.g. a cloud from a toxic fire), or a toxic stream (a teammate's) hits it. Every source feeds the same <see cref="ToxicExposureModel"/>,
     /// so the screen effect never flickers or doubles up. Sits next to the character's collider, like every
     /// impact receiver; screen effects read <see cref="IsExposed"/>.
@@ -22,6 +22,15 @@ namespace WaterChaos.Surfaces
 
         [Tooltip("Optional: the feet; the object's position (minus the character controller's half height) otherwise.")]
         [SerializeField] private Transform _feet;
+
+        [Header("Reservoirs")]
+        [Tooltip("Layers of the reservoirs' liquid volumes (triggers with a WaterReservoirComponent).")]
+        [SerializeField] private LayerMask _liquidMask = 1 << 4;
+
+        [Tooltip("Reach of the body (m) when checking for touching a reservoir's liquid.")]
+        [SerializeField, Min(0.01f)] private float _touchRadius = 0.3f;
+
+        private static readonly Collider[] s_liquidHits = new Collider[8];
 
         private ToxicExposureModel _model;
         private CharacterController _body;
@@ -59,8 +68,25 @@ namespace WaterChaos.Surfaces
                 return;
 
             _nextCheck = Time.time + _puddleCheckInterval;
-            _model.SetInPuddle(LiquidSurfaceController.IsInToxicPuddle(FeetPosition()));
+            _model.SetInPuddle(LiquidSurfaceController.IsInToxicPuddle(FeetPosition()) || TouchesToxicReservoir());
             _model.SetInCloud(ToxicHazards.AnyContains(BodyPosition()));
+        }
+
+        // Any body part from the feet to the chest inside a reservoir that holds toxic liquid.
+        private bool TouchesToxicReservoir()
+        {
+            int count = Physics.OverlapCapsuleNonAlloc(FeetPosition(), BodyPosition(), _touchRadius, s_liquidHits,
+                _liquidMask, QueryTriggerInteraction.Collide);
+
+            for (int i = 0; i < count; i++)
+            {
+                WaterReservoirComponent tank = s_liquidHits[i].GetComponent<WaterReservoirComponent>();
+                WaterReservoir reservoir = tank != null ? tank.Reservoir : null;
+                if (reservoir != null && !reservoir.IsEmpty && reservoir.Liquid == LiquidType.Toxic)
+                    return true;
+            }
+
+            return false;
         }
 
         private Vector3 BodyPosition()

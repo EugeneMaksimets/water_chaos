@@ -48,6 +48,10 @@ namespace WaterChaos.WaterTransfer
         [Tooltip("How sharply a hanging hose bends down under its weight, in 1/m. Lower = stiffer hose, wider arcs.")]
         [SerializeField, Range(0.3f, 6f)] private float _bendCurvature = 1.5f;
 
+        [Header("End Coupling")]
+        [Tooltip("Optional coupling head (a child of the hose end); kept on the tube's last point, pointing along the tube.")]
+        [SerializeField] private Transform _coupling;
+
         [Header("Water Inside")]
         [Tooltip("Pressure at which the hose looks fully charged, in pascals (Pa).")]
         [SerializeField, Min(1f)] private float _fullPressure = 200_000f;
@@ -97,8 +101,23 @@ namespace WaterChaos.WaterTransfer
             float radius = _width * 0.5f;
             int count = _drape.Build(path, path.Anchor, path.End, _groundMask, _pointSpacing, _maxSag, radius, _cornerRadius, _bendCurvature);
             _tube.Build(_drape.Points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
+            AlignCoupling(count);
 
             UpdateWater(Time.deltaTime);
+        }
+
+        // The end itself faces where the player looks (or the discharge direction); the coupling follows the tube instead.
+        private void AlignCoupling(int count)
+        {
+            if (_coupling == null || count < 2)
+                return;
+
+            Vector3 end = _drape.Points[count - 1];
+            Vector3 direction = end - _drape.Points[count - 2];
+            if (direction.sqrMagnitude < 1e-8f)
+                return;
+
+            _coupling.SetPositionAndRotation(end, Quaternion.LookRotation(direction));
         }
 
         private void UpdateWater(float deltaTime)

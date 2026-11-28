@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: FireSpreadSettings
   m_EditorClassIdentifier: WaterChaos.Runtime::WaterChaos.Interaction.FireSpreadSettings
   _firePrefab: {fileID: 2233029035384726905, guid: 8e6db1f8cbaa14019bada6da7b9b9c20, type: 3}
+  _spreadOutdoors: 0
   _spreadRadius: 3
   _spreadInterval: 6
   _minIntensity: 0.5
@@ -21,7 +22,7 @@ MonoBehaviour:
   _surfaceSamples: 8
   _spawnHeight: 0.5
   _exclusionRadius: 1
-  _maxActiveFires: 20
+  _maxActiveFires: 100
   _targetMask:
     serializedVersion: 2
     m_Bits: 4294966891

@@ -57,6 +57,9 @@ namespace WaterChaos.Rooms
         [Tooltip("Most fires that may burn in the room at once: spreading and re-lighting stop at this number. 0 = no limit.")]
         [SerializeField, Min(0)] private int _maxFires;
 
+        [Tooltip("Highest temperature the room can ever reach (°C). 0 = no cap.")]
+        [SerializeField, Min(0f)] private float _maxTemperature;
+
         // Everything seen by the trigger; owned only while its pivot is inside the box.
         private readonly HashSet<Component> _candidates = new HashSet<Component>();
         private readonly HashSet<Component> _owned = new HashSet<Component>();
@@ -105,6 +108,7 @@ namespace WaterChaos.Rooms
             _model = new RoomTemperatureModel(_startTemperature, Mathf.Min(_minTemperature, _coolingLimit),
                 _coolingLimit, _initialFireHeat, _extinguishHeatLoss, _heatInterval, _heatPerInterval, _overheatCooling, _reigniteDelay);
             _model.SetMaxFires(_maxFires);
+            _model.SetMaxTemperature(_maxTemperature);
 
             _onFireChanged = OnFireChanged;
             _onApplianceChanged = OnApplianceChanged;

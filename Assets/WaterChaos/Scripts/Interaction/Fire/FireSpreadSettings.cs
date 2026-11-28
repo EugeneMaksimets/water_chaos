@@ -14,6 +14,9 @@ namespace WaterChaos.Interaction
         [SerializeField] private FireExtinguishHandler _firePrefab;
 
         [Header("Spread")]
+        [Tooltip("Outdoor fires (not in a room) light new fires around them. Off = what burns outdoors keeps burning, but nothing new catches.")]
+        [SerializeField] private bool _spreadOutdoors = true;
+
         [Tooltip("How far a fire looks for flammable objects, in meters (m).")]
         [SerializeField, Min(0.1f)] private float _spreadRadius = 3f;
 
@@ -65,6 +68,7 @@ namespace WaterChaos.Interaction
         public float SpawnIntensity => _spawnIntensity;
 
         public FireExtinguishHandler FirePrefab => _firePrefab;
+        public bool SpreadOutdoors => _spreadOutdoors;
         public float SpreadRadius => _spreadRadius;
         public float SpreadInterval => _spreadInterval;
         public float MinIntensity => _minIntensity;

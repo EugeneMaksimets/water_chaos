@@ -663,5 +663,41 @@ namespace WaterChaos.Tests
             Assert.IsTrue(room.AllowsFireSpread);
             Assert.AreEqual(0, room.MaxFires);
         }
+
+        [Test]
+        public void MaxTemperature_FiresNeverHeatAboveIt()
+        {
+            RoomTemperatureModel room = CreateHotRoom(1);
+            room.SetMaxTemperature(30f);
+
+            room.AddHeat(100f);
+            room.AddFire(2);
+            room.Tick(HeatInterval * 50f, _ready);
+
+            Assert.AreEqual(30f, room.Temperature, Tolerance);
+        }
+
+        [Test]
+        public void MaxTemperature_BelowCurrent_CoolsRoomDownToIt()
+        {
+            RoomTemperatureModel room = CreateHotRoom(4);
+
+            room.SetMaxTemperature(35f);
+
+            Assert.AreEqual(35f, room.Temperature, Tolerance);
+        }
+
+        [TestCase(0f)]
+        [TestCase(-5f)]
+        [TestCase(float.NaN)]
+        public void MaxTemperature_ZeroOrLessOrNaN_MeansNoCap(float max)
+        {
+            RoomTemperatureModel room = CreateRoom();
+
+            room.SetMaxTemperature(max);
+            room.AddHeat(500f);
+
+            Assert.AreEqual(Start + 500f, room.Temperature, Tolerance);
+        }
     }
 }

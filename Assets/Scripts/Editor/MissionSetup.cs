@@ -350,7 +350,6 @@ namespace WaterChaos.EditorTools
 
             objectives = go.AddComponent<ObjectiveListView>();
             story = go.AddComponent<StoryPanelView>();
-            Set(story, "_pause", pause);
             hints = go.AddComponent<MissionHintView>();
             go.AddComponent<MissionMarkerView>();
         }

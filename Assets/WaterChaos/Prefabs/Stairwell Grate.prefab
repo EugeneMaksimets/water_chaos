@@ -150,3 +150,4 @@ MonoBehaviour:
   _warningColor: {r: 0.55, g: 1, b: 0.1, a: 1}
   _warningFrequency: 2.5
   _fumesPrefab: {fileID: 2751062189068295270, guid: 96ef92237979145949446cf2b5fd76ef, type: 3}
+  _dripMaterial: {fileID: 2100000, guid: 8aec4cb69e13948b0b01e52c0a9dea9f, type: 2}

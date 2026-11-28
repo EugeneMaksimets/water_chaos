@@ -232,11 +232,11 @@ namespace WaterChaos.Interaction
             return false;
         }
 
-        /// <summary>A room under cooling protection stops its fires from spreading.</summary>
+        /// <summary>A room under cooling protection stops its fires from spreading; outdoors the settings decide.</summary>
         private bool CanSpreadNow()
         {
             IFireArea area = _fire.Area;
-            return area == null || area.AllowsSpread;
+            return area == null ? _settings.SpreadOutdoors : area.AllowsSpread;
         }
 
         /// <summary>

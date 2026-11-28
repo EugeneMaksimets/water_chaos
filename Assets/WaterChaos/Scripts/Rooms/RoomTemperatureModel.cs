@@ -79,6 +79,19 @@ namespace WaterChaos.Rooms
             MaxFires = Math.Max(0, maxFires);
         }
 
+        /// <summary>Highest temperature (°C) the room can ever reach; positive infinity = no cap.</summary>
+        public float MaxTemperature { get; private set; } = float.PositiveInfinity;
+
+        /// <summary>
+        /// Caps the temperature (°C): nothing heats the room above it, and a hotter room drops to it at once.
+        /// 0 or less (or NaN) = no cap.
+        /// </summary>
+        public void SetMaxTemperature(float maxTemperature)
+        {
+            MaxTemperature = maxTemperature > 0f ? maxTemperature : float.PositiveInfinity;
+            Temperature = Math.Min(Temperature, MaxTemperature);
+        }
+
         /// <param name="startTemperature">Starting temperature (°C).</param>
         /// <param name="minTemperature">Lowest possible temperature (°C).</param>
         /// <param name="coolingLimit">Temperature (°C) fires cannot heat above while cooling works.</param>
@@ -138,7 +151,7 @@ namespace WaterChaos.Rooms
             if (IsProtected)
                 heated = Math.Max(Temperature, Math.Min(heated, _coolingLimit));
 
-            Temperature = heated;
+            Temperature = Math.Min(heated, MaxTemperature);
         }
 
         /// <summary>

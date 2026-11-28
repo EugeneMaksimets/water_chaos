@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace WaterChaos.Mission
 {
-    /// <summary>Shows a story panel (the game pauses) and is done once the player closes it with Esc.</summary>
+    /// <summary>Shows a story card (the game keeps running) and is done once its text is fully typed out.</summary>
     public sealed class StoryStep : MissionStep
     {
         [Header("Story")]
@@ -19,7 +19,7 @@ namespace WaterChaos.Mission
 
         protected override void OnTick()
         {
-            if (!Runner.Story.IsOpen)
+            if (!Runner.Story.IsReading)
                 Complete();
         }
     }
