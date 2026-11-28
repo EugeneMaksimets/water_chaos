@@ -33,6 +33,8 @@ namespace WaterChaos.Hose
         private Node[] _nodes;
         // Node positions before the constraints moved them, to sweep that move too.
         private Vector3[] _beforeConstraints;
+        // Node positions at the start of the last step: drawing blends from them to the current ones between steps.
+        private Vector3[] _lastStep;
 
         private readonly Collider[] _overlaps = new Collider[16];
         private readonly RaycastHit[] _hits = new RaycastHit[16];
@@ -62,6 +64,7 @@ namespace WaterChaos.Hose
         {
             _nodes = new Node[Mathf.Max(2, segments) + 1];
             _beforeConstraints = new Vector3[_nodes.Length];
+            _lastStep = new Vector3[_nodes.Length];
             _mask = mask & ~(1 << ProbeLayer);
             _isIgnored = isIgnored;
             _collisionRadius = Mathf.Max(0.001f, collisionRadius);
@@ -123,6 +126,8 @@ namespace WaterChaos.Hose
             }
 
             _segmentLength = total / (_nodes.Length - 1);
+            for (int i = 0; i < _nodes.Length; i++)
+                _lastStep[i] = _nodes[i].Position;
         }
 
         /// <summary>
@@ -161,12 +166,17 @@ namespace WaterChaos.Hose
 
             _nodes = resampled;
             _beforeConstraints = new Vector3[_nodes.Length];
+            _lastStep = new Vector3[_nodes.Length];
+            for (int i = 0; i < _nodes.Length; i++)
+                _lastStep[i] = _nodes[i].Position;
         }
 
         /// <summary>Advances the rope by <paramref name="deltaTime"/> (s); its total length becomes <paramref name="length"/> (m).</summary>
         public void Step(Vector3 start, Vector3 end, float length, Vector3 gravity, float deltaTime)
         {
             _segmentLength = Mathf.Max(0.01f, length / (_nodes.Length - 1));
+            for (int i = 0; i < _nodes.Length; i++)
+                _lastStep[i] = _nodes[i].Position;
             float deltaTimeSquared = deltaTime * deltaTime;
 
             for (int i = 1; i < _nodes.Length - 1; i++)
@@ -217,23 +227,43 @@ namespace WaterChaos.Hose
         /// </summary>
         public int BuildSmoothPoints(Vector3[] output, int smoothing)
         {
+            return BuildSmoothPoints(output, smoothing, 1f, Start, End);
+        }
+
+        /// <summary>
+        /// Like <see cref="BuildSmoothPoints(Vector3[], int)"/>, for drawing between physics steps: the free nodes are
+        /// blended from the last step to the current one by <paramref name="blend"/> (0..1), and the ends are drawn where
+        /// they are right now, so a hose carried at a run follows the hands smoothly instead of in steps.
+        /// </summary>
+        public int BuildSmoothPoints(Vector3[] output, int smoothing, float blend, Vector3 start, Vector3 end)
+        {
             int last = _nodes.Length - 1;
             int steps = Mathf.Max(1, Mathf.Min(smoothing, (output.Length - 1) / last));
             int count = 0;
+            blend = Mathf.Clamp01(blend);
 
             for (int i = 0; i < last; i++)
             {
-                Vector3 p0 = _nodes[Mathf.Max(i - 1, 0)].Position;
-                Vector3 p1 = _nodes[i].Position;
-                Vector3 p2 = _nodes[i + 1].Position;
-                Vector3 p3 = _nodes[Mathf.Min(i + 2, last)].Position;
+                Vector3 p0 = Drawn(Mathf.Max(i - 1, 0), blend, start, end);
+                Vector3 p1 = Drawn(i, blend, start, end);
+                Vector3 p2 = Drawn(i + 1, blend, start, end);
+                Vector3 p3 = Drawn(Mathf.Min(i + 2, last), blend, start, end);
 
                 for (int step = 0; step < steps; step++)
                     output[count++] = CatmullRom(p0, p1, p2, p3, (float)step / steps);
             }
 
-            output[count++] = _nodes[last].Position;
+            output[count++] = end;
             return count;
+        }
+
+        private Vector3 Drawn(int index, float blend, Vector3 start, Vector3 end)
+        {
+            if (index == 0)
+                return start;
+            if (index == _nodes.Length - 1)
+                return end;
+            return Vector3.LerpUnclamped(_lastStep[index], _nodes[index].Position, blend);
         }
 
         public void Destroy()

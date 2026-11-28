@@ -127,7 +127,7 @@ namespace WaterChaos.Hose
             float radius = _width * 0.5f;
             if (_shape == HoseShapeMode.Physics && _rope.IsLaid)
             {
-                int count = _rope.BuildPoints(out Vector3[] points);
+                int count = _rope.BuildPoints(_hose.StartPosition, _hose.EndPosition, out Vector3[] points);
                 _tube.Build(points, count, radius, _sides, _renderer.transform.worldToLocalMatrix);
             }
             else

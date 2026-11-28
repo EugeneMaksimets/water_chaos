@@ -99,6 +99,17 @@ namespace WaterChaos.Hose
             return _simulation.BuildSmoothPoints(_points, _smoothing);
         }
 
+        /// <summary>
+        /// Smooth points for drawing this frame: between physics steps the rope is blended forward, and its ends are
+        /// where <paramref name="start"/> and <paramref name="end"/> are now, so a hose carried at a run does not jerk.
+        /// </summary>
+        public int BuildPoints(Vector3 start, Vector3 end, out Vector3[] points)
+        {
+            points = _points;
+            float blend = Time.fixedDeltaTime > 0f ? (Time.time - Time.fixedTime) / Time.fixedDeltaTime : 1f;
+            return _simulation.BuildSmoothPoints(_points, _smoothing, blend, start, end);
+        }
+
         /// <summary>The hose was disconnected or switched to another shape: lay it again next time.</summary>
         public void Clear()
         {

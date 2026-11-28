@@ -123,7 +123,7 @@ namespace WaterChaos.WaterTransfer
             int count;
             if (_shape == HoseShapeMode.Physics && _rope.IsLaid)
             {
-                count = _rope.BuildPoints(out points);
+                count = _rope.BuildPoints(path.Anchor, _hose.End.position, out points);
             }
             else
             {
